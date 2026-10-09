@@ -1,0 +1,24 @@
+name: Daily AI Short
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 6 * * *"
+
+jobs:
+  make-short:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Test automation
+        run: |
+          echo "AI Shorts automation is working!"
+          python --version
