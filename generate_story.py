@@ -29,9 +29,8 @@ INDIAN_MYTHOLOGY = [
         ),
         "final_line": (
             "He did not lose his greatness when he became weaker. That was the moment his legend became even bigger."
-        )
+        ),
     },
-
     {
         "category": "indian_mythology",
         "title": "Krishna Gave Ashwatthama a Fate Worse Than Death",
@@ -51,9 +50,8 @@ INDIAN_MYTHOLOGY = [
         ),
         "final_line": (
             "For a warrior, death might have been mercy. Instead, the punishment was to keep living."
-        )
+        ),
     },
-
     {
         "category": "indian_mythology",
         "title": "Why Bhishma Refused to Die",
@@ -73,9 +71,8 @@ INDIAN_MYTHOLOGY = [
         ),
         "final_line": (
             "Even after defeat, Bhishma turned his final days into one last act of duty."
-        )
+        ),
     },
-
     {
         "category": "indian_mythology",
         "title": "Hanuman Didn't Know Which Herb to Take",
@@ -95,9 +92,8 @@ INDIAN_MYTHOLOGY = [
         ),
         "final_line": (
             "When the mission mattered more than the method, Hanuman simply moved the mountain."
-        )
+        ),
     },
-
     {
         "category": "indian_mythology",
         "title": "The Vow That Destroyed a Prince's Future",
@@ -117,9 +113,8 @@ INDIAN_MYTHOLOGY = [
         ),
         "final_line": (
             "The vow was so severe that Devavrata was remembered from then on as Bhishma — the man of the terrible oath."
-        )
+        ),
     },
-
     {
         "category": "indian_mythology",
         "title": "Shiva Drank What Could Destroy Everything",
@@ -139,10 +134,9 @@ INDIAN_MYTHOLOGY = [
         ),
         "final_line": (
             "The poison turned his throat blue, and Neelkanth became a symbol of taking suffering upon oneself to protect others."
-        )
-    }
+        ),
+    },
 ]
-
 
 INDIAN_HISTORY = [
     {
@@ -164,9 +158,8 @@ INDIAN_HISTORY = [
         ),
         "final_line": (
             "The remarkable part was not that he fought his way out. It was that he outthought the prison around him."
-        )
+        ),
     },
-
     {
         "category": "indian_history",
         "title": "Maharana Pratap Lost the Field, Not the Fight",
@@ -186,9 +179,8 @@ INDIAN_HISTORY = [
         ),
         "final_line": (
             "That is why his legend is less about one battle and more about refusing to disappear after it."
-        )
+        ),
     },
-
     {
         "category": "indian_history",
         "title": "Ashoka Won Kalinga and Hated What He Saw",
@@ -208,9 +200,8 @@ INDIAN_HISTORY = [
         ),
         "final_line": (
             "He conquered Kalinga with an army, but Kalinga changed the emperor."
-        )
+        ),
     },
-
     {
         "category": "indian_history",
         "title": "The Cholas Didn't Stop at India's Coast",
@@ -230,9 +221,8 @@ INDIAN_HISTORY = [
         ),
         "final_line": (
             "For a moment in medieval history, Indian power travelled by sea."
-        )
+        ),
     },
-
     {
         "category": "indian_history",
         "title": "Lachit Borphukan Fought While Seriously Ill",
@@ -252,9 +242,8 @@ INDIAN_HISTORY = [
         ),
         "final_line": (
             "Sometimes the strongest thing a commander can do is simply appear when everyone thinks he cannot."
-        )
+        ),
     },
-
     {
         "category": "indian_history",
         "title": "Rani Lakshmibai Refused the Ending Chosen for Her",
@@ -274,10 +263,9 @@ INDIAN_HISTORY = [
         ),
         "final_line": (
             "She lost the kingdom, but history never forgot the queen."
-        )
-    }
+        ),
+    },
 ]
-
 
 INTERNATIONAL_HISTORY = [
     {
@@ -299,9 +287,8 @@ INTERNATIONAL_HISTORY = [
         ),
         "final_line": (
             "Napoleon invaded with an army. Russia answered with distance, fire, and cold."
-        )
+        ),
     },
-
     {
         "category": "international_history",
         "title": "The City That Vanished Under Ash",
@@ -321,9 +308,8 @@ INTERNATIONAL_HISTORY = [
         ),
         "final_line": (
             "Pompeii was destroyed in hours, but that destruction accidentally froze part of its world in time."
-        )
+        ),
     },
-
     {
         "category": "international_history",
         "title": "The Emperor Who Was Told Rome Was Burning",
@@ -343,10 +329,9 @@ INTERNATIONAL_HISTORY = [
         ),
         "final_line": (
             "Sometimes the legend survives longer than the evidence."
-        )
-    }
+        ),
+    },
 ]
-
 
 FANTASY = [
     {
@@ -368,9 +353,8 @@ FANTASY = [
         ),
         "final_line": (
             "He had fallen in love with a memory that the moon refused to forget."
-        )
+        ),
     },
-
     {
         "category": "fantasy",
         "title": "The King Who Could Hear Lies",
@@ -390,9 +374,8 @@ FANTASY = [
         ),
         "final_line": (
             "The curse never existed to expose everyone else. It existed to expose him."
-        )
+        ),
     },
-
     {
         "category": "fantasy",
         "title": "The Dragon Guarded Nothing",
@@ -412,10 +395,9 @@ FANTASY = [
         ),
         "final_line": (
             "The treasure was never what the dragon protected. The dragon was the lock."
-        )
-    }
+        ),
+    },
 ]
-
 
 ROMANCE_DRAMA = [
     {
@@ -437,9 +419,8 @@ ROMANCE_DRAMA = [
         ),
         "final_line": (
             "He had never forgotten the meeting. He simply never lived long enough to return."
-        )
+        ),
     },
-
     {
         "category": "romance_drama",
         "title": "He Married the Wrong Twin",
@@ -459,10 +440,9 @@ ROMANCE_DRAMA = [
         ),
         "final_line": (
             "He came looking for betrayal and found sacrifice instead."
-        )
-    }
+        ),
+    },
 ]
-
 
 COMEDY = [
     {
@@ -472,6 +452,9 @@ COMEDY = [
         "main_figure": "an unlucky thief",
         "setting": "a chaotic medieval kingdom",
         "mood": "funny, absurd, fast-paced",
-        "hook": "A thief broke into the royal palace to steal gold and walked out with a government job.",
+        "hook": (
+            "A thief broke into the royal palace to steal gold and walked out with a government job."
+        ),
         "conflict": (
-            "When guards caught him hiding behind a war map, the king assumed he was a secret military 
+            "When guards caught him hiding behind a war map, "
+           
