@@ -18,16 +18,13 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
     steps:
-
       - name: Get repository
         uses: actions/checkout@v4
-
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
 
       - name: Install dependencies
         run: |
@@ -35,34 +32,26 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg
 
-
       - name: Generate unique story
         run: python generate_story.py
-
 
       - name: Generate visual scenes
         run: python generate_scenes.py
 
-
       - name: Show generated story
         run: cat story.json
-
 
       - name: Show scene prompts
         run: cat scenes.json
 
-
       - name: Generate narration
         run: python generate_voice.py
-
 
       - name: Check narration
         run: ls -lh voice.mp3
 
-
       - name: Generate images
         run: python generate_images.py
-
 
       - name: Check generated images
         run: |
@@ -73,15 +62,13 @@ jobs:
 
           echo "Image count: $IMAGE_COUNT"
 
-          if [ "$IMAGE_COUNT" -ne 15 ]; then
-            echo "Expected 15 images but found $IMAGE_COUNT"
+          if [ "$IMAGE_COUNT" -ne 7 ]; then
+            echo "Expected 7 images but found $IMAGE_COUNT"
             exit 1
           fi
 
-
       - name: Create final Short
         run: python make_video.py
-
 
       - name: Check final Short
         run: |
@@ -93,13 +80,11 @@ jobs:
             -of default=noprint_wrappers=1:nokey=1 \
             final_short.mp4
 
-
       - name: Upload final Short
         uses: actions/upload-artifact@v4
         with:
           name: final-short
           path: final_short.mp4
-
 
       - name: Upload narration
         uses: actions/upload-artifact@v4
@@ -107,20 +92,17 @@ jobs:
           name: narration
           path: voice.mp3
 
-
       - name: Upload generated images
         uses: actions/upload-artifact@v4
         with:
           name: generated-images
           path: images/
 
-
       - name: Upload scene prompts
         uses: actions/upload-artifact@v4
         with:
           name: scene-prompts
           path: scenes.json
-
 
       - name: Save story history
         run: |
