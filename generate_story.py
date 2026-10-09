@@ -5,396 +5,473 @@ from pathlib import Path
 
 HISTORY_FILE = Path("story_history.json")
 
-# --------------------------------------------------
-# Content pools
-# --------------------------------------------------
+# ============================================================
+# CONTENT POOLS
+# ============================================================
 
-MYTHOLOGY_TOPICS = [
+INDIAN_MYTHOLOGY = [
     {
-        "category": "mythology",
-        "title": "Why Bhishma Chose the Bed of Arrows",
-        "topic": "Bhishma on the bed of arrows",
-        "main_figure": "Bhishma",
-        "setting": "the battlefield of Kurukshetra",
-        "era": "Mahabharata era",
-        "mood": "solemn and epic",
-        "hook": "Why would a warrior choose to remain alive on a bed of arrows?",
-        "summary": (
-            "After being struck down in Kurukshetra, Bhishma did not die immediately. "
-            "Because of the boon of choosing the time of his death, he remained on a bed of arrows, "
-            "waiting for the right cosmic moment. Even in pain, he continued teaching dharma and statecraft."
+        "category": "indian_mythology",
+        "title": "Karna Knew He Was Being Tricked",
+        "topic": "Karna gives away his kavach and kundal",
+        "main_figure": "Karna",
+        "setting": "ancient India before the Kurukshetra war",
+        "mood": "tragic, intense, heroic",
+        "hook": "Karna knew the man asking for his armor was not an ordinary beggar.",
+        "conflict": (
+            "He understood that giving away his divine armor and earrings could leave him vulnerable in the coming war."
         ),
-        "reveal": "His final act was not about survival, but about duty, wisdom, and timing.",
-        "ending": "That is why Bhishma’s bed of arrows became one of the most powerful moments in Indian mythology."
+        "escalation": (
+            "But Karna had built his entire identity around never refusing someone who came to him asking for charity."
+        ),
+        "twist": (
+            "So even after realizing that Indra had come in disguise, Karna still removed the protection from his own body and gave it away."
+        ),
+        "final_line": (
+            "He did not lose his greatness when he became weaker. That was the moment his legend became even bigger."
+        )
     },
+
     {
-        "category": "mythology",
-        "title": "The Mystery of Ashwatthama’s Curse",
+        "category": "indian_mythology",
+        "title": "Krishna Gave Ashwatthama a Fate Worse Than Death",
         "topic": "Ashwatthama's curse",
         "main_figure": "Ashwatthama",
-        "setting": "the aftermath of the Mahabharata war",
-        "era": "Mahabharata era",
-        "mood": "dark and haunting",
-        "hook": "What if one warrior from the Mahabharata was cursed to wander forever?",
-        "summary": (
-            "Ashwatthama, the son of Dronacharya, committed a horrifying act after the war. "
-            "As punishment, Krishna cursed him with endless suffering and eternal wandering. "
-            "In many traditions, he is said to still roam the earth, carrying the burden of his actions."
+        "setting": "the final days of the Mahabharata war",
+        "mood": "dark, haunting, supernatural",
+        "hook": "The war was almost over, but Ashwatthama wanted revenge so badly that he crossed a line nobody could forgive.",
+        "conflict": (
+            "Driven by rage after his father's death, he attacked when his enemies were least prepared."
         ),
-        "reveal": "His story is remembered not as a victory, but as a warning about rage and revenge.",
-        "ending": "That is why Ashwatthama remains one of the most mysterious and tragic figures in Indian mythology."
+        "escalation": (
+            "What followed was not treated as another act of war. It was seen as something far darker."
+        ),
+        "twist": (
+            "Krishna did not simply kill him. According to tradition, Ashwatthama was cursed to wander the earth in suffering."
+        ),
+        "final_line": (
+            "For a warrior, death might have been mercy. Instead, the punishment was to keep living."
+        )
     },
+
     {
-        "category": "mythology",
-        "title": "How Hanuman Brought the Mountain",
-        "topic": "Hanuman and the Sanjeevani mountain",
+        "category": "indian_mythology",
+        "title": "Why Bhishma Refused to Die",
+        "topic": "Bhishma on the bed of arrows",
+        "main_figure": "Bhishma",
+        "setting": "Kurukshetra battlefield",
+        "mood": "epic, solemn, emotional",
+        "hook": "Bhishma had already fallen in battle. But he still refused to die.",
+        "conflict": (
+            "His body was covered in arrows, yet he possessed the boon of choosing the moment of his death."
+        ),
+        "escalation": (
+            "Instead of letting go, he remained alive through the suffering and continued advising kings and warriors."
+        ),
+        "twist": (
+            "He waited for an auspicious time before finally allowing himself to die."
+        ),
+        "final_line": (
+            "Even after defeat, Bhishma turned his final days into one last act of duty."
+        )
+    },
+
+    {
+        "category": "indian_mythology",
+        "title": "Hanuman Didn't Know Which Herb to Take",
+        "topic": "Hanuman carrying the mountain",
         "main_figure": "Hanuman",
         "setting": "the war in Lanka",
-        "era": "Ramayana era",
-        "mood": "heroic and fast-paced",
-        "hook": "Why did Hanuman carry an entire mountain instead of one herb?",
-        "summary": (
-            "When Lakshmana was struck down in battle, only the Sanjeevani herb could save him. "
-            "Hanuman was sent to fetch it, but when he could not identify the exact herb, "
-            "he lifted the whole mountain and brought it back. His strength was matched by his devotion."
+        "mood": "heroic, urgent, spectacular",
+        "hook": "Lakshmana was dying, and Hanuman had only one job: bring back a life-saving herb.",
+        "conflict": (
+            "The problem was that when he reached the mountain, he could not identify the correct herb."
         ),
-        "reveal": "The moment is legendary because Hanuman chose certainty over delay when a life was at stake.",
-        "ending": "That is why the image of Hanuman carrying the mountain became a symbol of unstoppable devotion."
-    },
-    {
-        "category": "mythology",
-        "title": "Why Karna Gave Away His Armor",
-        "topic": "Karna giving away his kavach and kundal",
-        "main_figure": "Karna",
-        "setting": "before the Kurukshetra war",
-        "era": "Mahabharata era",
-        "mood": "tragic and noble",
-        "hook": "Why would a warrior give away the very armor that made him nearly invincible?",
-        "summary": (
-            "Karna was born with divine armor and earrings that protected him. "
-            "Indra, knowing Karna’s power, came disguised as a Brahmin and asked for them as alms. "
-            "Even though Karna understood the danger, he still gave them away, staying true to his vow of generosity."
+        "escalation": (
+            "Every second mattered. Choosing the wrong plant could cost Lakshmana his life."
         ),
-        "reveal": "That decision made him more vulnerable in battle, but greater in legend.",
-        "ending": "That is why Karna is remembered not only as a warrior, but also as one of the greatest givers in mythology."
+        "twist": (
+            "So Hanuman stopped trying to choose. He lifted the entire mountain and carried it back."
+        ),
+        "final_line": (
+            "When the mission mattered more than the method, Hanuman simply moved the mountain."
+        )
     },
+
     {
-        "category": "mythology",
-        "title": "The Vow That Created Bhishma",
-        "topic": "Devavrata becoming Bhishma",
+        "category": "indian_mythology",
+        "title": "The Vow That Destroyed a Prince's Future",
+        "topic": "Bhishma's terrible vow",
         "main_figure": "Devavrata",
-        "setting": "the court of Hastinapura",
-        "era": "Mahabharata era",
-        "mood": "grand and emotional",
-        "hook": "What kind of vow is so terrifying that it changes a prince’s name forever?",
-        "summary": (
-            "Devavrata was the rightful heir to Hastinapura, but to fulfill his father Shantanu’s wish, "
-            "he gave up the throne and also swore lifelong celibacy. "
-            "The vow was so severe that the gods themselves were astonished, and from that moment he became Bhishma."
+        "setting": "the royal court of Hastinapura",
+        "mood": "dramatic, emotional, grand",
+        "hook": "A prince gave up not just his throne, but his entire future for one promise.",
+        "conflict": (
+            "Devavrata wanted his father to marry the woman he loved, but her family feared that Devavrata's children would one day claim the throne."
         ),
-        "reveal": "His greatness was born from sacrifice, not ambition.",
-        "ending": "That is why Bhishma’s vow is still remembered as one of the most powerful promises in Indian mythology."
+        "escalation": (
+            "Giving up the crown was not enough to remove that fear."
+        ),
+        "twist": (
+            "So he swore lifelong celibacy, ending his own royal line before it even began."
+        ),
+        "final_line": (
+            "The vow was so severe that Devavrata was remembered from then on as Bhishma — the man of the terrible oath."
+        )
     },
+
     {
-        "category": "mythology",
-        "title": "Why Shiva Drank the Poison",
-        "topic": "Shiva and the Halahala poison",
+        "category": "indian_mythology",
+        "title": "Shiva Drank What Could Destroy Everything",
+        "topic": "Shiva drinks Halahala",
         "main_figure": "Lord Shiva",
-        "setting": "the churning of the cosmic ocean",
-        "era": "Puranic era",
-        "mood": "cosmic and intense",
-        "hook": "Why did Shiva drink a poison powerful enough to destroy the universe?",
-        "summary": (
-            "During the Samudra Manthan, a deadly poison called Halahala emerged before the nectar of immortality. "
-            "Its power threatened all existence. To save the universe, Shiva consumed it and held it in his throat, "
-            "which then turned blue, earning him the name Neelkanth."
+        "setting": "the cosmic churning of the ocean",
+        "mood": "cosmic, intense, divine",
+        "hook": "Before the nectar of immortality appeared, something far worse came out first.",
+        "conflict": (
+            "A deadly poison emerged from the cosmic ocean, threatening gods, demons, and the entire world."
         ),
-        "reveal": "Before immortality came danger, and before reward came sacrifice.",
-        "ending": "That is why Shiva’s blue throat became a symbol of cosmic protection."
-    },
-    {
-        "category": "mythology",
-        "title": "How Abhimanyu Entered the Chakravyuha",
-        "topic": "Abhimanyu in the Chakravyuha",
-        "main_figure": "Abhimanyu",
-        "setting": "the battlefield of Kurukshetra",
-        "era": "Mahabharata era",
-        "mood": "brave and heartbreaking",
-        "hook": "How did a young warrior become one of the bravest names in the Mahabharata?",
-        "summary": (
-            "Abhimanyu knew how to enter the deadly Chakravyuha formation but not how to escape it. "
-            "Even so, he entered the formation during battle and fought fearlessly against far older warriors. "
-            "His courage became legendary, even though the odds were against him."
+        "escalation": (
+            "Nobody could safely contain it, and the danger kept spreading."
         ),
-        "reveal": "His story is remembered because bravery is not measured by survival alone.",
-        "ending": "That is why Abhimanyu remains one of the most admired heroes of the Mahabharata."
-    },
-    {
-        "category": "mythology",
-        "title": "The Day Ganga Took the Child Away",
-        "topic": "Ganga and the birth of Bhishma",
-        "main_figure": "Ganga",
-        "setting": "the kingdom of Hastinapura",
-        "era": "Mahabharata era",
-        "mood": "mysterious and emotional",
-        "hook": "Why would a mother carry away her own child into the river?",
-        "summary": (
-            "King Shantanu fell in love with Ganga, who agreed to marry him on one condition: he would never question her actions. "
-            "When their children were born, she took them away one by one into the river. "
-            "Only later was the hidden divine reason revealed, and the surviving child would become Bhishma."
+        "twist": (
+            "Shiva drank the poison himself and held it in his throat instead of letting it enter his body."
         ),
-        "reveal": "What looked cruel on the surface was tied to a larger cosmic fate.",
-        "ending": "That is why the story of Ganga and Bhishma is remembered as one of destiny, sacrifice, and mystery."
-    },
+        "final_line": (
+            "The poison turned his throat blue, and Neelkanth became a symbol of taking suffering upon oneself to protect others."
+        )
+    }
 ]
 
-HISTORY_TOPICS = [
+
+INDIAN_HISTORY = [
     {
-        "category": "history",
-        "title": "How Ashoka Changed After Kalinga",
-        "topic": "Ashoka after the Kalinga war",
-        "main_figure": "Emperor Ashoka",
-        "setting": "the battlefield of Kalinga",
-        "era": "Mauryan Empire",
-        "mood": "dramatic and reflective",
-        "hook": "How did one of India’s most powerful conquerors turn toward peace?",
-        "summary": (
-            "Ashoka’s victory in the Kalinga war came at a terrible human cost. "
-            "According to historical tradition, the suffering he witnessed deeply affected him. "
-            "After that, he moved toward dhamma, moral governance, and the spread of Buddhist ideals."
+        "category": "indian_history",
+        "title": "Shivaji Walked Into Agra and Realized He Was Trapped",
+        "topic": "Shivaji's escape from Agra",
+        "main_figure": "Chhatrapati Shivaji Maharaj",
+        "setting": "Agra during the Mughal era",
+        "mood": "tense, clever, rebellious",
+        "hook": "Shivaji entered Agra expecting diplomacy. Very quickly, he realized he was effectively trapped.",
+        "conflict": (
+            "His movements were restricted, and simply walking out was no longer an option."
         ),
-        "reveal": "His greatest transformation came not before war, but after seeing its consequences.",
-        "ending": "That is why Ashoka is remembered not only as a conqueror, but also as a ruler transformed by conscience."
-    },
-    {
-        "category": "history",
-        "title": "The Chola Fleet That Crossed the Sea",
-        "topic": "Rajendra Chola's naval campaign",
-        "main_figure": "Rajendra Chola I",
-        "setting": "the Indian Ocean trade world",
-        "era": "Chola Empire",
-        "mood": "powerful and adventurous",
-        "hook": "Did you know medieval India once launched a naval campaign across the seas?",
-        "summary": (
-            "Under Rajendra Chola I, the Chola Empire developed major maritime power. "
-            "Its fleets moved across the Bay of Bengal and projected influence far beyond the subcontinent. "
-            "This campaign showed that Indian power was not limited to land empires alone."
+        "escalation": (
+            "The longer he stayed, the greater the danger became, so escape had to rely on deception rather than force."
         ),
-        "reveal": "The Cholas were not just temple builders, but also one of the great naval powers of their age.",
-        "ending": "That is why Rajendra Chola’s maritime campaigns remain one of the most impressive chapters of Indian history."
-    },
-    {
-        "category": "history",
-        "title": "The Last Stand of Rani Durgavati",
-        "topic": "Rani Durgavati's final battle",
-        "main_figure": "Rani Durgavati",
-        "setting": "central India",
-        "era": "16th century",
-        "mood": "brave and tragic",
-        "hook": "Who was the queen who chose resistance over surrender?",
-        "summary": (
-            "Rani Durgavati ruled with courage and determination in central India. "
-            "When powerful forces advanced against her kingdom, she led resistance instead of giving in. "
-            "Her final stand turned her into a lasting symbol of courage and honor."
+        "twist": (
+            "According to popular accounts, Shivaji escaped under disguise and concealment, turning captivity into one of the most famous escapes in Indian history."
         ),
-        "reveal": "Her power came not only from rulership, but from refusing to abandon her people.",
-        "ending": "That is why Rani Durgavati is remembered as one of the bravest queens in Indian history."
+        "final_line": (
+            "The remarkable part was not that he fought his way out. It was that he outthought the prison around him."
+        )
     },
+
     {
-        "category": "history",
-        "title": "How Lachit Borphukan Defended Assam",
-        "topic": "Lachit Borphukan and the Battle of Saraighat",
-        "main_figure": "Lachit Borphukan",
-        "setting": "the Brahmaputra at Saraighat",
-        "era": "Ahom kingdom",
-        "mood": "bold and patriotic",
-        "hook": "How did one commander stop a mighty invasion on the Brahmaputra?",
-        "summary": (
-            "Lachit Borphukan led the Ahom defense in the Battle of Saraighat. "
-            "Using deep knowledge of the terrain and determined leadership, he resisted a far larger imperial force. "
-            "His leadership became a symbol of strategy, courage, and devotion to the homeland."
-        ),
-        "reveal": "The battle proved that resolve and strategy can outweigh sheer size.",
-        "ending": "That is why Lachit Borphukan remains one of the greatest military heroes in Indian history."
-    },
-    {
-        "category": "history",
-        "title": "What Happened After Haldighati",
+        "category": "indian_history",
+        "title": "Maharana Pratap Lost the Field, Not the Fight",
         "topic": "Maharana Pratap after Haldighati",
         "main_figure": "Maharana Pratap",
-        "setting": "the hills and forests of Mewar",
-        "era": "16th century",
-        "mood": "defiant and resilient",
-        "hook": "Most people know the Battle of Haldighati, but what happened after it is just as powerful.",
-        "summary": (
-            "Even after the fierce Battle of Haldighati, Maharana Pratap did not give up. "
-            "He endured years of hardship, regrouped, and continued resistance for the cause of Mewar. "
-            "His long struggle made him a lasting symbol of independence and endurance."
+        "setting": "Mewar after the Battle of Haldighati",
+        "mood": "defiant, rugged, heroic",
+        "hook": "Haldighati was brutal, but the real story of Maharana Pratap begins after the battle.",
+        "conflict": (
+            "He faced military pressure, loss of territory, and years of hardship."
         ),
-        "reveal": "His legend was built not on a single battle, but on refusing to surrender afterward.",
-        "ending": "That is why Maharana Pratap is remembered for resilience as much as for valor."
+        "escalation": (
+            "Instead of surrendering, he continued resistance from difficult terrain and slowly rebuilt his position."
+        ),
+        "twist": (
+            "The battle did not end his struggle. He later recovered significant parts of Mewar."
+        ),
+        "final_line": (
+            "That is why his legend is less about one battle and more about refusing to disappear after it."
+        )
     },
+
     {
-        "category": "history",
-        "title": "The Scholar and the Emperor",
-        "topic": "Chanakya and Chandragupta",
-        "main_figure": "Chanakya and Chandragupta Maurya",
-        "setting": "ancient northern India",
-        "era": "Mauryan rise",
-        "mood": "strategic and intense",
-        "hook": "What happens when a brilliant strategist finds the ruler he has been waiting for?",
-        "summary": (
-            "Chanakya was a master strategist and political thinker. "
-            "He became the guide of Chandragupta Maurya and helped shape the rise of one of India’s great empires. "
-            "Their partnership is remembered as one of the most powerful combinations of intellect and ambition."
+        "category": "indian_history",
+        "title": "Ashoka Won Kalinga and Hated What He Saw",
+        "topic": "Ashoka after Kalinga",
+        "main_figure": "Emperor Ashoka",
+        "setting": "the battlefield of Kalinga",
+        "mood": "grim, reflective, powerful",
+        "hook": "Ashoka won the war. Then he saw what victory had actually cost.",
+        "conflict": (
+            "The Kalinga campaign brought enormous suffering, death, and displacement."
         ),
-        "reveal": "Empires are not built by strength alone, but also by planning, patience, and vision.",
-        "ending": "That is why Chanakya and Chandragupta remain one of the most iconic duos in Indian history."
+        "escalation": (
+            "For a ruler known for conquest, the battlefield became something impossible to ignore."
+        ),
+        "twist": (
+            "Instead of celebrating, Ashoka's reign increasingly turned toward dhamma, moral governance, and Buddhist ideals."
+        ),
+        "final_line": (
+            "He conquered Kalinga with an army, but Kalinga changed the emperor."
+        )
     },
+
     {
-        "category": "history",
-        "title": "How Ahilyabai Holkar Rebuilt Sacred India",
-        "topic": "Ahilyabai Holkar's legacy",
-        "main_figure": "Ahilyabai Holkar",
-        "setting": "across major sacred sites in India",
-        "era": "18th century",
-        "mood": "graceful and inspiring",
-        "hook": "Which ruler quietly rebuilt some of India’s most sacred places?",
-        "summary": (
-            "Ahilyabai Holkar ruled with wisdom, justice, and deep religious devotion. "
-            "She supported temples, pilgrimage routes, and public works across India. "
-            "Her legacy was built not on conquest, but on restoration, service, and good governance."
+        "category": "indian_history",
+        "title": "The Cholas Didn't Stop at India's Coast",
+        "topic": "Rajendra Chola's naval campaign",
+        "main_figure": "Rajendra Chola I",
+        "setting": "the Bay of Bengal and Southeast Asian trade routes",
+        "mood": "grand, adventurous, powerful",
+        "hook": "A medieval Indian empire once sent fleets across the sea to project power far beyond the subcontinent.",
+        "conflict": (
+            "Control of maritime trade routes mattered enormously, and the Cholas had the naval strength to act."
         ),
-        "reveal": "Her greatness came from preserving civilization rather than expanding a battlefield empire.",
-        "ending": "That is why Ahilyabai Holkar is remembered as one of the most respected rulers in Indian history."
+        "escalation": (
+            "Their fleets crossed the Bay of Bengal and struck targets connected to powerful Southeast Asian trading networks."
+        ),
+        "twist": (
+            "The Chola Empire was not only a land power famous for temples. It was also capable of major overseas military operations."
+        ),
+        "final_line": (
+            "For a moment in medieval history, Indian power travelled by sea."
+        )
     },
+
     {
-        "category": "history",
-        "title": "The Burning of Nalanda",
-        "topic": "Nalanda University",
-        "main_figure": "Nalanda Mahavihara",
-        "setting": "ancient Bihar",
-        "era": "medieval India",
-        "mood": "somber and powerful",
-        "hook": "What happens when one of the world’s greatest centers of learning is destroyed?",
-        "summary": (
-            "Nalanda was one of the most famous centers of learning in the ancient world. "
-            "Students and scholars came there from many regions to study philosophy, science, and literature. "
-            "Its destruction became one of the most heartbreaking losses in the history of knowledge."
+        "category": "indian_history",
+        "title": "Lachit Borphukan Fought While Seriously Ill",
+        "topic": "Battle of Saraighat",
+        "main_figure": "Lachit Borphukan",
+        "setting": "the Brahmaputra River at Saraighat",
+        "mood": "urgent, brave, patriotic",
+        "hook": "Lachit Borphukan was sick, but when the battle began to turn, he still entered the fight.",
+        "conflict": (
+            "The Ahom forces faced a powerful Mughal attack, and morale was under pressure."
         ),
-        "reveal": "The fall of Nalanda was not just the loss of buildings, but the loss of an intellectual world.",
-        "ending": "That is why Nalanda still stands as a symbol of India’s scholarly greatness and its loss."
+        "escalation": (
+            "The commander himself was physically weak, but staying away risked collapse."
+        ),
+        "twist": (
+            "Lachit personally returned to the battle and helped rally his forces in the river fight at Saraighat."
+        ),
+        "final_line": (
+            "Sometimes the strongest thing a commander can do is simply appear when everyone thinks he cannot."
+        )
     },
+
+    {
+        "category": "indian_history",
+        "title": "Rani Lakshmibai Refused the Ending Chosen for Her",
+        "topic": "Rani Lakshmibai's final resistance",
+        "main_figure": "Rani Lakshmibai",
+        "setting": "Jhansi and central India during 1857",
+        "mood": "fiery, tragic, heroic",
+        "hook": "The British expected Jhansi to fall quietly. Rani Lakshmibai had another answer.",
+        "conflict": (
+            "Political pressure, annexation, and rebellion pushed the kingdom into open conflict."
+        ),
+        "escalation": (
+            "Lakshmibai became one of the central resistance figures and continued fighting even after losing control of Jhansi."
+        ),
+        "twist": (
+            "Her death in battle turned a defeated ruler into one of the most enduring symbols of resistance in Indian history."
+        ),
+        "final_line": (
+            "She lost the kingdom, but history never forgot the queen."
+        )
+    }
 ]
 
-ALL_TOPICS = MYTHOLOGY_TOPICS + HISTORY_TOPICS
+
+INTERNATIONAL_HISTORY = [
+    {
+        "category": "international_history",
+        "title": "Napoleon Won Battles but Lost to Winter",
+        "topic": "Napoleon's invasion of Russia",
+        "main_figure": "Napoleon Bonaparte",
+        "setting": "Russia in 1812",
+        "mood": "massive, bleak, dramatic",
+        "hook": "Napoleon entered Russia with one of the largest armies Europe had seen. Most of it would never return.",
+        "conflict": (
+            "Russian forces avoided giving him the clean victory he wanted while retreating deeper into the country."
+        ),
+        "escalation": (
+            "Supplies failed, distance grew, and winter turned every mile into a disaster."
+        ),
+        "twist": (
+            "The campaign became less about defeating the enemy and more about surviving the retreat."
+        ),
+        "final_line": (
+            "Napoleon invaded with an army. Russia answered with distance, fire, and cold."
+        )
+    },
+
+    {
+        "category": "international_history",
+        "title": "The City That Vanished Under Ash",
+        "topic": "Pompeii and Mount Vesuvius",
+        "main_figure": "the people of Pompeii",
+        "setting": "Pompeii in 79 CE",
+        "mood": "eerie, catastrophic, tragic",
+        "hook": "A normal Roman city woke up one morning and had no idea it was about to disappear.",
+        "conflict": (
+            "Mount Vesuvius erupted, filling the sky with ash and volcanic debris."
+        ),
+        "escalation": (
+            "People tried to escape as darkness, heat, and falling material overwhelmed the city."
+        ),
+        "twist": (
+            "Centuries later, the destruction preserved buildings and traces of daily life with haunting detail."
+        ),
+        "final_line": (
+            "Pompeii was destroyed in hours, but that destruction accidentally froze part of its world in time."
+        )
+    },
+
+    {
+        "category": "international_history",
+        "title": "The Emperor Who Was Told Rome Was Burning",
+        "topic": "Nero and the Great Fire of Rome",
+        "main_figure": "Emperor Nero",
+        "setting": "Rome in 64 CE",
+        "mood": "chaotic, political, controversial",
+        "hook": "Rome burned for days, and one emperor's reputation would burn with it for centuries.",
+        "conflict": (
+            "A massive fire devastated large parts of the city and created panic and political suspicion."
+        ),
+        "escalation": (
+            "Rumors spread that Nero had somehow allowed or even encouraged the disaster."
+        ),
+        "twist": (
+            "Historians still debate many popular stories about his role, including the famous image of him playing music while Rome burned."
+        ),
+        "final_line": (
+            "Sometimes the legend survives longer than the evidence."
+        )
+    }
+]
 
 
-# --------------------------------------------------
-# Helpers
-# --------------------------------------------------
+FANTASY = [
+    {
+        "category": "fantasy",
+        "title": "The Prince Who Fell in Love With Midnight",
+        "topic": "a woman who only exists after midnight",
+        "main_figure": "a lonely prince",
+        "setting": "a cursed moonlit kingdom",
+        "mood": "romantic, magical, melancholic",
+        "hook": "Every night at exactly midnight, a woman appeared in the palace garden. At sunrise, she vanished.",
+        "conflict": (
+            "The prince fell in love with her, but she refused to tell him where she came from."
+        ),
+        "escalation": (
+            "He began staying awake every night just to spend a few hours with her."
+        ),
+        "twist": (
+            "Eventually he discovered she was not visiting the kingdom at all. She was someone who had died there a century earlier."
+        ),
+        "final_line": (
+            "He had fallen in love with a memory that the moon refused to forget."
+        )
+    },
 
-def load_history():
-    if HISTORY_FILE.exists():
-        try:
-            return json.loads(HISTORY_FILE.read_text(encoding="utf-8"))
-        except Exception:
-            return []
-    return []
+    {
+        "category": "fantasy",
+        "title": "The King Who Could Hear Lies",
+        "topic": "a cursed king who hears lies as screams",
+        "main_figure": "a young king",
+        "setting": "an ancient mountain kingdom",
+        "mood": "dark fantasy, tense, mysterious",
+        "hook": "The king's gift sounded useful: every time someone lied, he heard a scream.",
+        "conflict": (
+            "At first, it made him impossible to deceive."
+        ),
+        "escalation": (
+            "Then the screams became constant — advisers, friends, servants, even his own family."
+        ),
+        "twist": (
+            "The worst scream came when he looked into a mirror and said, 'I am a good king.'"
+        ),
+        "final_line": (
+            "The curse never existed to expose everyone else. It existed to expose him."
+        )
+    },
 
-
-def make_fingerprint(item):
-    key = f"{item['category']}|{item['topic']}|{item['title']}"
-    return hashlib.sha256(key.encode()).hexdigest()
-
-
-def choose_topic(history):
-    recent = history[-10:]
-
-    used_fingerprints = {item.get("fingerprint") for item in history}
-    recent_topics = {item.get("topic") for item in recent}
-    recent_categories = [item.get("category") for item in recent[-4:]]
-
-    candidates = []
-
-    for item in ALL_TOPICS:
-        fp = make_fingerprint(item)
-
-        if fp in used_fingerprints:
-            continue
-
-        if item["topic"] in recent_topics:
-            continue
-
-        # prevent too many consecutive mythology or history stories
-        if len(recent_categories) >= 3 and all(cat == item["category"] for cat in recent_categories[-3:]):
-            continue
-
-        candidates.append(item)
-
-    if not candidates:
-        # fallback if all topics have been used
-        candidates = ALL_TOPICS[:]
-
-    return random.choice(candidates)
-
-
-def make_screenplay(item):
-    # ~90–115 words, good for short-form narration
-    return (
-        f"{item['hook']} "
-        f"This story takes us to {item['setting']}, during {item['era']}. "
-        f"At the center of it is {item['main_figure']}. "
-        f"{item['summary']} "
-        f"{item['reveal']} "
-        f"{item['ending']}"
-    )
-
-
-def make_beats(item):
-    return [
-        f"Hook moment introducing the mystery or dramatic question: {item['hook']}",
-        f"Show {item['setting']} during {item['era']}, establishing the atmosphere.",
-        f"Introduce {item['main_figure']} as the central figure of the story.",
-        f"Show the key turning point of the story: {item['summary']}",
-        f"Show the reveal or emotional realization: {item['reveal']}",
-        f"End with a powerful final visual that reflects: {item['ending']}"
-    ]
+    {
+        "category": "fantasy",
+        "title": "The Dragon Guarded Nothing",
+        "topic": "a dragon guarding an empty vault",
+        "main_figure": "a thief",
+        "setting": "a ruined mountain fortress",
+        "mood": "adventurous, mysterious, ironic",
+        "hook": "For three hundred years, a dragon guarded the same vault. Everyone assumed unimaginable treasure was inside.",
+        "conflict": (
+            "A thief spent years preparing to steal it."
+        ),
+        "escalation": (
+            "He survived traps, fire, and the dragon itself just to reach the door."
+        ),
+        "twist": (
+            "When he finally opened the vault, it was empty. The dragon had been guarding the world from what used to be inside."
+        ),
+        "final_line": (
+            "The treasure was never what the dragon protected. The dragon was the lock."
+        )
+    }
+]
 
 
-# --------------------------------------------------
-# Main
-# --------------------------------------------------
+ROMANCE_DRAMA = [
+    {
+        "category": "romance_drama",
+        "title": "She Waited at the Same Station for 20 Years",
+        "topic": "a tragic railway station romance",
+        "main_figure": "a woman waiting for her first love",
+        "setting": "an old railway station",
+        "mood": "emotional, bittersweet, cinematic",
+        "hook": "Every year on the same date, she returned to the same railway platform.",
+        "conflict": (
+            "Decades earlier, the man she loved had promised to meet her there after leaving for work."
+        ),
+        "escalation": (
+            "He never came back, but she never stopped believing there had been a reason."
+        ),
+        "twist": (
+            "Years later, a stranger brought her an unopened letter that had been found among his belongings after his death."
+        ),
+        "final_line": (
+            "He had never forgotten the meeting. He simply never lived long enough to return."
+        )
+    },
 
-history = load_history()
-chosen = choose_topic(history)
-fingerprint = make_fingerprint(chosen)
+    {
+        "category": "romance_drama",
+        "title": "He Married the Wrong Twin",
+        "topic": "romantic mistaken identity drama",
+        "main_figure": "a young nobleman",
+        "setting": "a wealthy family estate",
+        "mood": "dramatic, romantic, tense",
+        "hook": "He thought he was marrying the woman he loved. Then she walked into the wedding.",
+        "conflict": (
+            "The bride looked exactly like her, because she was her twin."
+        ),
+        "escalation": (
+            "A family secret, a hidden engagement, and years of resentment came crashing together in one room."
+        ),
+        "twist": (
+            "The woman he loved had secretly arranged the marriage herself because she believed her sister deserved the life she could never have."
+        ),
+        "final_line": (
+            "He came looking for betrayal and found sacrifice instead."
+        )
+    }
+]
 
-story = {
-    "title": chosen["title"],
-    "category": chosen["category"],
-    "topic": chosen["topic"],
-    "main_figure": chosen["main_figure"],
-    "setting": chosen["setting"],
-    "era": chosen["era"],
-    "mood": chosen["mood"],
-    "hook": chosen["hook"],
-    "screenplay": make_screenplay(chosen),
-    "beats": make_beats(chosen),
-    "fingerprint": fingerprint
-}
 
-Path("story.json").write_text(
-    json.dumps(story, indent=2, ensure_ascii=False),
-    encoding="utf-8"
-)
-
-history.append(story)
-
-Path("story_history.json").write_text(
-    json.dumps(history, indent=2, ensure_ascii=False),
-    encoding="utf-8"
-)
-
-print("Generated India-focused story:")
-print(json.dumps(story, indent=2, ensure_ascii=False))
+COMEDY = [
+    {
+        "category": "comedy",
+        "title": "The Thief Who Accidentally Became Royal Adviser",
+        "topic": "a thief mistaken for a genius strategist",
+        "main_figure": "an unlucky thief",
+        "setting": "a chaotic medieval kingdom",
+        "mood": "funny, absurd, fast-paced",
+        "hook": "A thief broke into the royal palace to steal gold and walked out with a government job.",
+        "conflict": (
+            "When guards caught him hiding behind a war map, the king assumed he was a secret military 
