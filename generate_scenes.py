@@ -4,69 +4,56 @@ from pathlib import Path
 with open("story.json", "r", encoding="utf-8") as f:
     story = json.load(f)
 
-character = story["character"]
+title = story["title"]
+category = story["category"]
+main_figure = story["main_figure"]
 setting = story["setting"]
-goal = story["goal"]
-obstacle = story["obstacle"]
-twist = story["twist"]
+era = story["era"]
 mood = story["mood"]
+beats = story["beats"]
 
-style = (
-    "cinematic photorealistic movie still, vertical 9:16, "
-    "dramatic lighting, realistic textures, atmospheric depth, "
-    "high detail, consistent character design, same face and clothing, "
+STYLE = (
+    "cinematic photorealistic scene, vertical 9:16 composition, "
+    "dramatic lighting, rich atmosphere, high detail, realistic textures, "
+    "Indian aesthetic accuracy, professional storytelling visual, "
     "no text, no watermark"
 )
 
-scene_descriptions = [
-    f"A mysterious exterior view of the {setting}, immediately intriguing and {mood}.",
+# Consistent presenter image
+presenter_scene = {
+    "scene": 0,
+    "type": "presenter",
+    "prompt": (
+        f"{STYLE}. A charismatic young Indian male storyteller in a dark premium studio, "
+        "wearing a black outfit, facing the camera, confident and mysterious expression, "
+        "soft cinematic rim lighting, blurred dark background, waist-up portrait, "
+        "social media storytelling host aesthetic."
+    )
+}
 
-    f"The {character} approaches the {setting}, unaware of what is waiting inside.",
+story_scenes = []
 
-    f"The {character} enters the {setting}, cautiously observing the surroundings.",
-
-    f"A close-up of the {character} noticing the first strange clue.",
-
-    f"The {character} begins trying to {goal}.",
-
-    f"The environment becomes more threatening as {obstacle}.",
-
-    f"The {character} investigates a disturbing detail hidden in the {setting}.",
-
-    f"A tense close-up as the {character} realizes something does not make sense.",
-
-    f"The {character} moves deeper into the {setting}, surrounded by increasingly strange clues.",
-
-    f"A dangerous or unsettling event suddenly interrupts the investigation.",
-
-    f"The {character} discovers evidence pointing toward a shocking truth.",
-
-    f"A dramatic moment immediately before the revelation, intense suspense.",
-
-    f"The shocking truth becomes clear: {twist}.",
-
-    f"Close-up of the {character} reacting emotionally to the revelation.",
-
-    f"The {character} stands alone in the {setting} after the revelation, unresolved cliffhanger ending."
-]
-
-scenes = []
-
-for i, description in enumerate(scene_descriptions, start=1):
-    scenes.append({
+for i, beat in enumerate(beats, start=1):
+    story_scenes.append({
         "scene": i,
+        "type": "story",
+        "purpose": f"beat_{i}",
         "prompt": (
-            f"{style}. "
-            f"{description} "
-            f"Overall atmosphere: {mood}. "
-            "Strong cinematic composition."
+            f"{STYLE}. Story title inspiration: {title}. "
+            f"Category: {category}. "
+            f"Main figure: {main_figure}. "
+            f"Setting: {setting}. Era: {era}. Mood: {mood}. "
+            f"Visualize this exact story beat clearly and dramatically: {beat}. "
+            "Strong cinematic composition. Make the image clear and narrative, not random."
         )
     })
 
+all_scenes = [presenter_scene] + story_scenes
+
 Path("scenes.json").write_text(
-    json.dumps(scenes, indent=2),
+    json.dumps(all_scenes, indent=2, ensure_ascii=False),
     encoding="utf-8"
 )
 
-print(f"Generated {len(scenes)} visual scenes.")
-print(json.dumps(scenes, indent=2))
+print("Generated storytelling scenes:")
+print(json.dumps(all_scenes, indent=2, ensure_ascii=False))
