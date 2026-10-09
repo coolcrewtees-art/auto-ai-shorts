@@ -43,3 +43,9 @@ jobs:
           git add story_history.json
           git diff --cached --quiet || git commit -m "Save generated story history"
           git push
+
+      - name: Upload narration artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: narration
+          path: voice.mp3
