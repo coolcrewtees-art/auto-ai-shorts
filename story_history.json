@@ -82,5 +82,25 @@
     "hook": "A rescue pilot enters an remote Arctic laboratory and discovers something is terribly wrong.",
     "screenplay": "A rescue pilot is trapped in an remote Arctic laboratory. Their only goal is to survive until sunrise. But their memories contradict reality. Every clue makes the situation stranger. Then the truth is revealed: the supposed villain was protecting them. The story ends before the character fully understands what this means.",
     "fingerprint": "b20d741daea76d4d88608439aa3e67990d7d8c6a0014b858aa0e21126cc7cdf2"
+  },
+  {
+    "title": "How Ashoka Changed After Kalinga",
+    "category": "history",
+    "topic": "Ashoka after the Kalinga war",
+    "main_figure": "Emperor Ashoka",
+    "setting": "the battlefield of Kalinga",
+    "era": "Mauryan Empire",
+    "mood": "dramatic and reflective",
+    "hook": "How did one of India’s most powerful conquerors turn toward peace?",
+    "screenplay": "How did one of India’s most powerful conquerors turn toward peace? This story takes us to the battlefield of Kalinga, during Mauryan Empire. At the center of it is Emperor Ashoka. Ashoka’s victory in the Kalinga war came at a terrible human cost. According to historical tradition, the suffering he witnessed deeply affected him. After that, he moved toward dhamma, moral governance, and the spread of Buddhist ideals. His greatest transformation came not before war, but after seeing its consequences. That is why Ashoka is remembered not only as a conqueror, but also as a ruler transformed by conscience.",
+    "beats": [
+      "Hook moment introducing the mystery or dramatic question: How did one of India’s most powerful conquerors turn toward peace?",
+      "Show the battlefield of Kalinga during Mauryan Empire, establishing the atmosphere.",
+      "Introduce Emperor Ashoka as the central figure of the story.",
+      "Show the key turning point of the story: Ashoka’s victory in the Kalinga war came at a terrible human cost. According to historical tradition, the suffering he witnessed deeply affected him. After that, he moved toward dhamma, moral governance, and the spread of Buddhist ideals.",
+      "Show the reveal or emotional realization: His greatest transformation came not before war, but after seeing its consequences.",
+      "End with a powerful final visual that reflects: That is why Ashoka is remembered not only as a conqueror, but also as a ruler transformed by conscience."
+    ],
+    "fingerprint": "200801969cdcb5f7e194f306482dd49366b2f2e71ef408316b02b1ef51702f61"
   }
 ]
