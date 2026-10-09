@@ -40,5 +40,19 @@
     "hook": "A teenage inventor enters an deserted space station and discovers something is terribly wrong.",
     "screenplay": "A teenage inventor is trapped in an deserted space station. Their only goal is to survive until sunrise. But someone is secretly following them. Every clue makes the situation stranger. Then the truth is revealed: the world outside no longer exists. The story ends before the character fully understands what this means.",
     "fingerprint": "f13505585710f10c4ac55970b6bc149f7d11af27c7163c4ee248cd4b6240220c"
+  },
+  {
+    "title": "The Lost Signal",
+    "genre": "dystopian",
+    "setting": "underground megacity",
+    "character": "stranded astronaut",
+    "goal": "find a missing person",
+    "obstacle": "an AI begins lying to them",
+    "twist": "everything happened hundreds of years ago",
+    "mood": "cinematic",
+    "ending_style": "emotional reveal",
+    "hook": "A stranded astronaut enters an underground megacity and discovers something is terribly wrong.",
+    "screenplay": "A stranded astronaut is trapped in an underground megacity. Their only goal is to find a missing person. But an AI begins lying to them. Every clue makes the situation stranger. Then the truth is revealed: everything happened hundreds of years ago. The story ends before the character fully understands what this means.",
+    "fingerprint": "696545efcce860341fa68a01d284de2c1f4f353a79c6265c3d9c31597864aee4"
   }
 ]
