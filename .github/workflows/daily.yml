@@ -21,11 +21,20 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install voice generator
+        run: pip install edge-tts
+
       - name: Generate unique story
         run: python generate_story.py
 
       - name: Show generated story
         run: cat story.json
+
+      - name: Generate narration
+        run: python generate_voice.py
+
+      - name: Check narration
+        run: ls -lh voice.mp3
 
       - name: Save story history
         run: |
