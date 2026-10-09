@@ -30,8 +30,7 @@ headers = {
 def generate_image(prompt, scene_number):
     payload = {
         "prompt": prompt[:2048],
-        "steps": 4,
-        "seed": 100000 + scene_number,
+        "steps": 4
     }
 
     for attempt in range(1, 4):
@@ -103,6 +102,7 @@ for scene in scenes:
     prompt = scene["prompt"]
 
     generate_image(prompt, scene_number)
+
     time.sleep(2)
 
 print(f"✅ Successfully generated {len(scenes)} images.")
