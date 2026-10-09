@@ -2,6 +2,7 @@ name: Daily AI Short
 
 on:
   workflow_dispatch:
+
   schedule:
     - cron: "30 6 * * *"
 
@@ -12,6 +13,10 @@ jobs:
     permissions:
       contents: write
 
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
     steps:
       - name: Get repository
         uses: actions/checkout@v4
@@ -21,8 +26,9 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install voice generator
-        run: pip install edge-tts
+      - name: Install dependencies
+        run: |
+          pip install edge-tts requests
 
       - name: Generate unique story
         run: python generate_story.py
@@ -39,11 +45,25 @@ jobs:
       - name: Generate narration
         run: python generate_voice.py
 
+      - name: Check narration
+        run: ls -lh voice.mp3
+
       - name: Generate images
         run: python generate_images.py
 
       - name: Check generated images
-        run: ls -lh images/
+        run: |
+          echo "Generated images:"
+          ls -lh images/
+
+          IMAGE_COUNT=$(find images -type f -name "*.jpg" | wc -l)
+
+          echo "Image count: $IMAGE_COUNT"
+
+          if [ "$IMAGE_COUNT" -ne 15 ]; then
+            echo "Expected 15 images but found $IMAGE_COUNT"
+            exit 1
+          fi
 
       - name: Upload narration artifact
         uses: actions/upload-artifact@v4
@@ -67,6 +87,9 @@ jobs:
         run: |
           git config user.name "AI Shorts Bot"
           git config user.email "actions@github.com"
+
           git add story_history.json
+
           git diff --cached --quiet || git commit -m "Save generated story history"
+
           git push
