@@ -27,14 +27,32 @@ jobs:
       - name: Generate unique story
         run: python generate_story.py
 
+      - name: Generate visual scenes
+        run: python generate_scenes.py
+
       - name: Show generated story
         run: cat story.json
+
+      - name: Show scene prompts
+        run: cat scenes.json
 
       - name: Generate narration
         run: python generate_voice.py
 
       - name: Check narration
         run: ls -lh voice.mp3
+
+      - name: Upload narration artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: narration
+          path: voice.mp3
+
+      - name: Upload scene prompts artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: scene-prompts
+          path: scenes.json
 
       - name: Save story history
         run: |
@@ -43,9 +61,3 @@ jobs:
           git add story_history.json
           git diff --cached --quiet || git commit -m "Save generated story history"
           git push
-
-      - name: Upload narration artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: narration
-          path: voice.mp3
