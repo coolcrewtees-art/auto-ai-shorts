@@ -18,38 +18,51 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
     steps:
+
       - name: Get repository
         uses: actions/checkout@v4
+
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
+
       - name: Install dependencies
         run: |
           pip install edge-tts requests
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
 
       - name: Generate unique story
         run: python generate_story.py
 
+
       - name: Generate visual scenes
         run: python generate_scenes.py
+
 
       - name: Show generated story
         run: cat story.json
 
+
       - name: Show scene prompts
         run: cat scenes.json
+
 
       - name: Generate narration
         run: python generate_voice.py
 
+
       - name: Check narration
         run: ls -lh voice.mp3
 
+
       - name: Generate images
         run: python generate_images.py
+
 
       - name: Check generated images
         run: |
@@ -65,11 +78,35 @@ jobs:
             exit 1
           fi
 
-      - name: Upload narration artifact
+
+      - name: Create final Short
+        run: python make_video.py
+
+
+      - name: Check final Short
+        run: |
+          ls -lh final_short.mp4
+
+          ffprobe \
+            -v error \
+            -show_entries format=duration \
+            -of default=noprint_wrappers=1:nokey=1 \
+            final_short.mp4
+
+
+      - name: Upload final Short
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-short
+          path: final_short.mp4
+
+
+      - name: Upload narration
         uses: actions/upload-artifact@v4
         with:
           name: narration
           path: voice.mp3
+
 
       - name: Upload generated images
         uses: actions/upload-artifact@v4
@@ -77,11 +114,13 @@ jobs:
           name: generated-images
           path: images/
 
-      - name: Upload scene prompts artifact
+
+      - name: Upload scene prompts
         uses: actions/upload-artifact@v4
         with:
           name: scene-prompts
           path: scenes.json
+
 
       - name: Save story history
         run: |
@@ -90,6 +129,7 @@ jobs:
 
           git add story_history.json
 
-          git diff --cached --quiet || git commit -m "Save generated story history"
+          git diff --cached --quiet || \
+          git commit -m "Save generated story history"
 
           git push
