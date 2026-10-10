@@ -1,148 +1,182 @@
 import json
+import re
 from pathlib import Path
 
 with open("story.json", "r", encoding="utf-8") as f:
     story = json.load(f)
 
-title = story["title"]
-category = story["category"]
-main_figure = story["main_figure"]
-setting = story["setting"]
-mood = story["mood"]
-beats = story["beats"]
-
 BASE_STYLE = (
-    "cinematic photorealistic storytelling visual, vertical 9:16 composition, "
-    "dramatic lighting, realistic textures, atmospheric depth, "
-    "professional film still, visually clear storytelling, no text, no watermark"
+    "cinematic photorealistic storytelling image, vertical 9:16 composition, "
+    "dramatic lighting, strong depth, realistic textures, clear visual storytelling, "
+    "high detail, no text, no watermark"
 )
 
-# Style tweaks by genre
 CATEGORY_STYLE = {
     "indian_mythology": (
-        "epic Indian mythological aesthetic, ancient Indian architecture, "
-        "ornate traditional clothing and armor, divine atmosphere, rich gold and deep shadows"
+        "epic Indian mythological atmosphere, ancient Indian architecture, "
+        "ornate traditional clothing, sacred symbolism, dramatic divine lighting"
     ),
-    "indian_history": (
-        "historically inspired Indian setting, realistic period clothing, "
-        "authentic architecture and battlefield atmosphere"
+
+    "indian_folktale": (
+        "Indian folktale atmosphere, rural or old-world Indian setting, "
+        "authentic regional textures, mysterious cinematic mood"
     ),
-    "international_history": (
-        "historically inspired period setting, realistic clothing and architecture, "
-        "documentary-cinematic visual style"
+
+    "indian_legend": (
+        "legendary Indian royal or village atmosphere, timeless dramatic visual style, "
+        "rich architecture and traditional clothing"
     ),
+
+    "supernatural_mystery": (
+        "eerie supernatural atmosphere, cinematic shadows, suspenseful composition, "
+        "subtle horror without gore"
+    ),
+
     "fantasy": (
-        "dark fantasy cinematic aesthetic, magical atmosphere, dramatic environments"
+        "dark fantasy cinematic atmosphere, magical environment, dramatic scale, "
+        "mysterious lighting"
     ),
+
     "romance_drama": (
-        "emotional cinematic romance aesthetic, expressive faces, soft dramatic lighting"
+        "emotional cinematic romance, expressive faces, soft dramatic lighting, "
+        "beautiful atmosphere"
     ),
+
     "comedy": (
-        "cinematic but playful visual storytelling, expressive reactions, slightly exaggerated situation"
+        "cinematic comedic storytelling, expressive reactions, playful visual timing, "
+        "slightly heightened but realistic situations"
     ),
 }
 
 genre_style = CATEGORY_STYLE.get(
-    category,
-    "cinematic dramatic storytelling aesthetic"
+    story["category"],
+    "cinematic dramatic storytelling"
 )
 
-# One presenter image reused in the final edit
-presenter = {
-    "scene": 0,
-    "type": "presenter",
-    "purpose": "presenter",
-    "prompt": (
-        f"{BASE_STYLE}. "
-        "A charismatic young Indian male storyteller in a premium dark studio, "
-        "simple black outfit, facing the camera, confident mysterious expression, "
-        "soft rim lighting, blurred cinematic background, waist-up framing, "
-        "high-end social media storytelling host aesthetic."
-    )
-}
+BEATS = [
+    {
+        "name": "title_hook",
+        "text": story["title_hook"],
+        "importance": "major",
+        "shot": "striking cinematic hook shot",
+        "direction": (
+            "Create immediate curiosity. Show the most intriguing visual idea "
+            "without revealing the entire twist."
+        ),
+    },
 
-# Shot styles keep the reel visually varied
-SHOT_STYLES = [
-    "dramatic wide establishing shot",
-    "intense medium shot",
-    "dynamic action shot",
-    "cinematic close-up reaction shot",
-    "powerful final wide shot"
+    {
+        "name": "opening",
+        "text": story["opening"],
+        "importance": "medium",
+        "shot": "wide or medium establishing shot",
+        "direction": (
+            "Clearly establish who, where, and what is happening. "
+            "This should feel like the true beginning of the story."
+        ),
+    },
+
+    {
+        "name": "conflict",
+        "text": story["conflict"],
+        "importance": "medium",
+        "shot": "focused dramatic medium shot",
+        "direction": (
+            "Show the central problem clearly. The visual must communicate danger, "
+            "tension, emotion, or complication."
+        ),
+    },
+
+    {
+        "name": "escalation",
+        "text": story["escalation"],
+        "importance": "medium",
+        "shot": "dynamic action or tension shot",
+        "direction": (
+            "Escalate the situation. Avoid a generic portrait. "
+            "Show action, discovery, movement, confrontation, or a meaningful visual clue."
+        ),
+    },
+
+    {
+        "name": "dramatic_reveal",
+        "text": story["dramatic_reveal"],
+        "importance": "major",
+        "shot": "powerful reveal shot",
+        "direction": (
+            "This is the biggest visual reveal of the story. "
+            "Make it immediately understandable, dramatic, and visually different."
+        ),
+    },
+
+    {
+        "name": "final_punch",
+        "text": story["final_punch"],
+        "importance": "major",
+        "shot": "memorable final cinematic shot",
+        "direction": (
+            "Create a strong final image with emotional, eerie, romantic, or ironic impact. "
+            "It must feel like a closing punch."
+        ),
+    },
 ]
 
-story_scenes = []
+scenes = []
 
-for index, beat in enumerate(beats, start=1):
+for index, beat in enumerate(BEATS):
 
-    beat_type = beat["type"]
-    beat_text = beat["text"]
+    comma_count = beat["text"].count(",")
 
-    shot = SHOT_STYLES[min(index - 1, len(SHOT_STYLES) - 1)]
-
-    extra_direction = ""
-
-    if beat_type == "hook":
-        extra_direction = (
-            "The image must instantly create curiosity. "
-            "Show the most visually striking moment related to the hook."
+    pause_count = len(
+        re.findall(
+            r"[;:—…]",
+            beat["text"]
         )
-
-    elif beat_type == "conflict":
-        extra_direction = (
-            "Clearly show the central problem or danger. "
-            "The viewer should understand that something serious is happening."
-        )
-
-    elif beat_type == "escalation":
-        extra_direction = (
-            "Increase tension and intensity. Show action, danger, confrontation, "
-            "or a powerful emotional moment."
-        )
-
-    elif beat_type == "twist":
-        extra_direction = (
-            "Show the shocking reveal visually. "
-            "This should feel like the biggest visual moment of the reel."
-        )
-
-    elif beat_type == "ending":
-        extra_direction = (
-            "Create a memorable final frame with emotional or dramatic impact. "
-            "It should feel like a strong ending, not a generic portrait."
-        )
+    )
 
     prompt = (
         f"{BASE_STYLE}. "
         f"{genre_style}. "
-        f"Story: {title}. "
-        f"Main figure: {main_figure}. "
-        f"Setting: {setting}. "
-        f"Overall mood: {mood}. "
-        f"Exact story beat to visualize: {beat_text}. "
-        f"Shot type: {shot}. "
-        f"{extra_direction} "
-        "Avoid unrelated extra characters unless required by the story. "
-        "Keep the visual focused on the exact event being narrated."
+        f"Story title: {story['title_hook']}. "
+        f"Main figure: {story['main_figure']}. "
+        f"Setting: {story['setting']}. "
+        f"Mood: {story['mood']}. "
+        f"Exact narration to visualize: {beat['text']} "
+        f"Shot type: {beat['shot']}. "
+        f"{beat['direction']} "
+        "Keep recurring characters visually consistent in age, face, hair, clothing, "
+        "and major accessories whenever they appear again. "
+        "Avoid unrelated extra people. "
+        "No written words inside the image."
     )
 
-    story_scenes.append({
+    scenes.append({
         "scene": index,
-        "type": "story",
-        "purpose": beat_type,
-        "narration": beat_text,
+        "beat": beat["name"],
+        "narration": beat["text"],
+        "importance": beat["importance"],
+
+        # Later used for zoom/crop changes,
+        # NOT new image generation.
+        "comma_motion_points": comma_count + pause_count,
+
         "prompt": prompt
     })
 
-all_scenes = [presenter] + story_scenes
-
 Path("scenes.json").write_text(
     json.dumps(
-        all_scenes,
+        scenes,
         indent=2,
         ensure_ascii=False
     ),
     encoding="utf-8"
 )
 
-print(f"Generated {len(all_scenes)} scenes:")
-print(json.dumps(all_scenes, indent=2, ensure_ascii=False))
+print(f"Generated {len(scenes)} story scenes.")
+print(
+    json.dumps(
+        scenes,
+        indent=2,
+        ensure_ascii=False
+    )
+)
