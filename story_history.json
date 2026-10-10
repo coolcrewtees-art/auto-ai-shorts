@@ -139,5 +139,42 @@
       }
     ],
     "fingerprint": "6cbc2ffacf81d9b893f2b20c6e5b210be11ae0aff109cc55ab757cd8c2918bd0"
+  },
+  {
+    "category": "fantasy",
+    "title": "The Dragon Guarded Nothing",
+    "topic": "a dragon guarding an empty vault",
+    "main_figure": "a thief",
+    "setting": "a ruined mountain fortress",
+    "mood": "adventurous, mysterious, ironic",
+    "hook": "For three hundred years, a dragon guarded the same vault. Everyone assumed unimaginable treasure was inside.",
+    "conflict": "A thief spent years preparing to steal it.",
+    "escalation": "He survived traps, fire, and the dragon itself just to reach the door.",
+    "twist": "When he opened the vault, it was empty. The dragon had been guarding the world from what used to be inside.",
+    "final_line": "The treasure was never what the dragon protected. The dragon was the lock.",
+    "screenplay": "For three hundred years, a dragon guarded the same vault. Everyone assumed unimaginable treasure was inside. A thief spent years preparing to steal it. He survived traps, fire, and the dragon itself just to reach the door. When he opened the vault, it was empty. The dragon had been guarding the world from what used to be inside. The treasure was never what the dragon protected. The dragon was the lock.",
+    "beats": [
+      {
+        "type": "hook",
+        "text": "For three hundred years, a dragon guarded the same vault. Everyone assumed unimaginable treasure was inside."
+      },
+      {
+        "type": "conflict",
+        "text": "A thief spent years preparing to steal it."
+      },
+      {
+        "type": "escalation",
+        "text": "He survived traps, fire, and the dragon itself just to reach the door."
+      },
+      {
+        "type": "twist",
+        "text": "When he opened the vault, it was empty. The dragon had been guarding the world from what used to be inside."
+      },
+      {
+        "type": "ending",
+        "text": "The treasure was never what the dragon protected. The dragon was the lock."
+      }
+    ],
+    "fingerprint": "0d7d97e1520150ad12c5085a748591489ab281664340fd5256aa2b38241b3159"
   }
 ]
