@@ -62,8 +62,8 @@ jobs:
 
           echo "Image count: $IMAGE_COUNT"
 
-          if [ "$IMAGE_COUNT" -ne 7 ]; then
-            echo "Expected 7 images but found $IMAGE_COUNT"
+          if [ "$IMAGE_COUNT" -ne 6 ]; then
+            echo "Expected 6 images but found $IMAGE_COUNT"
             exit 1
           fi
 
