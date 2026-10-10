@@ -102,5 +102,42 @@
       "End with a powerful final visual that reflects: That is why Ashoka is remembered not only as a conqueror, but also as a ruler transformed by conscience."
     ],
     "fingerprint": "200801969cdcb5f7e194f306482dd49366b2f2e71ef408316b02b1ef51702f61"
+  },
+  {
+    "category": "indian_history",
+    "title": "Shivaji Walked Into Agra and Realized He Was Trapped",
+    "topic": "Shivaji's escape from Agra",
+    "main_figure": "Chhatrapati Shivaji Maharaj",
+    "setting": "Agra during the Mughal era",
+    "mood": "tense, clever, rebellious",
+    "hook": "Shivaji entered Agra expecting diplomacy. Very quickly, he realized he was effectively trapped.",
+    "conflict": "His movements were restricted, and simply walking out was no longer an option.",
+    "escalation": "The longer he stayed, the more dangerous the situation became, so escape had to rely on deception rather than force.",
+    "twist": "Popular accounts describe a daring escape built on concealment and misdirection rather than a direct battle.",
+    "final_line": "The remarkable part was not that he fought his way out. It was that he outthought the prison around him.",
+    "screenplay": "Shivaji entered Agra expecting diplomacy. Very quickly, he realized he was effectively trapped. His movements were restricted, and simply walking out was no longer an option. The longer he stayed, the more dangerous the situation became, so escape had to rely on deception rather than force. Popular accounts describe a daring escape built on concealment and misdirection rather than a direct battle. The remarkable part was not that he fought his way out. It was that he outthought the prison around him.",
+    "beats": [
+      {
+        "type": "hook",
+        "text": "Shivaji entered Agra expecting diplomacy. Very quickly, he realized he was effectively trapped."
+      },
+      {
+        "type": "conflict",
+        "text": "His movements were restricted, and simply walking out was no longer an option."
+      },
+      {
+        "type": "escalation",
+        "text": "The longer he stayed, the more dangerous the situation became, so escape had to rely on deception rather than force."
+      },
+      {
+        "type": "twist",
+        "text": "Popular accounts describe a daring escape built on concealment and misdirection rather than a direct battle."
+      },
+      {
+        "type": "ending",
+        "text": "The remarkable part was not that he fought his way out. It was that he outthought the prison around him."
+      }
+    ],
+    "fingerprint": "6cbc2ffacf81d9b893f2b20c6e5b210be11ae0aff109cc55ab757cd8c2918bd0"
   }
 ]
