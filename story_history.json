@@ -176,5 +176,42 @@
       }
     ],
     "fingerprint": "0d7d97e1520150ad12c5085a748591489ab281664340fd5256aa2b38241b3159"
+  },
+  {
+    "category": "indian_history",
+    "title": "Ashoka Won Kalinga and Hated What He Saw",
+    "topic": "Ashoka after Kalinga",
+    "main_figure": "Emperor Ashoka",
+    "setting": "the battlefield of Kalinga",
+    "mood": "grim, reflective, powerful",
+    "hook": "Ashoka won the war. Then he saw what victory had actually cost.",
+    "conflict": "The Kalinga campaign brought enormous suffering, death, and displacement.",
+    "escalation": "For a ruler known for conquest, the battlefield became something impossible to ignore.",
+    "twist": "After Kalinga, Ashoka increasingly turned toward dhamma, moral governance, and Buddhist ideals.",
+    "final_line": "He conquered Kalinga with an army, but Kalinga changed the emperor.",
+    "screenplay": "Ashoka won the war. Then he saw what victory had actually cost. The Kalinga campaign brought enormous suffering, death, and displacement. For a ruler known for conquest, the battlefield became something impossible to ignore. After Kalinga, Ashoka increasingly turned toward dhamma, moral governance, and Buddhist ideals. He conquered Kalinga with an army, but Kalinga changed the emperor.",
+    "beats": [
+      {
+        "type": "hook",
+        "text": "Ashoka won the war. Then he saw what victory had actually cost."
+      },
+      {
+        "type": "conflict",
+        "text": "The Kalinga campaign brought enormous suffering, death, and displacement."
+      },
+      {
+        "type": "escalation",
+        "text": "For a ruler known for conquest, the battlefield became something impossible to ignore."
+      },
+      {
+        "type": "twist",
+        "text": "After Kalinga, Ashoka increasingly turned toward dhamma, moral governance, and Buddhist ideals."
+      },
+      {
+        "type": "ending",
+        "text": "He conquered Kalinga with an army, but Kalinga changed the emperor."
+      }
+    ],
+    "fingerprint": "4838fbcd175559f4f3b8faddc0b7d547aaba0a351f4c60e96f1d06ddf2e2b669"
   }
 ]
