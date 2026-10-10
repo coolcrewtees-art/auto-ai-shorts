@@ -1,14 +1,32 @@
 import asyncio
 import json
 import re
+import subprocess
+from pathlib import Path
+
 import edge_tts
 
-# Voices
+
+TEMP_DIR = Path("voice_parts")
+TEMP_DIR.mkdir(exist_ok=True)
+
+OUTPUT_AUDIO = "voice.mp3"
+TIMING_FILE = "voice_timing.json"
+
+
+# ============================================================
+# VOICES
+# ============================================================
+
 INDIAN_VOICE = "en-IN-PrabhatNeural"
 GLOBAL_VOICE = "en-US-AndrewMultilingualNeural"
 
-# These substitutions affect ONLY speech.
-# story.json and captions remain correctly spelled.
+
+# ============================================================
+# PRONUNCIATION FIXES
+# Only affects spoken audio, not captions.
+# ============================================================
+
 PRONUNCIATIONS = {
     "Ashwatthama": "Ashwatthaama",
     "Bhishma": "Bheeshma",
@@ -20,19 +38,12 @@ PRONUNCIATIONS = {
     "Arjuna": "Arjun",
     "Lakshmana": "Lakshman",
     "Hanuman": "Hunoomaan",
-    "Halahala": "Halaa hala",
     "Neelkanth": "Neel kanth",
     "Shivaji": "Shivaaji",
-    "Chhatrapati": "Chhatrapati",
-    "Maharaj": "Mahaaraaj",
     "Maharana": "Mahaaraana",
     "Pratap": "Prataap",
     "Haldighati": "Haldee ghaatee",
-    "Lachit Borphukan": "Laachit Borphukan",
-    "Saraighat": "Saraai ghaat",
-    "Rajendra Chola": "Raajendra Chola",
-    "Kalinga": "Kalinga",
-    "Mewar": "Maywaar"
+    "Mewar": "Maywaar",
 }
 
 
@@ -48,33 +59,46 @@ def fix_pronunciation(text):
     return text
 
 
-async def main():
+# ============================================================
+# AUDIO HELPERS
+# ============================================================
 
-    with open("story.json", "r", encoding="utf-8") as f:
-        story = json.load(f)
+def duration(filename):
+    result = subprocess.run(
+        [
+            "ffprobe",
+            "-v", "error",
+            "-show_entries", "format=duration",
+            "-of", "default=noprint_wrappers=1:nokey=1",
+            str(filename)
+        ],
+        capture_output=True,
+        text=True,
+        check=True
+    )
 
-    text = story["screenplay"]
-    category = story.get("category", "")
+    return float(result.stdout.strip())
 
-    # Indian content gets Indian English pronunciation
-    if category in ["indian_mythology", "indian_history"]:
-        voice = INDIAN_VOICE
-        text = fix_pronunciation(text)
 
-        rate = "-3%"
-        pitch = "-2Hz"
+def make_silence(filename, seconds):
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-f", "lavfi",
+            "-i", "anullsrc=r=44100:cl=stereo",
+            "-t", str(seconds),
+            "-q:a", "9",
+            "-acodec", "libmp3lame",
+            str(filename)
+        ],
+        check=True
+    )
 
-    else:
-        voice = GLOBAL_VOICE
 
-        rate = "-4%"
-        pitch = "-2Hz"
+async def speak(text, voice, rate, pitch, filename):
 
-    print("Category:", category)
-    print("Voice:", voice)
-    print("Speech text:", text)
-
-    communicate = edge_tts.Communicate(
+    communication = edge_tts.Communicate(
         text=text,
         voice=voice,
         rate=rate,
@@ -82,9 +106,21 @@ async def main():
         volume="+0%"
     )
 
-    await communicate.save("voice.mp3")
-
-    print("Narration generated successfully.")
+    await communication.save(str(filename))
 
 
-asyncio.run(main())
+# ============================================================
+# MAIN
+# ============================================================
+
+async def main():
+
+    with open("story.json", "r", encoding="utf-8") as f:
+        story = json.load(f)
+
+    category = story["category"]
+
+    if category.startswith("indian_"):
+        voice = INDIAN_VOICE
+    else:
+        voice = GLOBAL_VOICE
