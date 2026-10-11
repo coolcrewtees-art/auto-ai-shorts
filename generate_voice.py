@@ -13,9 +13,16 @@ TEMP_DIR.mkdir(exist_ok=True)
 OUTPUT_AUDIO = Path("voice.mp3")
 TIMING_FILE = Path("voice_timing.json")
 
-INDIAN_VOICE = "en-IN-PrabhatNeural"
-GLOBAL_VOICE = "en-US-AndrewMultilingualNeural"
+# Use the voice you originally liked for EVERYTHING.
+VOICE = "en-US-AndrewMultilingualNeural"
 
+
+# ============================================================
+# PRONUNCIATION FIXES
+#
+# Only the spoken version is modified.
+# Captions/story.json keep the proper spelling.
+# ============================================================
 
 PRONUNCIATIONS = {
     "Ashwatthama": "Ashwatthaama",
@@ -24,155 +31,153 @@ PRONUNCIATIONS = {
     "Kurukshetra": "Kuru kshetra",
     "Dronacharya": "Dronaachaarya",
     "Duryodhana": "Duryodhan",
+    "Yudhishthira": "Yudhishthir",
     "Arjuna": "Arjun",
     "Lakshmana": "Lakshman",
     "Hanuman": "Hunoomaan",
     "Neelkanth": "Neel kanth",
+    "Halahala": "Halaa hala",
+    "Krishna": "Krishna",
+    "Indra": "Indra",
+    "Mahabharata": "Mahaa bhaarata",
+    "Ramayana": "Raamaayana",
 }
 
 
-def pronunciation(text):
-
+def pronunciation_fix(text):
     for original, spoken in PRONUNCIATIONS.items():
-
         text = re.sub(
             rf"\b{re.escape(original)}\b",
             spoken,
             text,
-            flags=re.IGNORECASE
+            flags=re.IGNORECASE,
         )
 
     return text
 
 
-def duration(filename):
+# ============================================================
+# AUDIO HELPERS
+# ============================================================
 
+def get_duration(filename):
     result = subprocess.run(
         [
             "ffprobe",
             "-v", "error",
-            "-show_entries",
-            "format=duration",
-            "-of",
-            "default=noprint_wrappers=1:nokey=1",
-            str(filename)
+            "-show_entries", "format=duration",
+            "-of", "default=noprint_wrappers=1:nokey=1",
+            str(filename),
         ],
         capture_output=True,
         text=True,
-        check=True
+        check=True,
     )
 
-    return float(
-        result.stdout.strip()
-    )
+    return float(result.stdout.strip())
 
 
-async def speak(
-    text,
-    voice,
-    rate,
-    pitch,
-    filename
-):
-
-    tts = edge_tts.Communicate(
-        text=text,
-        voice=voice,
-        rate=rate,
-        pitch=pitch
-    )
-
-    await tts.save(
-        str(filename)
-    )
-
-
-def make_pause(
-    filename,
-    seconds
-):
-
+def make_pause(filename, seconds):
     subprocess.run(
         [
             "ffmpeg",
             "-y",
             "-f", "lavfi",
-            "-i",
-            "anullsrc=r=44100:cl=stereo",
+            "-i", "anullsrc=r=44100:cl=stereo",
             "-t", str(seconds),
             "-c:a", "libmp3lame",
             "-b:a", "128k",
-            str(filename)
+            str(filename),
         ],
-        check=True
+        check=True,
     )
 
+
+async def create_voice(
+    text,
+    rate,
+    pitch,
+    filename,
+):
+    text = pronunciation_fix(text)
+
+    communicate = edge_tts.Communicate(
+        text=text,
+        voice=VOICE,
+        rate=rate,
+        pitch=pitch,
+        volume="+0%",
+    )
+
+    await communicate.save(str(filename))
+
+    if not filename.exists():
+        raise RuntimeError(
+            f"TTS failed to create {filename}"
+        )
+
+
+# ============================================================
+# MAIN
+# ============================================================
 
 async def main():
 
     with open(
         "story.json",
         "r",
-        encoding="utf-8"
+        encoding="utf-8",
     ) as f:
-
         story = json.load(f)
 
-    category = story["category"]
-
-    if category.startswith("indian_"):
-        voice = INDIAN_VOICE
-    else:
-        voice = GLOBAL_VOICE
-
-    # Much faster than the previous version.
+    # Faster and more contrast between story sections.
     sections = [
         {
             "name": "title_hook",
             "text": story["title_hook"],
-            "rate": "+2%",
-            "pitch": "-5Hz",
-            "pause": 0.55,
+            "rate": "+4%",
+            "pitch": "-6Hz",
+            "pause": 0.42,
         },
 
         {
             "name": "opening",
             "text": story["opening"],
-            "rate": "+15%",
+            "rate": "+17%",
             "pitch": "-1Hz",
-            "pause": 0.10,
+            "pause": 0.08,
         },
 
         {
             "name": "conflict",
             "text": story["conflict"],
-            "rate": "+17%",
+            "rate": "+19%",
             "pitch": "+0Hz",
-            "pause": 0.08,
+            "pause": 0.06,
         },
 
         {
             "name": "escalation",
             "text": story["escalation"],
-            "rate": "+20%",
+            "rate": "+22%",
             "pitch": "+1Hz",
-            "pause": 0.08,
+            "pause": 0.06,
         },
 
         {
             "name": "dramatic_reveal",
             "text": story["dramatic_reveal"],
-            "rate": "+8%",
-            "pitch": "-4Hz",
-            "pause": 0.38,
+            "rate": "+10%",
+            "pitch": "-5Hz",
+            "pause": 0.30,
         },
 
         {
             "name": "final_punch",
             "text": story["final_punch"],
-            "rate": "+4%",
-            "pitch": "-5Hz",
-            "pause": 0.25,
+            "rate": "+6%",
+            "pitch": "-6Hz",
+            "pause": 0.20,
         },
     ]
 
@@ -183,93 +188,81 @@ async def main():
 
     for index, section in enumerate(sections):
 
-        spoken = section["text"]
-
-        if category.startswith("indian_"):
-            spoken = pronunciation(
-                spoken
-            )
-
         output = (
-            TEMP_DIR /
-            f"{index:02d}_{section['name']}.mp3"
+            TEMP_DIR
+            / f"{index:02d}_{section['name']}.mp3"
         )
 
         print(
-            "Generating:",
-            section["name"],
-            "|",
-            section["rate"]
+            f"Generating {section['name']} "
+            f"| rate {section['rate']} "
+            f"| pitch {section['pitch']}"
         )
 
-        await speak(
-            spoken,
-            voice,
+        await create_voice(
+            section["text"],
             section["rate"],
             section["pitch"],
-            output
+            output,
         )
 
-        length = duration(
-            output
+        part_duration = get_duration(output)
+
+        start = current_time
+        end = start + part_duration
+
+        timing.append(
+            {
+                "name": section["name"],
+                "text": section["text"],
+                "start": round(start, 3),
+                "end": round(end, 3),
+                "duration": round(
+                    part_duration,
+                    3,
+                ),
+            }
         )
 
-        timing.append({
-            "name": section["name"],
-            "text": section["text"],
-            "start": round(
-                current_time,
-                3
-            ),
-            "end": round(
-                current_time + length,
-                3
-            ),
-            "duration": round(
-                length,
-                3
-            )
-        })
+        files.append(output)
 
-        files.append(
-            output
-        )
+        current_time = end
 
-        current_time += length
-
-        pause = section["pause"]
-
-        if pause:
+        if section["pause"] > 0:
 
             pause_file = (
-                TEMP_DIR /
-                f"{index:02d}_pause.mp3"
+                TEMP_DIR
+                / f"{index:02d}_pause.mp3"
             )
 
             make_pause(
                 pause_file,
-                pause
+                section["pause"],
             )
 
             files.append(
                 pause_file
             )
 
-            current_time += pause
+            current_time += (
+                section["pause"]
+            )
+
+    # --------------------------------------------------------
+    # CONCAT EVERYTHING
+    # --------------------------------------------------------
 
     concat_file = (
-        TEMP_DIR /
-        "concat.txt"
+        TEMP_DIR / "concat.txt"
     )
 
     with open(
         concat_file,
         "w",
-        encoding="utf-8"
+        encoding="utf-8",
     ) as f:
 
         for file in files:
-
             f.write(
                 f"file '{file.resolve()}'\n"
             )
@@ -283,9 +276,9 @@ async def main():
             "-i", str(concat_file),
             "-c:a", "libmp3lame",
             "-b:a", "192k",
-            str(OUTPUT_AUDIO)
+            str(OUTPUT_AUDIO),
         ],
-        check=True
+        check=True,
     )
 
     if not OUTPUT_AUDIO.exists():
@@ -293,28 +286,41 @@ async def main():
             "voice.mp3 was not created"
         )
 
+    if OUTPUT_AUDIO.stat().st_size < 5000:
+        raise RuntimeError(
+            "voice.mp3 is suspiciously small"
+        )
+
     TIMING_FILE.write_text(
         json.dumps(
             timing,
             indent=2,
-            ensure_ascii=False
+            ensure_ascii=False,
         ),
-        encoding="utf-8"
+        encoding="utf-8",
     )
 
-    final_length = duration(
+    total_duration = get_duration(
         OUTPUT_AUDIO
     )
 
     print("")
     print("==============================")
-    print("FAST NARRATION CREATED")
+    print("NARRATION CREATED")
     print("==============================")
-    print("Voice:", voice)
+    print("Voice:", VOICE)
     print(
         "Duration:",
-        round(final_length, 2),
-        "seconds"
+        round(total_duration, 2),
+        "seconds",
+    )
+    print(
+        "Audio:",
+        OUTPUT_AUDIO,
+    )
+    print(
+        "Timing:",
+        TIMING_FILE,
     )
     print("==============================")
 
