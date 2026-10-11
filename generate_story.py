@@ -11,9 +11,8 @@ from pathlib import Path
 HISTORY_FILE = Path("story_history.json")
 OUTPUT_FILE = Path("story.json")
 
-# Around 190-230 words works much better for ~60 sec narration
 MIN_WORDS = 185
-TARGET_MAX_WORDS = 235
+TARGET_MAX_WORDS = 240
 
 
 CATEGORIES = [
@@ -29,17 +28,6 @@ CATEGORIES = [
 
 # ============================================================
 # STORY LIBRARY
-#
-# IMPORTANT:
-# These are written like spoken Shorts.
-# Short lines.
-# Frequent mini-reveals.
-# Dialogue.
-# Escalation.
-# Strong ending.
-#
-# Same fields are preserved so generate_scenes.py,
-# generate_voice.py and make_video.py still work.
 # ============================================================
 
 STORIES = [
@@ -88,8 +76,8 @@ STORIES = [
             "Rohan laughed nervously. "
             "He thought it was some kind of trick. "
             "Then the train stopped. "
-            "One passenger stood up... "
-            "gave the conductor another memory... "
+            "One passenger stood up, "
+            "gave the conductor another memory, "
             "and walked into the darkness outside."
         ),
 
@@ -111,7 +99,7 @@ STORIES = [
             "Finally, the train reached the last station. "
             "The conductor asked for one final memory. "
             "Rohan searched his mind. "
-            "Nothing remained... except his mother's face. "
+            "Nothing remained except his mother's face. "
             "He refused. "
             "The conductor smiled. "
             "'Then you cannot leave.' "
@@ -127,13 +115,12 @@ STORIES = [
             "'People think forgetting makes pain disappear.' "
             "'It doesn't.' "
             "'It only makes you forget why you're hurting.' "
-            "Then the doors closed... "
+            "Then the doors closed, "
             "and the train continued into the dark."
         ),
 
         "has_next_part": False,
     },
-
 
     # ========================================================
     # FANTASY
@@ -159,7 +146,7 @@ STORIES = [
 
         "opening": (
             "The king had a gift no ruler should ever have. "
-            "Whenever somebody lied to him... "
+            "Whenever somebody lied to him, "
             "he heard a scream. "
             "At first, he loved it. "
             "A merchant said, 'My prices are fair.' "
@@ -180,7 +167,7 @@ STORIES = [
             "'Do you still love me?' "
             "She answered yes. "
             "Silence. "
-            "For the first time in months... no scream."
+            "For the first time in months, no scream."
         ),
 
         "escalation": (
@@ -220,7 +207,6 @@ STORIES = [
         "has_next_part": False,
     },
 
-
     # ========================================================
     # INDIAN FOLKTALE
     # ========================================================
@@ -257,14 +243,14 @@ STORIES = [
         "conflict": (
             "The traveler assumed he was joking. "
             "That evening, villagers gave him one warning. "
-            "'After midnight, if someone knocks three times... don't open the door.' "
+            "'After midnight, if someone knocks three times, don't open the door.' "
             "He laughed. "
             "Then midnight came. "
             "Knock. "
             "Knock. "
             "Knock. "
             "A woman's voice whispered from outside, "
-            "'Please... let me in.'"
+            "'Please, let me in.'"
         ),
 
         "escalation": (
@@ -276,7 +262,7 @@ STORIES = [
             "The traveler froze. "
             "Nobody in the village knew his name. "
             "The knocking started again. "
-            "This time... from the wall behind him."
+            "This time, from the wall behind him."
         ),
 
         "dramatic_reveal": (
@@ -293,14 +279,13 @@ STORIES = [
         "final_punch": (
             "The traveler slowly turned around. "
             "Behind the house were deep footprints. "
-            "Not coming toward his window... "
+            "Not coming toward his window, "
             "but leading away from it. "
             "Something else had been inside the room with him all night."
         ),
 
         "has_next_part": True,
     },
-
 
     # ========================================================
     # INDIAN MYTHOLOGY
@@ -330,7 +315,7 @@ STORIES = [
             "Something stranger. "
             "The ability to decide when you die. "
             "According to the Mahabharata, Bhishma possessed exactly that boon. "
-            "And during the great war of Kurukshetra... "
+            "And during the great war of Kurukshetra, "
             "that power created one of its most unforgettable moments."
         ),
 
@@ -340,7 +325,7 @@ STORIES = [
             "Yet even armies struggled to stop him. "
             "Eventually, Arjuna's arrows brought him down. "
             "But Bhishma didn't fall onto the earth. "
-            "So many arrows pierced his body that they held him above the ground... "
+            "So many arrows pierced his body that they held him above the ground, "
             "forming a bed beneath him."
         ),
 
@@ -351,12 +336,13 @@ STORIES = [
             "Bhishma remained alive on that bed of arrows. "
             "He was wounded. "
             "He was suffering. "
-            "But because of his boon... death could not take him until he allowed it."
+            "But because of his boon, "
+            "death could not take him until he allowed it."
         ),
 
         "dramatic_reveal": (
             "And Bhishma was waiting for something. "
-            "In Hindu tradition, he waited for Uttarayana... "
+            "In Hindu tradition, he waited for Uttarayana, "
             "the period associated with the sun's northward journey. "
             "Only when he believed the right moment had arrived "
             "did he finally choose to let go."
@@ -366,13 +352,12 @@ STORIES = [
             "Most warriors spend their final battle trying desperately not to die. "
             "Bhishma's final battle was completely different. "
             "Death was already waiting beside him. "
-            "And according to the epic... "
+            "And according to the epic, "
             "death itself had to wait for Bhishma."
         ),
 
         "has_next_part": False,
     },
-
 
     # ========================================================
     # ROMANCE / DRAMA
@@ -411,14 +396,15 @@ STORIES = [
             "Then another. "
             "'Your mother still worries when you skip dinner.' "
             "Nobody else knew these things. "
-            "Arjun became convinced that somehow... Mira was still reaching him."
+            "Arjun became convinced that somehow, "
+            "Mira was still reaching him."
         ),
 
         "escalation": (
             "For months, the messages continued. "
             "Sometimes funny. "
             "Sometimes painfully specific. "
-            "Then one night a message appeared: "
+            "Then one night a message appeared. "
             "'Tomorrow, go to our old café. Table seven.' "
             "Arjun barely slept. "
             "The next evening he arrived early. "
@@ -444,7 +430,6 @@ STORIES = [
 
         "has_next_part": False,
     },
-
 
     # ========================================================
     # COMEDY
@@ -473,14 +458,14 @@ STORIES = [
             "Gold. "
             "Nothing heroic. "
             "Nothing complicated. "
-            "Unfortunately, he chose the worst possible room to hide in... "
+            "Unfortunately, he chose the worst possible room to hide in, "
             "the king's military strategy chamber."
         ),
 
         "conflict": (
             "Guards burst through the door. "
             "Milo panicked and pointed randomly at a map. "
-            "'Attack... there!' "
+            "'Attack there!' "
             "The king walked in at exactly that moment. "
             "Everyone went silent. "
             "The king stared at the map. "
@@ -504,9 +489,10 @@ STORIES = [
             "Within a month, people were calling Milo the greatest strategist alive. "
             "Then the king announced, "
             "'I am retiring.' "
-            "Milo smiled politely... until the king continued. "
+            "Milo smiled politely until the king continued. "
             "'And you shall replace me.' "
-            "For the first time in his criminal career, Milo genuinely wanted to be arrested."
+            "For the first time in his criminal career, "
+            "Milo genuinely wanted to be arrested."
         ),
 
         "final_punch": (
@@ -518,7 +504,6 @@ STORIES = [
 
         "has_next_part": False,
     },
-
 
     # ========================================================
     # INDIAN LEGEND
@@ -568,7 +553,7 @@ STORIES = [
             "And beside every name was a date. "
             "Then he noticed the final line. "
             "His own name was already there. "
-            "Beside it... tomorrow's date."
+            "Beside it, tomorrow's date."
         ),
 
         "dramatic_reveal": (
@@ -577,7 +562,8 @@ STORIES = [
             "Then his reflection moved without him. "
             "The reflection smiled and placed one finger against the glass. "
             "Behind it stood dozens of people. "
-            "Every missing member of the royal family was trapped inside the mirror."
+            "Every missing member of the royal family "
+            "was trapped inside the mirror."
         ),
 
         "final_punch": (
@@ -586,7 +572,7 @@ STORIES = [
             "The next morning, guards finally opened the door. "
             "The prince was gone. "
             "But a new mirror stood against the wall. "
-            "And inside it... the prince was screaming."
+            "And inside it, the prince was screaming."
         ),
 
         "has_next_part": True,
@@ -595,7 +581,7 @@ STORIES = [
 
 
 # ============================================================
-# HISTORY
+# LOAD HISTORY
 # ============================================================
 
 def load_history():
@@ -607,4 +593,20 @@ def load_history():
         data = json.loads(
             HISTORY_FILE.read_text(
                 encoding="utf-8"
-   
+            )
+        )
+
+        if isinstance(data, list):
+            return data
+
+    except Exception as error:
+        print(
+            "Could not read story history:",
+            error
+        )
+
+    return []
+
+
+# ============================================================
+# STORY F
