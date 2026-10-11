@@ -1,307 +1,456 @@
 import json
 import math
-import re
 import subprocess
 from pathlib import Path
 
 
-FPS = 30
+# ============================================================
+# BASIC SETTINGS
+# ============================================================
+
 WIDTH = 1080
 HEIGHT = 1920
+FPS = 30
 
 IMAGE_DIR = Path("images")
 TEMP_DIR = Path("temp_video")
-
 TEMP_DIR.mkdir(exist_ok=True)
 
-AUDIO_FILE = "voice.mp3"
-TIMING_FILE = "voice_timing.json"
+VOICE_FILE = Path("voice.mp3")
+TIMING_FILE = Path("voice_timing.json")
 
-FINAL_FILE = "final_short.mp4"
-CAPTION_FILE = "captions.ass"
+OUTPUT_FILE = Path("final_short.mp4")
+CAPTION_FILE = Path("captions.ass")
 
 
 # ============================================================
 # HELPERS
 # ============================================================
 
-def run(cmd):
-    print(" ".join(str(x) for x in cmd))
-    subprocess.run(cmd, check=True)
+def run(command):
+    print("")
+    print(" ".join(str(x) for x in command))
+    subprocess.run(
+        command,
+        check=True,
+    )
 
 
 def ass_time(seconds):
 
-    hours = int(seconds // 3600)
-    minutes = int((seconds % 3600) // 60)
+    seconds = max(
+        0,
+        seconds,
+    )
 
-    secs = seconds % 60
+    hours = int(
+        seconds // 3600
+    )
 
-    return f"{hours}:{minutes:02d}:{secs:05.2f}"
+    minutes = int(
+        (seconds % 3600) // 60
+    )
 
+    secs = (
+        seconds % 60
+    )
 
-# ============================================================
-# LOAD DATA
-# ============================================================
-
-with open("story.json", "r", encoding="utf-8") as f:
-    story = json.load(f)
-
-with open("scenes.json", "r", encoding="utf-8") as f:
-    scenes = json.load(f)
-
-with open(TIMING_FILE, "r", encoding="utf-8") as f:
-    timings = json.load(f)
-
-
-images = sorted(
-    IMAGE_DIR.glob("scene_*.jpg")
-)
-
-if len(images) != len(scenes):
-    raise RuntimeError(
-        f"{len(images)} images but "
-        f"{len(scenes)} scenes."
+    return (
+        f"{hours}:"
+        f"{minutes:02d}:"
+        f"{secs:05.2f}"
     )
 
 
 # ============================================================
-# CREATE SOUND EFFECTS
+# LOAD STORY DATA
 # ============================================================
 
-impact_sound = TEMP_DIR / "impact.wav"
-whoosh_sound = TEMP_DIR / "whoosh.wav"
-soft_hit_sound = TEMP_DIR / "soft_hit.wav"
+with open(
+    "story.json",
+    "r",
+    encoding="utf-8",
+) as f:
+    story = json.load(f)
 
 
-# Deep reveal impact
+with open(
+    "scenes.json",
+    "r",
+    encoding="utf-8",
+) as f:
+    scenes = json.load(f)
+
+
+with open(
+    TIMING_FILE,
+    "r",
+    encoding="utf-8",
+) as f:
+    timings = json.load(f)
+
+
+images = sorted(
+    IMAGE_DIR.glob(
+        "scene_*.jpg"
+    )
+)
+
+
+if len(images) != len(scenes):
+    raise RuntimeError(
+        f"Expected {len(scenes)} images "
+        f"but found {len(images)}"
+    )
+
+
+if len(timings) != len(scenes):
+    raise RuntimeError(
+        f"Expected {len(scenes)} timing sections "
+        f"but found {len(timings)}"
+    )
+
+
+# ============================================================
+# CREATE SIMPLE SOUND EFFECTS
+# ============================================================
+
+hook_hit = (
+    TEMP_DIR / "hook_hit.wav"
+)
+
+reveal_hit = (
+    TEMP_DIR / "reveal_hit.wav"
+)
+
+whoosh = (
+    TEMP_DIR / "whoosh.wav"
+)
+
+
+# Hook thump
 run([
     "ffmpeg",
     "-y",
     "-f", "lavfi",
-    "-i", "sine=frequency=70:duration=0.32",
+    "-i",
+    "sine=frequency=95:duration=0.20",
     "-filter:a",
-    "volume=0.35,afade=t=out:st=0.05:d=0.27",
-    str(impact_sound)
+    (
+        "volume=0.22,"
+        "afade=t=out:st=0.03:d=0.17"
+    ),
+    str(hook_hit),
 ])
 
 
-# Transition whoosh
+# Reveal bass impact
 run([
     "ffmpeg",
     "-y",
     "-f", "lavfi",
-    "-i", "anoisesrc=color=white:duration=0.22",
+    "-i",
+    "sine=frequency=55:duration=0.38",
     "-filter:a",
-    "highpass=f=450,lowpass=f=5000,"
-    "volume=0.06,"
-    "afade=t=in:st=0:d=0.05,"
-    "afade=t=out:st=0.09:d=0.13",
-    str(whoosh_sound)
+    (
+        "volume=0.36,"
+        "afade=t=out:st=0.06:d=0.32"
+    ),
+    str(reveal_hit),
 ])
 
 
-# Small hook hit
+# Small whoosh
 run([
     "ffmpeg",
     "-y",
     "-f", "lavfi",
-    "-i", "sine=frequency=120:duration=0.18",
+    "-i",
+    "anoisesrc=color=white:duration=0.18",
     "-filter:a",
-    "volume=0.18,afade=t=out:st=0.02:d=0.16",
-    str(soft_hit_sound)
+    (
+        "highpass=f=700,"
+        "lowpass=f=5500,"
+        "volume=0.035,"
+        "afade=t=in:st=0:d=0.04,"
+        "afade=t=out:st=0.06:d=0.12"
+    ),
+    str(whoosh),
 ])
 
 
 # ============================================================
-# CREATE VIDEO CLIPS
+# MICRO-CUT GENERATION
+#
+# One generated image can create several visual cuts.
 # ============================================================
 
-clips = []
+micro_clips = []
 
-for i, scene in enumerate(scenes):
+clip_counter = 0
 
-    image = images[i]
 
-    timing = timings[i]
+for index, scene in enumerate(scenes):
 
-    # Include pause before next line naturally.
-    if i < len(timings) - 1:
-        duration = (
-            timings[i + 1]["start"]
-            - timing["start"]
-        )
+    image = images[index]
+    timing = timings[index]
+
+    start_time = timing["start"]
+
+    if index < len(timings) - 1:
+        end_time = timings[index + 1]["start"]
     else:
-        duration = (
-            timing["duration"] + 0.7
+        end_time = (
+            timing["end"] + 0.25
         )
 
-    output = TEMP_DIR / f"clip_{i:02d}.mp4"
+    scene_duration = max(
+        end_time - start_time,
+        0.8,
+    )
 
-    beat = scene["beat"]
+    # commas / punctuation allow extra motion cuts
+    punctuation_points = int(
+        scene.get(
+            "comma_motion_points",
+            0,
+        )
+    )
 
-    # --------------------------------------------------------
-    # TITLE HOOK
-    # Quick punch-in
-    # --------------------------------------------------------
+    # Normally 2 cuts per image,
+    # 3 for longer/more punctuated lines.
+    if (
+        scene_duration >= 4.0
+        or punctuation_points >= 2
+    ):
+        cut_count = 3
+    else:
+        cut_count = 2
 
-    if beat == "title_hook":
-
-        vf = (
-            f"scale=1180:2100,"
-            f"crop={WIDTH}:{HEIGHT}:"
-            f"x='(iw-{WIDTH})/2':"
-            f"y='(ih-{HEIGHT})/2',"
-            f"zoompan="
-            f"z='min(1.0+0.0017*on,1.15)':"
-            f"x='iw/2-(iw/zoom/2)':"
-            f"y='ih/2-(ih/zoom/2)':"
-            f"d=1:"
-            f"s={WIDTH}x{HEIGHT}:"
-            f"fps={FPS},"
-            f"fade=t=in:st=0:d=0.18,"
-            f"format=yuv420p"
+    # Title/reveal are deliberately faster.
+    if scene["beat"] in [
+        "title_hook",
+        "dramatic_reveal",
+    ]:
+        cut_count = max(
+            cut_count,
+            2,
         )
 
-    # --------------------------------------------------------
-    # OPENING
-    # Gentle cinematic movement
-    # --------------------------------------------------------
+    cut_duration = (
+        scene_duration
+        / cut_count
+    )
 
-    elif beat == "opening":
+    for sub_index in range(
+        cut_count
+    ):
 
-        vf = (
-            f"scale=1180:2100,"
-            f"crop={WIDTH}:{HEIGHT}:"
-            f"x='40+15*sin(t*0.7)':"
-            f"y='90',"
-            f"format=yuv420p"
+        output = (
+            TEMP_DIR
+            / f"micro_{clip_counter:03d}.mp4"
         )
 
-    # --------------------------------------------------------
-    # CONFLICT
-    # Faster creeping zoom
-    # --------------------------------------------------------
+        # ------------------------------------
+        # DIFFERENT FRAMING FOR EACH CUT
+        # ------------------------------------
 
-    elif beat == "conflict":
+        mode = (
+            clip_counter % 5
+        )
+
+        if mode == 0:
+
+            movement = (
+                "zoompan="
+                "z='min(1+0.0015*on,1.14)':"
+                "x='iw/2-(iw/zoom/2)':"
+                "y='ih/2-(ih/zoom/2)':"
+                "d=1:"
+                f"s={WIDTH}x{HEIGHT}:"
+                f"fps={FPS}"
+            )
+
+        elif mode == 1:
+
+            movement = (
+                "zoompan="
+                "z='1.10':"
+                "x='(iw-iw/zoom)*0.20':"
+                "y='ih/2-(ih/zoom/2)':"
+                "d=1:"
+                f"s={WIDTH}x{HEIGHT}:"
+                f"fps={FPS}"
+            )
+
+        elif mode == 2:
+
+            movement = (
+                "zoompan="
+                "z='1.13':"
+                "x='(iw-iw/zoom)*0.80':"
+                "y='ih/2-(ih/zoom/2)':"
+                "d=1:"
+                f"s={WIDTH}x{HEIGHT}:"
+                f"fps={FPS}"
+            )
+
+        elif mode == 3:
+
+            movement = (
+                "zoompan="
+                "z='min(1.12-0.0008*on,1.12)':"
+                "x='iw/2-(iw/zoom/2)':"
+                "y='(ih-ih/zoom)*0.28':"
+                "d=1:"
+                f"s={WIDTH}x{HEIGHT}:"
+                f"fps={FPS}"
+            )
+
+        else:
+
+            movement = (
+                "zoompan="
+                "z='1.08':"
+                "x='iw/2-(iw/zoom/2)':"
+                "y='(ih-ih/zoom)*0.70':"
+                "d=1:"
+                f"s={WIDTH}x{HEIGHT}:"
+                f"fps={FPS}"
+            )
+
+
+        # ------------------------------------
+        # BEAT-SPECIFIC EFFECTS
+        # ------------------------------------
+
+        extra_effect = ""
+
+        if scene["beat"] == "title_hook":
+
+            extra_effect = (
+                ",fade=t=in:"
+                "st=0:d=0.10"
+            )
+
+        elif (
+            scene["beat"]
+            == "dramatic_reveal"
+            and sub_index == 0
+        ):
+
+            extra_effect = (
+                ",eq="
+                "brightness="
+                "'if(lt(t,0.08),0.32,"
+                "if(lt(t,0.16),0.10,0))':"
+                "eval=frame"
+            )
+
+        elif (
+            scene["beat"]
+            == "final_punch"
+        ):
+
+            extra_effect = (
+                ",vignette=PI/5"
+            )
+
 
         vf = (
             f"scale={WIDTH}:{HEIGHT}:"
-            f"force_original_aspect_ratio=increase,"
+            "force_original_aspect_ratio=increase,"
             f"crop={WIDTH}:{HEIGHT},"
-            f"zoompan="
-            f"z='min(max(zoom,pzoom)+0.0010,1.12)':"
-            f"x='iw/2-(iw/zoom/2)':"
-            f"y='ih/2-(ih/zoom/2)':"
-            f"d=1:"
-            f"s={WIDTH}x{HEIGHT}:"
-            f"fps={FPS},"
-            f"format=yuv420p"
+            f"{movement}"
+            f"{extra_effect},"
+            "setsar=1,"
+            "format=yuv420p"
         )
 
-    # --------------------------------------------------------
-    # ESCALATION
-    # More aggressive movement
-    # --------------------------------------------------------
 
-    elif beat == "escalation":
+        run([
+            "ffmpeg",
+            "-y",
+            "-loop", "1",
+            "-framerate",
+            str(FPS),
+            "-i",
+            str(image),
+            "-t",
+            str(cut_duration),
+            "-vf",
+            vf,
+            "-an",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "veryfast",
+            "-crf",
+            "19",
+            "-pix_fmt",
+            "yuv420p",
+            str(output),
+        ])
 
-        vf = (
-            f"scale=1200:2140,"
-            f"crop={WIDTH}:{HEIGHT}:"
-            f"x='60+18*sin(t*2.3)':"
-            f"y='110+10*cos(t*1.8)',"
-            f"format=yuv420p"
+
+        micro_clips.append(
+            output
         )
 
-    # --------------------------------------------------------
-    # DRAMATIC REVEAL
-    # Flash + punch + micro-shake
-    # --------------------------------------------------------
-
-    elif beat == "dramatic_reveal":
-
-        vf = (
-            f"scale=1220:2170,"
-            f"crop={WIDTH}:{HEIGHT}:"
-            f"x='70+8*sin(t*35)':"
-            f"y='125+8*cos(t*31)',"
-            f"eq="
-            f"brightness='if(lt(t,0.10),0.35,"
-            f"if(lt(t,0.22),0.10,0))':"
-            f"eval=frame,"
-            f"format=yuv420p"
-        )
-
-    # --------------------------------------------------------
-    # FINAL PUNCH
-    # Slow dark cinematic hold
-    # --------------------------------------------------------
-
-    else:
-
-        vf = (
-            f"scale={WIDTH}:{HEIGHT}:"
-            f"force_original_aspect_ratio=increase,"
-            f"crop={WIDTH}:{HEIGHT},"
-            f"zoompan="
-            f"z='min(max(zoom,pzoom)+0.00045,1.07)':"
-            f"x='iw/2-(iw/zoom/2)':"
-            f"y='ih/2-(ih/zoom/2)':"
-            f"d=1:"
-            f"s={WIDTH}x{HEIGHT}:"
-            f"fps={FPS},"
-            f"vignette=PI/5,"
-            f"format=yuv420p"
-        )
-
-    run([
-        "ffmpeg",
-        "-y",
-        "-loop", "1",
-        "-framerate", str(FPS),
-        "-i", str(image),
-        "-t", str(duration),
-        "-vf", vf,
-        "-an",
-        "-c:v", "libx264",
-        "-preset", "veryfast",
-        "-crf", "19",
-        str(output)
-    ])
-
-    clips.append(output)
+        clip_counter += 1
 
 
 # ============================================================
-# CONCAT VIDEO
+# CONCAT ALL MICRO CUTS
 # ============================================================
 
-concat_file = TEMP_DIR / "clips.txt"
+concat_file = (
+    TEMP_DIR / "micro_concat.txt"
+)
 
-with open(concat_file, "w", encoding="utf-8") as f:
 
-    for clip in clips:
+with open(
+    concat_file,
+    "w",
+    encoding="utf-8",
+) as f:
+
+    for clip in micro_clips:
+
         f.write(
             f"file '{clip.resolve()}'\n"
         )
 
 
-visual_video = TEMP_DIR / "visuals.mp4"
+visual_video = (
+    TEMP_DIR / "visuals.mp4"
+)
+
 
 run([
     "ffmpeg",
     "-y",
     "-f", "concat",
     "-safe", "0",
-    "-i", str(concat_file),
-    "-c", "copy",
-    str(visual_video)
+    "-i",
+    str(concat_file),
+    "-c:v",
+    "libx264",
+    "-preset",
+    "veryfast",
+    "-crf",
+    "19",
+    "-vf",
+    "setsar=1",
+    "-pix_fmt",
+    "yuv420p",
+    "-an",
+    str(visual_video),
 ])
 
 
 # ============================================================
-# CAPTIONS
+# CAPTION FILE
 # ============================================================
 
 ass_header = f"""[Script Info]
@@ -312,111 +461,148 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding
-Style: Normal,DejaVu Sans,70,&H00FFFFFF,&H00FFFFFF,&H00000000,&H70000000,-1,0,0,0,100,100,0,0,1,5,1,2,75,75,250,1
-Style: Hook,DejaVu Sans,86,&H00FFFFFF,&H00FFFFFF,&H00000000,&H70000000,-1,0,0,0,100,100,0,0,1,6,2,5,85,85,0,1
-Style: Reveal,DejaVu Sans,80,&H00FFFFFF,&H00FFFFFF,&H00000000,&H70000000,-1,0,0,0,100,100,0,0,1,6,2,2,70,70,260,1
+Style: Normal,DejaVu Sans,74,&H00FFFFFF,&H00FFFFFF,&H00000000,&H78000000,-1,0,0,0,100,100,0,0,1,5,1,2,85,85,245,1
+Style: Hook,DejaVu Sans,88,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,6,2,5,80,80,0,1
+Style: Reveal,DejaVu Sans,82,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,6,2,2,80,80,250,1
 
 [Events]
 Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
 """
 
 
-caption_lines = []
-
-
-def chunk_text(text, max_words=4):
+def chunks(text):
 
     words = text.split()
 
-    chunks = []
-
+    result = []
     current = []
 
     for word in words:
 
-        current.append(word)
-
-        punctuation = word.endswith(
-            (",", ".", "!", "?", ":", ";")
+        current.append(
+            word
         )
 
-        if len(current) >= max_words or (
-            punctuation and len(current) >= 2
+        punctuation = (
+            word.endswith(
+                (
+                    ",",
+                    ".",
+                    "?",
+                    "!",
+                    "…",
+                    ":",
+                    ";",
+                )
+            )
+        )
+
+        if (
+            len(current) >= 3
+            or (
+                punctuation
+                and len(current) >= 2
+            )
         ):
 
-            chunks.append(
+            result.append(
                 " ".join(current)
             )
 
             current = []
 
     if current:
-        chunks.append(
+
+        result.append(
             " ".join(current)
         )
 
-    return chunks
+    return result
+
+
+caption_lines = []
 
 
 for item in timings:
 
-    chunks = chunk_text(
-        item["text"],
-        max_words=4
+    text_chunks = chunks(
+        item["text"]
     )
 
     total_words = sum(
-        len(c.split())
-        for c in chunks
+        len(x.split())
+        for x in text_chunks
     )
 
     current = item["start"]
 
-    for chunk in chunks:
+    for chunk in text_chunks:
 
-        words = len(chunk.split())
-
-        fraction = words / total_words
-
-        chunk_duration = (
-            item["duration"]
-            * fraction
+        word_count = len(
+            chunk.split()
         )
 
-        chunk_duration = max(
-            chunk_duration,
-            0.42
+        duration = (
+            item["duration"]
+            * (
+                word_count
+                / total_words
+            )
+        )
+
+        duration = max(
+            duration,
+            0.32,
         )
 
         start = current
+
         end = min(
-            start + chunk_duration,
-            item["end"]
+            start + duration,
+            item["end"],
         )
 
         style = "Normal"
 
-        if item["name"] == "title_hook":
+        if (
+            item["name"]
+            == "title_hook"
+        ):
             style = "Hook"
 
-        elif item["name"] in [
-            "dramatic_reveal",
-            "final_punch"
-        ]:
+        elif (
+            item["name"]
+            in [
+                "dramatic_reveal",
+                "final_punch",
+            ]
+        ):
             style = "Reveal"
+
 
         safe = (
             chunk
-            .replace("\\", r"\\")
-            .replace("{", r"\{")
-            .replace("}", r"\}")
+            .replace(
+                "\\",
+                r"\\",
+            )
+            .replace(
+                "{",
+                r"\{",
+            )
+            .replace(
+                "}",
+                r"\}",
+            )
         )
 
+
         caption_lines.append(
-            f"Dialogue: 0,"
+            "Dialogue: 0,"
             f"{ass_time(start)},"
             f"{ass_time(end)},"
-            f"{style},,0,0,0,,"
+            f"{style},,"
+            "0,0,0,,"
             f"{safe}"
         )
 
@@ -426,31 +612,42 @@ for item in timings:
 with open(
     CAPTION_FILE,
     "w",
-    encoding="utf-8"
+    encoding="utf-8",
 ) as f:
 
-    f.write(ass_header)
+    f.write(
+        ass_header
+    )
 
     for line in caption_lines:
-        f.write(line + "\n")
+
+        f.write(
+            line + "\n"
+        )
 
 
 # ============================================================
 # EFFECT TIMESTAMPS
 # ============================================================
 
-hook_time = timings[0]["start"]
-
-reveal_time = next(
-    item["start"]
-    for item in timings
-    if item["name"] == "dramatic_reveal"
+hook_time = (
+    timings[0]["start"]
 )
 
-ending_time = next(
-    item["start"]
-    for item in timings
-    if item["name"] == "final_punch"
+
+reveal_time = next(
+    x["start"]
+    for x in timings
+    if x["name"]
+    == "dramatic_reveal"
+)
+
+
+final_time = next(
+    x["start"]
+    for x in timings
+    if x["name"]
+    == "final_punch"
 )
 
 
@@ -462,71 +659,128 @@ reveal_delay = int(
     reveal_time * 1000
 )
 
-ending_delay = int(
-    ending_time * 1000
+final_delay = int(
+    final_time * 1000
 )
 
 
 # ============================================================
-# FINAL AUDIO + VIDEO MIX
+# AUDIO MIX
 # ============================================================
 
-filter_complex = (
+audio_filter = (
     f"[1:a]volume=1.0[voice];"
-    f"[2:a]adelay={hook_delay}|{hook_delay},"
-    f"volume=0.7[hook];"
-    f"[3:a]adelay={reveal_delay}|{reveal_delay},"
-    f"volume=1.0[impact];"
-    f"[4:a]adelay={ending_delay}|{ending_delay},"
-    f"volume=0.55[ending];"
-    f"[voice][hook][impact][ending]"
-    f"amix=inputs=4:"
-    f"duration=longest:"
-    f"normalize=0[aout]"
+
+    f"[2:a]"
+    f"adelay={hook_delay}|{hook_delay},"
+    f"volume=0.70[hook];"
+
+    f"[3:a]"
+    f"adelay={reveal_delay}|{reveal_delay},"
+    f"volume=0.95[reveal];"
+
+    f"[4:a]"
+    f"adelay={final_delay}|{final_delay},"
+    f"volume=0.45[finalfx];"
+
+    "[voice][hook][reveal][finalfx]"
+    "amix="
+    "inputs=4:"
+    "duration=longest:"
+    "normalize=0[aout]"
 )
 
+
+# ============================================================
+# FINAL VIDEO
+# ============================================================
 
 run([
     "ffmpeg",
     "-y",
 
-    "-i", str(visual_video),
-    "-i", AUDIO_FILE,
-    "-i", str(soft_hit_sound),
-    "-i", str(impact_sound),
-    "-i", str(whoosh_sound),
+    "-i",
+    str(visual_video),
+
+    "-i",
+    str(VOICE_FILE),
+
+    "-i",
+    str(hook_hit),
+
+    "-i",
+    str(reveal_hit),
+
+    "-i",
+    str(whoosh),
 
     "-filter_complex",
-    filter_complex,
+    audio_filter,
 
-    "-filter:v",
-    f"ass={CAPTION_FILE}",
+    "-vf",
+    (
+        f"ass={CAPTION_FILE},"
+        "setsar=1"
+    ),
 
-    "-map", "0:v:0",
-    "-map", "[aout]",
+    "-map",
+    "0:v:0",
 
-    "-c:v", "libx264",
-    "-preset", "veryfast",
-    "-crf", "19",
+    "-map",
+    "[aout]",
 
-    "-c:a", "aac",
-    "-b:a", "192k",
+    "-c:v",
+    "libx264",
+
+    "-preset",
+    "veryfast",
+
+    "-crf",
+    "18",
+
+    "-pix_fmt",
+    "yuv420p",
+
+    "-aspect",
+    "9:16",
+
+    "-c:a",
+    "aac",
+
+    "-b:a",
+    "192k",
+
+    "-movflags",
+    "+faststart",
 
     "-shortest",
-    "-movflags", "+faststart",
 
-    FINAL_FILE
+    str(OUTPUT_FILE),
 ])
 
 
 print("")
-print("===================================")
+print("================================")
 print("FINAL SHORT CREATED")
-print("===================================")
-print("Voice expression: YES")
-print("Captions: YES")
-print("Hook effect: YES")
-print("Reveal flash/shake: YES")
-print("Impact SFX: YES")
-print("Final vignette: YES")
-print("Output:", FINAL_FILE)
+print("================================")
+print(
+    "Resolution:",
+    WIDTH,
+    "x",
+    HEIGHT,
+)
+print("Aspect ratio: 9:16")
+print("SAR: 1:1")
+print(
+    "Visual cuts:",
+    len(micro_clips),
+)
+print(
+    "Captions:",
+    len(caption_lines),
+)
+print(
+    "Output:",
+    OUTPUT_FILE,
+)
+print("================================")
