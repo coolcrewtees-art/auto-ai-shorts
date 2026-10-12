@@ -570,3 +570,588 @@ def make_fingerprint(
 # ============================================================
 # CHECK FOR REQUIRED PART TWO
 # =======================
+
+# ============================================================
+# RELIABLE RUNNER - KEEP THIS AT VERY BOTTOM
+# ============================================================
+
+def main():
+    import json
+    import random
+    import hashlib
+    from pathlib import Path
+
+    output_file = Path("story.json")
+    history_file = Path("story_history.json")
+
+    print("AI MANIA reliable story runner started")
+
+    # --------------------------------------------------------
+    # LOAD HISTORY
+    # --------------------------------------------------------
+
+    history = []
+
+    if history_file.exists():
+        try:
+            data = json.loads(
+                history_file.read_text(
+                    encoding="utf-8"
+                )
+            )
+
+            if isinstance(data, list):
+                history = data
+
+        except Exception as error:
+            print(
+                "History warning:",
+                error
+            )
+
+
+    # --------------------------------------------------------
+    # GET EXISTING STORY POOL
+    # --------------------------------------------------------
+
+    story_pool = globals().get(
+        "STORIES",
+        []
+    )
+
+    part_twos = globals().get(
+        "PART_TWOS",
+        {}
+    )
+
+
+    if not isinstance(
+        story_pool,
+        list
+    ):
+        story_pool = []
+
+
+    if not isinstance(
+        part_twos,
+        dict
+    ):
+        part_twos = {}
+
+
+    # --------------------------------------------------------
+    # EMERGENCY FALLBACK
+    #
+    # Means workflow STILL works even if the large story pool
+    # above gets damaged later.
+    # --------------------------------------------------------
+
+    fallback_stories = [
+
+        {
+            "story_id": "memory_clock",
+            "part": 1,
+            "has_next_part": False,
+            "category": "supernatural_mystery",
+            "title_hook":
+                "The Clock That Counted Down His Memories",
+            "topic":
+                "A mysterious clock erases one memory every hour.",
+            "main_figure":
+                "a young Indian man named Kabir",
+            "setting":
+                "a small apartment in an Indian city at midnight",
+            "mood":
+                "mysterious, emotional, supernatural",
+
+            "opening":
+                "Kabir bought an antique clock from a shop that disappeared the very next day. At midnight, the clock began counting backward instead of forward. When it struck eleven, Kabir suddenly forgot the name of his childhood school.",
+
+            "conflict":
+                "At ten, he forgot his best friend's face. At nine, an entire year of college vanished from his memory. Kabir smashed the clock against the floor, but the broken hands kept moving backward.",
+
+            "escalation":
+                "He searched inside the clock and discovered tiny photographs hidden behind its face. Every photograph showed a memory he had already lost. One final picture showed his mother standing beside him.",
+
+            "dramatic_reveal":
+                "The clock reached one minute before midnight. Kabir realized the final photograph was not showing a memory from the past. It showed his mother standing outside his apartment at that exact moment.",
+
+            "final_punch":
+                "Someone knocked on the door. Kabir opened it and saw the woman from the photograph. She hugged him tightly. Kabir stared at her and asked, Have we met before?"
+        },
+
+        {
+            "story_id": "shadow_market",
+            "part": 1,
+            "has_next_part": False,
+            "category": "indian_folktale",
+            "title_hook":
+                "The Market That Opened Only After Midnight",
+            "topic":
+                "A traveler discovers a marketplace where memories are sold.",
+            "main_figure":
+                "a young Indian traveler named Dev",
+            "setting":
+                "an ancient Indian market hidden inside narrow streets at midnight",
+            "mood":
+                "mysterious, magical, unsettling",
+
+            "opening":
+                "Dev became lost in an old city just after midnight and discovered a crowded market that had not existed during the day. Nobody sold food, jewellery or clothes. Every stall sold memories.",
+
+            "conflict":
+                "One merchant offered Dev the memory of becoming rich. Another offered the happiest day of a stranger's life. Dev laughed until he found a small bottle labelled with his own name.",
+
+            "escalation":
+                "Inside the bottle he saw himself returning home the following morning. His family was crying, but nobody could see him standing beside them. Dev demanded to know who had placed his future inside the bottle.",
+
+            "dramatic_reveal":
+                "The merchant quietly pointed toward an empty stall across the market. A sign above it carried Dev's name. Beneath the sign was tomorrow's date.",
+
+            "final_punch":
+                "Dev ran from the market before sunrise. When he reached home, his mother opened the door, looked straight through him, and asked who was there."
+        }
+
+    ]
+
+
+    # --------------------------------------------------------
+    # IF ORIGINAL POOL IS EMPTY, USE FALLBACK
+    # --------------------------------------------------------
+
+    if not story_pool:
+
+        print(
+            "WARNING: original STORIES pool missing."
+        )
+
+        print(
+            "Using emergency fallback stories."
+        )
+
+        story_pool = fallback_stories
+
+
+    # --------------------------------------------------------
+    # CHECK WHETHER PART 2 IS PENDING
+    # --------------------------------------------------------
+
+    selected = None
+
+    if history:
+
+        latest = history[-1]
+
+        if isinstance(
+            latest,
+            dict
+        ):
+
+            pending = latest.get(
+                "next_part_pending",
+                False
+            )
+
+            pending_id = latest.get(
+                "story_id"
+            )
+
+            if (
+                pending
+                and pending_id
+                in part_twos
+            ):
+
+                selected = dict(
+                    part_twos[
+                        pending_id
+                    ]
+                )
+
+                print(
+                    "Generating pending Part 2:",
+                    pending_id
+                )
+
+
+    # --------------------------------------------------------
+    # SELECT FRESH STORY
+    # --------------------------------------------------------
+
+    if selected is None:
+
+        recently_used = set()
+
+        for item in history[-6:]:
+
+            if isinstance(
+                item,
+                dict
+            ):
+
+                story_id = item.get(
+                    "story_id"
+                )
+
+                if story_id:
+
+                    recently_used.add(
+                        story_id
+                    )
+
+
+        available = [
+
+            story
+
+            for story in story_pool
+
+            if story.get(
+                "story_id"
+            )
+            not in recently_used
+
+        ]
+
+
+        if not available:
+
+            available = story_pool
+
+
+        selected = dict(
+            random.choice(
+                available
+            )
+        )
+
+        print(
+            "Fresh story selected:",
+            selected.get(
+                "story_id"
+            )
+        )
+
+
+    # --------------------------------------------------------
+    # REQUIRED DEFAULTS
+    # --------------------------------------------------------
+
+    selected.setdefault(
+        "story_id",
+        "ai_mania_story"
+    )
+
+    selected.setdefault(
+        "part",
+        1
+    )
+
+    selected.setdefault(
+        "has_next_part",
+        False
+    )
+
+    selected.setdefault(
+        "category",
+        "supernatural_mystery"
+    )
+
+    selected.setdefault(
+        "title_hook",
+        "An Impossible Story"
+    )
+
+    selected.setdefault(
+        "topic",
+        selected[
+            "title_hook"
+        ]
+    )
+
+    selected.setdefault(
+        "main_figure",
+        "a mysterious traveler"
+    )
+
+    selected.setdefault(
+        "setting",
+        "a cinematic mysterious location"
+    )
+
+    selected.setdefault(
+        "mood",
+        "cinematic and mysterious"
+    )
+
+
+    # --------------------------------------------------------
+    # VALIDATE STORY TEXT
+    # --------------------------------------------------------
+
+    required_story_sections = [
+
+        "opening",
+        "conflict",
+        "escalation",
+        "dramatic_reveal",
+        "final_punch",
+
+    ]
+
+
+    missing = [
+
+        key
+
+        for key
+        in required_story_sections
+
+        if not selected.get(
+            key
+        )
+
+    ]
+
+
+    if missing:
+
+        raise RuntimeError(
+            "Selected story missing: "
+            + ", ".join(
+                missing
+            )
+        )
+
+
+    # --------------------------------------------------------
+    # CONTINUATION LINE
+    # --------------------------------------------------------
+
+    if selected.get(
+        "has_next_part",
+        False
+    ):
+
+        if (
+            "part two"
+            not in selected[
+                "final_punch"
+            ].lower()
+        ):
+
+            selected[
+                "final_punch"
+            ] += (
+                " But this story isn't over. "
+                "Part two is next."
+            )
+
+
+    # --------------------------------------------------------
+    # SCREENPLAY
+    # --------------------------------------------------------
+
+    selected[
+        "screenplay"
+    ] = " ".join([
+
+        selected[
+            "title_hook"
+        ]
+        + ".",
+
+        selected[
+            "opening"
+        ],
+
+        selected[
+            "conflict"
+        ],
+
+        selected[
+            "escalation"
+        ],
+
+        selected[
+            "dramatic_reveal"
+        ],
+
+        selected[
+            "final_punch"
+        ],
+
+    ])
+
+
+    # --------------------------------------------------------
+    # FINGERPRINT
+    # --------------------------------------------------------
+
+    fingerprint_source = "|".join([
+
+        str(
+            selected[
+                "story_id"
+            ]
+        ),
+
+        str(
+            selected[
+                "part"
+            ]
+        ),
+
+        selected[
+            "title_hook"
+        ],
+
+    ])
+
+
+    selected[
+        "fingerprint"
+    ] = hashlib.sha256(
+
+        fingerprint_source.encode(
+            "utf-8"
+        )
+
+    ).hexdigest()
+
+
+    # --------------------------------------------------------
+    # WRITE STORY.JSON
+    # --------------------------------------------------------
+
+    output_file.write_text(
+
+        json.dumps(
+            selected,
+            indent=2,
+            ensure_ascii=False
+        ),
+
+        encoding="utf-8"
+
+    )
+
+
+    if not output_file.exists():
+
+        raise RuntimeError(
+            "story.json was not created"
+        )
+
+
+    if output_file.stat().st_size < 100:
+
+        raise RuntimeError(
+            "story.json is too small"
+        )
+
+
+    # --------------------------------------------------------
+    # UPDATE HISTORY
+    # --------------------------------------------------------
+
+    history.append({
+
+        "story_id":
+            selected[
+                "story_id"
+            ],
+
+        "part":
+            selected[
+                "part"
+            ],
+
+        "category":
+            selected[
+                "category"
+            ],
+
+        "title_hook":
+            selected[
+                "title_hook"
+            ],
+
+        "fingerprint":
+            selected[
+                "fingerprint"
+            ],
+
+        "next_part_pending":
+            bool(
+                selected.get(
+                    "has_next_part",
+                    False
+                )
+            ),
+
+    })
+
+
+    history_file.write_text(
+
+        json.dumps(
+            history[-200:],
+            indent=2,
+            ensure_ascii=False
+        ),
+
+        encoding="utf-8"
+
+    )
+
+
+    print("")
+    print(
+        "================================="
+    )
+
+    print(
+        "STORY CREATED SUCCESSFULLY"
+    )
+
+    print(
+        "================================="
+    )
+
+    print(
+        "Title:",
+        selected[
+            "title_hook"
+        ]
+    )
+
+    print(
+        "Part:",
+        selected[
+            "part"
+        ]
+    )
+
+    print(
+        "Words:",
+        len(
+            selected[
+                "screenplay"
+            ].split()
+        )
+    )
+
+    print(
+        "story.json:",
+        output_file.stat().st_size,
+        "bytes"
+    )
+
+
+# ============================================================
+# DO NOT REMOVE THESE TWO LINES
+# ============================================================
+
+if __name__ == "__main__":
+    main()
