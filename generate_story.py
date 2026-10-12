@@ -4,20 +4,12 @@ import hashlib
 from pathlib import Path
 
 
-# ============================================================
-# FILES
-# ============================================================
-
 HISTORY_FILE = Path("story_history.json")
 OUTPUT_FILE = Path("story.json")
 
+MIN_WORDS = 175
+MAX_WORDS = 260
 
-# ============================================================
-# SETTINGS
-# ============================================================
-
-MIN_WORDS = 180
-MAX_WORDS = 250
 
 CATEGORIES = [
     "indian_mythology",
@@ -31,16 +23,18 @@ CATEGORIES = [
 
 
 # ============================================================
-# STORY LIBRARY
+# PART ONE STORIES
 # ============================================================
 
 STORIES = [
 
-    # --------------------------------------------------------
-    # SUPERNATURAL / MYSTERY
-    # --------------------------------------------------------
+    # ========================================================
+    # SUPERNATURAL
+    # ========================================================
 
     {
+        "story_id": "memory_train",
+        "part": 1,
         "category": "supernatural_mystery",
 
         "title_hook":
@@ -50,252 +44,253 @@ STORIES = [
             "a mysterious train where memories are used as fare",
 
         "main_figure":
-            "a young man traveling alone at night",
+            "Rohan, a young Indian man traveling alone at night",
 
         "setting":
-            "an endless midnight train moving through a surreal dark landscape",
+            "an endless midnight train traveling through a dark surreal landscape",
 
         "mood":
-            "mysterious, unsettling, emotional, cinematic",
+            "unsettling, mysterious, emotional, cinematic",
 
         "opening": (
             "Rohan missed the last normal train home. "
             "Then, at exactly midnight, another train arrived. "
             "No number. No destination. "
             "The doors opened anyway. "
-            "Inside, every passenger was completely silent. "
-            "Rohan sat down. "
-            "A conductor approached him and said, "
-            "'Ticket, please.' "
+            "Inside, every passenger sat completely silent. "
+            "Rohan took a seat. "
+            "A conductor approached and asked for his ticket. "
             "Rohan reached for his wallet. "
-            "The conductor shook his head. "
+            "The conductor smiled. "
             "'We don't take money here.'"
         ),
 
         "conflict": (
             "Instead, the conductor touched Rohan's forehead. "
-            "Suddenly, Rohan couldn't remember his tenth birthday. "
-            "The conductor smiled. "
+            "Instantly, Rohan forgot his tenth birthday. "
+            "The conductor whispered, "
             "'One memory. One station.' "
-            "Rohan laughed nervously. "
-            "He thought it was some kind of trick. "
+            "Rohan thought it was some bizarre trick. "
             "Then the train stopped. "
-            "One passenger stood up, "
-            "gave the conductor another memory, "
-            "and walked into the darkness outside."
+            "A passenger stood, surrendered another memory, "
+            "and walked through the doors into complete darkness."
         ),
 
         "escalation": (
             "Station after station, Rohan kept paying. "
-            "His first day of school disappeared. "
+            "His first day of school vanished. "
             "Then his first kiss. "
             "Then the sound of his father's voice. "
-            "He panicked. "
-            "'Stop the train!' "
-            "The conductor calmly replied, "
+            "Rohan finally shouted for the train to stop. "
+            "The conductor calmly said, "
             "'You chose to keep traveling.' "
             "Rohan looked around. "
-            "The other passengers weren't quiet because they were afraid. "
-            "They had simply forgotten how to speak."
+            "The other passengers were not silent because they were frightened. "
+            "They had forgotten how to speak."
         ),
 
         "dramatic_reveal": (
             "Finally, the train reached the last station. "
-            "The conductor asked for one final memory. "
+            "The conductor demanded one final memory. "
             "Rohan searched his mind. "
-            "Nothing remained except his mother's face. "
-            "He refused. "
-            "The conductor smiled. "
+            "Only his mother's face remained. "
+            "He refused to surrender it. "
+            "The conductor smiled and said, "
             "'Then you cannot leave.' "
-            "Rohan turned toward the window. "
-            "Hundreds of people stood on the platform outside. "
-            "All of them looked lost. "
-            "All of them had once been passengers."
+            "Rohan looked outside. "
+            "Hundreds of confused people stood on the platform. "
+            "Every one of them had once been a passenger."
         ),
 
         "final_punch": (
-            "The doors opened. "
-            "The conductor leaned closer and whispered, "
+            "The conductor leaned close and whispered, "
             "'People think forgetting makes pain disappear.' "
             "'It doesn't.' "
             "'It only makes you forget why you're hurting.' "
-            "Then the doors closed, "
-            "and the train continued into the dark."
+            "The doors slammed shut. "
+            "And the train continued deeper into the darkness."
         ),
 
         "has_next_part": False,
     },
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # FANTASY
-    # --------------------------------------------------------
+    # ========================================================
 
     {
+        "story_id": "lying_king",
+        "part": 1,
         "category": "fantasy",
 
         "title_hook":
             "The King Who Could Hear Every Lie",
 
         "topic":
-            "a king cursed with the ability to hear lies",
+            "a king cursed to hear lies",
 
         "main_figure":
-            "a powerful young king wearing dark royal armor",
+            "a young king wearing dark royal armor",
 
         "setting":
-            "a giant medieval fantasy kingdom",
+            "a vast medieval fantasy kingdom and royal palace",
 
         "mood":
-            "dark fantasy, psychological, dramatic, royal",
+            "dark fantasy, psychological, royal, dramatic",
 
         "opening": (
-            "The king had a gift no ruler should ever have. "
-            "Whenever somebody lied to him, "
-            "he heard a scream. "
+            "The king possessed one gift no ruler should ever have. "
+            "Whenever somebody lied to him, he heard a scream. "
             "At first, he loved it. "
-            "A merchant said, 'My prices are fair.' "
+            "A merchant said his prices were fair. "
             "Scream. "
-            "A general said, 'My soldiers adore you.' "
+            "A general claimed every soldier adored him. "
             "Scream. "
-            "Even his own advisers couldn't fool him."
+            "No adviser could deceive him."
         ),
 
         "conflict": (
-            "Soon, the king trusted nobody. "
+            "Soon, the gift became an obsession. "
             "Servants were punished. "
             "Friends were banished. "
             "Ministers were imprisoned. "
-            "His wife finally begged him to stop. "
-            "'Not every lie is meant to hurt you.' "
-            "The king asked, "
+            "Eventually his wife begged him to stop. "
+            "The king looked at her and asked, "
             "'Do you still love me?' "
             "She answered yes. "
-            "Silence. "
-            "For the first time in months, no scream."
+            "For the first time in months, there was complete silence."
         ),
 
         "escalation": (
             "That should have comforted him. "
-            "Instead, it terrified him. "
-            "Because the next morning she disappeared. "
-            "The king became obsessed. "
-            "He questioned everyone in the palace. "
+            "Instead, it frightened him. "
+            "The following morning, his wife disappeared. "
+            "The king interrogated the entire palace. "
             "Scream after scream filled his head. "
-            "Finally, an old prisoner laughed at him. "
-            "'You still don't understand your curse.'"
+            "Finally, an old prisoner began laughing. "
+            "The king demanded to know why. "
+            "The prisoner replied, "
+            "'Because you still don't understand your curse.'"
         ),
 
         "dramatic_reveal": (
-            "The king demanded an explanation. "
             "The prisoner pointed toward a mirror. "
-            "'It doesn't reveal lies told to you.' "
-            "'It reveals lies you choose to believe.' "
-            "The king stared at himself. "
-            "Then he whispered, "
+            "'Your gift doesn't reveal every lie people tell.' "
+            "'It reveals lies you desperately want to believe.' "
+            "The king stared at his reflection. "
+            "He whispered, "
             "'My people love me.' "
-            "A scream exploded through the room. "
-            "He tried again. "
+            "A scream exploded through the chamber. "
+            "Then he said, "
             "'I am a good king.' "
             "The scream became unbearable."
         ),
 
         "final_punch": (
-            "Then he finally asked the question he'd avoided for years. "
+            "Finally he asked the question he'd avoided. "
             "'Did my wife leave because she stopped loving me?' "
             "Silence. "
-            "And that silence hurt more than every scream combined. "
+            "That silence hurt more than every scream combined. "
             "She had loved him. "
-            "She had simply become afraid of the man he had become."
+            "She had simply become terrified of the man he had become."
         ),
 
         "has_next_part": False,
     },
 
-    # --------------------------------------------------------
-    # INDIAN FOLKTALE
-    # --------------------------------------------------------
+
+    # ========================================================
+    # INDIAN FOLKTALE — PART 1
+    # ========================================================
 
     {
+        "story_id": "unlocked_village",
+        "part": 1,
         "category": "indian_folktale",
 
         "title_hook":
             "The Village Where Nobody Locked Their Doors",
 
         "topic":
-            "a village protected by a mysterious night visitor",
+            "a village with a mysterious night visitor",
 
         "main_figure":
-            "a skeptical young traveler",
+            "a skeptical young Indian traveler",
 
         "setting":
-            "an isolated old Indian village surrounded by forest",
+            "an isolated old Indian village surrounded by dense forest",
 
         "mood":
-            "Indian folklore, eerie, mysterious, atmospheric",
+            "Indian folklore, eerie, atmospheric, suspenseful",
 
         "opening": (
-            "A traveler reached a tiny village just before sunset. "
-            "Something immediately felt strange. "
+            "A traveler reached a tiny village shortly before sunset. "
+            "Something immediately felt wrong. "
             "Not one house had a lock. "
-            "Not even the jewellery shop. "
+            "Even the jewellery shop stood completely unsecured. "
             "He asked an old shopkeeper, "
             "'Aren't you afraid of thieves?' "
-            "The old man smiled. "
+            "The old man smiled strangely. "
             "'Thieves don't survive the night here.'"
         ),
 
         "conflict": (
-            "The traveler assumed he was joking. "
-            "That evening, villagers gave him one warning. "
-            "'After midnight, if someone knocks three times, don't open the door.' "
+            "The traveler assumed the man was joking. "
+            "Before nightfall, villagers gave him only one warning. "
+            "'After midnight, if someone knocks three times, do not open the door.' "
             "He laughed. "
-            "Then midnight came. "
+            "Then midnight arrived. "
             "Knock. "
             "Knock. "
             "Knock. "
-            "A woman's voice whispered from outside, "
-            "'Please, let me in.'"
+            "A frightened woman's voice whispered from outside, "
+            "'Please... let me in.'"
         ),
 
         "escalation": (
-            "He looked through a crack in the window. "
-            "A woman stood outside wearing red bridal clothes. "
+            "The traveler looked through a crack in the window. "
+            "A woman wearing red bridal clothes stood outside. "
             "Her feet were covered in mud. "
             "She looked terrified. "
             "Then she whispered his name. "
             "The traveler froze. "
             "Nobody in the village knew his name. "
-            "The knocking started again. "
-            "This time, from the wall behind him."
+            "Suddenly the knocking started again. "
+            "But this time... it came from the wall behind him."
         ),
 
         "dramatic_reveal": (
             "At sunrise, everything stopped. "
-            "The traveler rushed to the shopkeeper. "
-            "The old man listened quietly. "
-            "Then he pulled out a faded photograph. "
-            "The same bride stood in it. "
-            "The picture was almost eighty years old. "
-            "'She wasn't trying to enter your room,' the old man said. "
+            "The traveler rushed to the old shopkeeper. "
+            "The man quietly pulled out a faded photograph. "
+            "The same bride was standing in it. "
+            "The photograph was almost eighty years old. "
+            "The traveler asked why the dead woman wanted inside. "
+            "The old man shook his head. "
+            "'She wasn't trying to enter your room.' "
             "'She was warning you.'"
         ),
 
         "final_punch": (
-            "The traveler slowly turned around. "
-            "Behind the house were deep footprints. "
-            "Not coming toward his window, "
-            "but leading away from it. "
+            "The traveler slowly returned to the house. "
+            "Behind it were enormous muddy footprints. "
+            "But they weren't coming toward his window. "
+            "They were leading away from the house. "
             "Something else had been inside the room with him all night."
         ),
 
         "has_next_part": True,
     },
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # INDIAN MYTHOLOGY
-    # --------------------------------------------------------
+    # ========================================================
 
     {
+        "story_id": "bhishma_death",
+        "part": 1,
         "category": "indian_mythology",
 
         "title_hook":
@@ -305,56 +300,55 @@ STORIES = [
             "Bhishma and the boon of choosing the time of his death",
 
         "main_figure":
-            "Bhishma, an ancient warrior lying upon a bed of arrows",
+            "Bhishma, an elderly legendary Indian warrior",
 
         "setting":
-            "the battlefield of Kurukshetra",
+            "the battlefield of Kurukshetra during the Mahabharata war",
 
         "mood":
             "epic, tragic, powerful, mythological",
 
         "opening": (
-            "Imagine being given one impossible power. "
+            "Imagine being given an impossible power. "
             "Not immortality. "
             "Something stranger. "
             "The ability to decide when you die. "
             "According to the Mahabharata, Bhishma possessed exactly that boon. "
-            "And during the great war of Kurukshetra, "
-            "that power created one of its most unforgettable moments."
+            "And during the war of Kurukshetra, "
+            "it created one of the epic's most unforgettable moments."
         ),
 
         "conflict": (
             "Bhishma was almost impossible to defeat. "
-            "He was older than most warriors fighting against him. "
-            "Yet even armies struggled to stop him. "
+            "He was older than most warriors around him, "
+            "yet entire forces struggled to stop him. "
             "Eventually, Arjuna's arrows brought him down. "
-            "But Bhishma didn't fall onto the earth. "
-            "So many arrows pierced his body that they held him above the ground, "
-            "forming a bed beneath him."
+            "But Bhishma never touched the ground. "
+            "So many arrows pierced his body that they formed a bed beneath him."
         ),
 
         "escalation": (
             "Everyone expected him to die. "
             "He didn't. "
             "Days passed. "
-            "Bhishma remained alive on that bed of arrows. "
+            "Bhishma remained alive on the bed of arrows. "
             "He was wounded. "
             "He was suffering. "
             "But because of his boon, "
-            "death could not take him until he allowed it."
+            "death could not take him until he permitted it."
         ),
 
         "dramatic_reveal": (
-            "And Bhishma was waiting for something. "
-            "In Hindu tradition, he waited for Uttarayana, "
-            "the period associated with the sun's northward journey. "
-            "Only when he believed the right moment had arrived "
-            "did he finally choose to let go."
+            "Bhishma was waiting for something. "
+            "According to tradition, he waited for Uttarayana, "
+            "the period connected with the sun's northward journey. "
+            "Only when the moment he considered auspicious finally arrived "
+            "did Bhishma choose to release his life."
         ),
 
         "final_punch": (
-            "Most warriors spend their final battle trying desperately not to die. "
-            "Bhishma's final battle was completely different. "
+            "Most warriors spend their final battle desperately avoiding death. "
+            "Bhishma's final battle was different. "
             "Death was already waiting beside him. "
             "And according to the epic, "
             "death itself had to wait for Bhishma."
@@ -363,11 +357,14 @@ STORIES = [
         "has_next_part": False,
     },
 
-    # --------------------------------------------------------
-    # ROMANCE / DRAMA
-    # --------------------------------------------------------
+
+    # ========================================================
+    # ROMANCE
+    # ========================================================
 
     {
+        "story_id": "future_messages",
+        "part": 1,
         "category": "romance_drama",
 
         "title_hook":
@@ -377,41 +374,41 @@ STORIES = [
             "scheduled messages from a lost love",
 
         "main_figure":
-            "a young man grieving the woman he loved",
+            "Arjun, a young man grieving the woman he loved",
 
         "setting":
-            "a modern city apartment during rainy nights",
+            "a modern Indian city, rainy apartment and old cafe",
 
         "mood":
-            "emotional, bittersweet, mysterious",
+            "emotional, bittersweet, mysterious, cinematic",
 
         "opening": (
-            "Five years after Mira died, Arjun's phone buzzed. "
-            "The message was from her number. "
-            "It said, "
+            "Five years after Mira died, Arjun's phone suddenly buzzed. "
+            "The message came from her old number. "
+            "It read, "
             "'You still order coffee without sugar, don't you?' "
-            "He nearly dropped the phone. "
-            "That number had been disconnected for years."
+            "Arjun nearly dropped the phone. "
+            "The number had been disconnected for years."
         ),
 
         "conflict": (
-            "The next week, another message arrived. "
+            "One week later, another message arrived. "
             "'Stop keeping my blue sweater.' "
             "Then another. "
             "'Your mother still worries when you skip dinner.' "
-            "Nobody else knew these things. "
-            "Arjun became convinced that somehow, "
+            "Nobody else knew those details. "
+            "Arjun slowly became convinced that somehow, "
             "Mira was still reaching him."
         ),
 
         "escalation": (
-            "For months, the messages continued. "
-            "Sometimes funny. "
+            "For months the messages continued. "
+            "Sometimes they were funny. "
             "Sometimes painfully specific. "
             "Then one night a message appeared. "
-            "'Tomorrow, go to our old café. Table seven.' "
+            "'Tomorrow. Our old cafe. Table seven.' "
             "Arjun barely slept. "
-            "The next evening he arrived early. "
+            "The following evening he arrived early. "
             "Someone was already sitting there."
         ),
 
@@ -421,67 +418,71 @@ STORIES = [
             "Before Mira died, she had written hundreds of messages "
             "and scheduled them years into the future. "
             "She knew Arjun would struggle to move on. "
-            "So she had created a goodbye that would take years to finish."
+            "So she had designed a goodbye that would take years to finish."
         ),
 
         "final_punch": (
-            "Arjun looked at the final scheduled message. "
+            "Arjun opened Mira's final scheduled message. "
             "It read, "
-            "'If you're reading this, you've survived the part where you thought you couldn't.' "
-            "'Now please stop waiting for me.' "
+            "'If you're reading this, you've survived the part "
+            "where you thought you couldn't.' "
+            "'Now stop waiting for me.' "
             "'Go live enough for both of us.'"
         ),
 
         "has_next_part": False,
     },
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # COMEDY
-    # --------------------------------------------------------
+    # ========================================================
 
     {
+        "story_id": "lucky_thief",
+        "part": 1,
         "category": "comedy",
 
         "title_hook":
             "The Thief Who Accidentally Became Prime Minister",
 
         "topic":
-            "an incompetent thief mistaken for a brilliant strategist",
+            "a terrible thief mistaken for a brilliant strategist",
 
         "main_figure":
-            "a nervous but strangely lucky thief",
+            "Milo, a nervous young thief",
 
         "setting":
-            "a ridiculous medieval fantasy kingdom",
+            "a chaotic medieval fantasy kingdom",
 
         "mood":
             "fast, funny, absurd, energetic",
 
         "opening": (
-            "A thief named Milo broke into the royal palace for one reason. "
+            "Milo broke into the royal palace for exactly one reason. "
             "Gold. "
             "Nothing heroic. "
             "Nothing complicated. "
-            "Unfortunately, he chose the worst possible room to hide in, "
-            "the king's military strategy chamber."
+            "Unfortunately, he chose the worst possible room to hide in. "
+            "The king's military strategy chamber."
         ),
 
         "conflict": (
             "Guards burst through the door. "
-            "Milo panicked and pointed randomly at a map. "
+            "Milo panicked and pointed randomly at a military map. "
             "'Attack there!' "
             "The king walked in at exactly that moment. "
-            "Everyone went silent. "
-            "The king stared at the map. "
-            "'Brilliant,' he whispered. "
-            "Milo had accidentally pointed at the enemy army's weakest position."
+            "Everyone became silent. "
+            "The king stared at the map and whispered, "
+            "'Brilliant.' "
+            "Milo had accidentally pointed at the enemy's weakest position."
         ),
 
         "escalation": (
             "By morning, Milo had been promoted to royal adviser. "
             "He tried to resign. "
-            "The king thought it was humility. "
-            "He tried giving terrible advice. "
+            "The king mistook it for humility. "
+            "Milo deliberately gave terrible advice. "
             "It somehow worked. "
             "'Move the army left!' "
             "A bridge collapsed on the right. "
@@ -490,46 +491,49 @@ STORIES = [
         ),
 
         "dramatic_reveal": (
-            "Within a month, people were calling Milo the greatest strategist alive. "
-            "Then the king announced, "
-            "'I am retiring.' "
-            "Milo smiled politely until the king continued. "
+            "Within a month, everyone called Milo the greatest strategist alive. "
+            "Then the king announced his retirement. "
+            "Milo smiled politely. "
+            "Until the king continued, "
             "'And you shall replace me.' "
             "For the first time in his criminal career, "
-            "Milo genuinely wanted to be arrested."
+            "Milo genuinely wanted the guards to arrest him."
         ),
 
         "final_punch": (
             "Years later, historians called him Milo the Brilliant. "
             "His greatest secret never became public. "
-            "He hadn't predicted a single thing correctly in his entire life. "
+            "He hadn't correctly predicted a single event in his entire life. "
             "He was simply the luckiest idiot the kingdom had ever seen."
         ),
 
         "has_next_part": False,
     },
 
-    # --------------------------------------------------------
-    # INDIAN LEGEND
-    # --------------------------------------------------------
+
+    # ========================================================
+    # INDIAN LEGEND — PART 1
+    # ========================================================
 
     {
+        "story_id": "black_door_palace",
+        "part": 1,
         "category": "indian_legend",
 
         "title_hook":
             "The Palace Room That Was Never Opened",
 
         "topic":
-            "a sealed royal chamber hiding a strange secret",
+            "a forbidden royal chamber containing a supernatural mirror",
 
         "main_figure":
-            "a young prince investigating an abandoned palace chamber",
+            "a young Indian prince wearing dark traditional royal clothing",
 
         "setting":
-            "an ancient Indian hill palace during a thunderstorm",
+            "an ancient Indian hill palace during a violent thunderstorm",
 
         "mood":
-            "royal mystery, eerie, suspenseful",
+            "royal mystery, eerie, suspenseful, supernatural",
 
         "opening": (
             "For generations, one room in the palace remained locked. "
@@ -542,41 +546,41 @@ STORIES = [
 
         "conflict": (
             "Naturally, the king's youngest son became obsessed with it. "
-            "One stormy night, he stole the key. "
-            "The door opened surprisingly easily. "
-            "Inside was almost nothing. "
-            "A chair. "
-            "A giant mirror. "
-            "And hundreds of names carved into the wall."
+            "One stormy night, the prince stole the key. "
+            "The black door opened surprisingly easily. "
+            "Inside were only three things. "
+            "A wooden chair. "
+            "A giant antique mirror. "
+            "And hundreds of names carved into the stone wall."
         ),
 
         "escalation": (
             "The prince stepped closer. "
-            "Every name belonged to someone from his own family. "
+            "Every name belonged to somebody from his own family. "
             "Kings. Queens. Children. "
-            "And beside every name was a date. "
-            "Then he noticed the final line. "
-            "His own name was already there. "
-            "Beside it, tomorrow's date."
+            "Beside every name was a date. "
+            "Then the prince noticed the final line. "
+            "His own name was already carved into the wall. "
+            "Beside it was tomorrow's date."
         ),
 
         "dramatic_reveal": (
-            "He ran toward the door. "
+            "The prince ran for the door. "
             "It slammed shut. "
             "Then his reflection moved without him. "
-            "The reflection smiled and placed one finger against the glass. "
-            "Behind it stood dozens of people. "
+            "The reflection slowly smiled and placed one finger against the glass. "
+            "Behind it stood dozens of terrified people. "
             "Every missing member of the royal family "
             "was trapped inside the mirror."
         ),
 
         "final_punch": (
-            "The prince smashed the glass. "
-            "The room instantly became silent. "
-            "The next morning, guards finally opened the door. "
+            "The prince grabbed a metal candle stand and smashed the mirror. "
+            "The chamber instantly became silent. "
+            "The following morning, guards opened the black door. "
             "The prince was gone. "
             "But a new mirror stood against the wall. "
-            "And inside it, the prince was screaming."
+            "And inside it... the prince was screaming."
         ),
 
         "has_next_part": True,
@@ -585,112 +589,5 @@ STORIES = [
 
 
 # ============================================================
-# HISTORY FUNCTIONS
-# ============================================================
-
-def load_history():
-    if not HISTORY_FILE.exists():
-        return []
-
-    try:
-        data = json.loads(HISTORY_FILE.read_text(encoding="utf-8"))
-        return data if isinstance(data, list) else []
-    except Exception as error:
-        print("History load failed:", error)
-        return []
-
-
-def save_history(history):
-    HISTORY_FILE.write_text(
-        json.dumps(history, indent=2, ensure_ascii=False),
-        encoding="utf-8"
-    )
-
-
-def fingerprint(story):
-    source = f"{story['category']}|{story['topic']}|{story['title_hook']}"
-    return hashlib.sha256(source.encode("utf-8")).hexdigest()
-
-
-def choose_story(history):
-    category = random.choice(CATEGORIES)
-
-    used = {
-        item.get("fingerprint")
-        for item in history
-        if isinstance(item, dict)
-    }
-
-    available = [
-        story
-        for story in STORIES
-        if story["category"] == category
-        and fingerprint(story) not in used
-    ]
-
-    if not available:
-        available = [
-            story
-            for story in STORIES
-            if story["category"] == category
-        ]
-
-    if not available:
-        raise RuntimeError(f"No stories available for {category}")
-
-    return random.choice(available)
-
-
-def build_story(source):
-    story = dict(source)
-
-    if story.get("has_next_part", False):
-        story["final_punch"] += (
-            " But this story isn't over. Part two continues next."
-        )
-
-    story["screenplay"] = " ".join([
-        story["title_hook"] + ".",
-        story["opening"],
-        story["conflict"],
-        story["escalation"],
-        story["dramatic_reveal"],
-        story["final_punch"],
-    ])
-
-    story["fingerprint"] = fingerprint(story)
-
-    return story
-
-
-def main():
-    print("Story generator started")
-
-    history = load_history()
-    story = build_story(choose_story(history))
-
-    OUTPUT_FILE.write_text(
-        json.dumps(story, indent=2, ensure_ascii=False),
-        encoding="utf-8"
-    )
-
-    if not OUTPUT_FILE.exists():
-        raise RuntimeError("story.json was not created")
-
-    print("story.json created successfully")
-    print("Category:", story["category"])
-    print("Title:", story["title_hook"])
-    print("Words:", len(story["screenplay"].split()))
-
-    history.append({
-        "title_hook": story["title_hook"],
-        "topic": story["topic"],
-        "category": story["category"],
-        "fingerprint": story["fingerprint"],
-    })
-
-    save_history(history[-100:])
-
-
-if __name__ == "__main__":
-    main()
+# PART TWO STORIES
+# =====================================
