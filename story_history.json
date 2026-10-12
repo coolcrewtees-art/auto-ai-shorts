@@ -279,5 +279,13 @@
     "topic": "a sealed royal chamber hiding a strange secret",
     "category": "indian_legend",
     "fingerprint": "f777c72c5cbe1d436594db20f91ee4c78457a8c34ad756f576101b394bddbf86"
+  },
+  {
+    "story_id": "lying_king",
+    "part": 1,
+    "category": "fantasy",
+    "title_hook": "The King Who Could Hear Every Lie",
+    "fingerprint": "884aee20a917dfcb11e7e2c7bef93e4253ee460fa8aad6c4910fa2a539d6628c",
+    "next_part_pending": false
   }
 ]
