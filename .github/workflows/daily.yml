@@ -90,7 +90,14 @@ jobs:
 
       - name: Generate unique story
         run: |
-          python generate_story.py
+          echo "Checking generate_story.py syntax..."
+          python -m py_compile generate_story.py
+
+          echo "Running story generator..."
+
+          python -c "import generate_story; print('Loaded:', generate_story.__file__); generate_story.main()"
+
+          echo "Story generator finished."
 
 
       - name: Check story output
@@ -116,6 +123,10 @@ jobs:
 
       - name: Generate visual scenes
         run: |
+          echo "Checking generate_scenes.py syntax..."
+          python -m py_compile generate_scenes.py
+
+          echo "Generating scenes..."
           python generate_scenes.py
 
 
@@ -172,6 +183,10 @@ jobs:
           rm -f voice.mp3
           rm -f voice_timing.json
 
+          echo "Checking generate_voice.py syntax..."
+          python -m py_compile generate_voice.py
+
+          echo "Generating narration..."
           python generate_voice.py
 
 
@@ -216,6 +231,10 @@ jobs:
           rm -rf images
           mkdir -p images
 
+          echo "Checking generate_images.py syntax..."
+          python -m py_compile generate_images.py
+
+          echo "Generating images..."
           python generate_images.py
 
 
@@ -246,6 +265,10 @@ jobs:
           rm -f captions.ass
           rm -f final_short.mp4
 
+          echo "Checking make_video.py syntax..."
+          python -m py_compile make_video.py
+
+          echo "Creating final short..."
           python make_video.py
 
 
@@ -286,7 +309,7 @@ jobs:
 
 
       # ======================================================
-      # UPLOAD ARTIFACTS
+      # ARTIFACTS
       # ======================================================
 
       - name: Upload final Short
