@@ -591,3 +591,66 @@ STORIES = [
 # ============================================================
 # PART TWO STORIES
 # =====================================
+
+
+def main():
+
+    history = load_history()
+
+    pending = get_pending_part_two(history)
+
+    if pending is not None:
+        selected = pending
+        print("Generating guaranteed Part 2")
+    else:
+        selected = choose_random_story(history)
+        print("Generating new random story")
+
+    story = build_story(selected)
+
+    OUTPUT_FILE.write_text(
+        json.dumps(
+            story,
+            indent=2,
+            ensure_ascii=False
+        ),
+        encoding="utf-8"
+    )
+
+    if not OUTPUT_FILE.exists():
+        raise RuntimeError("story.json was not created")
+
+    if OUTPUT_FILE.stat().st_size < 100:
+        raise RuntimeError("story.json is unexpectedly small")
+
+    word_count = len(
+        story["screenplay"].split()
+    )
+
+    print("Story:", story["title_hook"])
+    print("Part:", story["part"])
+    print("Words:", word_count)
+
+    history.append({
+        "story_id": story["story_id"],
+        "part": story["part"],
+        "category": story["category"],
+        "title_hook": story["title_hook"],
+        "fingerprint": story["fingerprint"],
+        "next_part_pending": bool(
+            story.get("has_next_part", False)
+        ),
+    })
+
+    save_history(history[-100:])
+
+    if story.get("has_next_part", False):
+        print("Next workflow run WILL generate Part 2.")
+    else:
+        print("No continuation pending.")
+
+    print("story.json created successfully")
+
+
+if __name__ == "__main__":
+    main()
