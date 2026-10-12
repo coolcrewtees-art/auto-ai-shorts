@@ -5,14 +5,19 @@ from pathlib import Path
 
 
 # ============================================================
-# SETTINGS
+# FILES
 # ============================================================
 
 HISTORY_FILE = Path("story_history.json")
 OUTPUT_FILE = Path("story.json")
 
-MIN_WORDS = 185
-TARGET_MAX_WORDS = 240
+
+# ============================================================
+# STORY SETTINGS
+# ============================================================
+
+MIN_WORDS = 180
+TARGET_MAX_WORDS = 250
 
 
 CATEGORIES = [
@@ -360,7 +365,7 @@ STORIES = [
     },
 
     # ========================================================
-    # ROMANCE / DRAMA
+    # ROMANCE DRAMA
     # ========================================================
 
     {
@@ -581,7 +586,7 @@ STORIES = [
 
 
 # ============================================================
-# LOAD HISTORY
+# HISTORY
 # ============================================================
 
 def load_history():
@@ -590,23 +595,17 @@ def load_history():
         return []
 
     try:
-        data = json.loads(
-            HISTORY_FILE.read_text(
-                encoding="utf-8"
-            )
+
+        raw = HISTORY_FILE.read_text(
+            encoding="utf-8"
         )
+
+        data = json.loads(raw)
 
         if isinstance(data, list):
             return data
 
     except Exception as error:
+
         print(
-            "Could not read story history:",
-            error
-        )
-
-    return []
-
-
-# ============================================================
-# STORY F
+            "History could not be lo
