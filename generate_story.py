@@ -1,15 +1,24 @@
+import hashlib
 import json
 import random
-import hashlib
+
 from pathlib import Path
 
 
-HISTORY_FILE = Path("story_history.json")
+# ============================================================
+# FILES
+# ============================================================
+
 OUTPUT_FILE = Path("story.json")
 
-MIN_WORDS = 175
-MAX_WORDS = 260
+HISTORY_FILE = Path(
+    "story_history.json"
+)
 
+
+# ============================================================
+# CATEGORIES
+# ============================================================
 
 CATEGORIES = [
     "indian_mythology",
@@ -23,95 +32,57 @@ CATEGORIES = [
 
 
 # ============================================================
-# PART ONE STORIES
+# STORY POOL
+#
+# Part 1 stories only.
 # ============================================================
 
 STORIES = [
 
+
     # ========================================================
-    # SUPERNATURAL
+    # SUPERNATURAL / MYSTERY
     # ========================================================
 
     {
         "story_id": "memory_train",
+
         "part": 1,
-        "category": "supernatural_mystery",
+
+        "has_next_part": False,
+
+        "category":
+            "supernatural_mystery",
 
         "title_hook":
             "The Train That Charged Passengers With Memories",
 
         "topic":
-            "a mysterious train where memories are used as fare",
+            "A supernatural train takes memories instead of money.",
 
         "main_figure":
-            "Rohan, a young Indian man traveling alone at night",
+            "a young Indian man named Aarav wearing a dark jacket",
 
         "setting":
-            "an endless midnight train traveling through a dark surreal landscape",
+            "an impossible midnight train moving through empty darkness",
 
         "mood":
-            "unsettling, mysterious, emotional, cinematic",
+            "eerie, emotional, mysterious",
 
-        "opening": (
-            "Rohan missed the last normal train home. "
-            "Then, at exactly midnight, another train arrived. "
-            "No number. No destination. "
-            "The doors opened anyway. "
-            "Inside, every passenger sat completely silent. "
-            "Rohan took a seat. "
-            "A conductor approached and asked for his ticket. "
-            "Rohan reached for his wallet. "
-            "The conductor smiled. "
-            "'We don't take money here.'"
-        ),
+        "opening":
+            "Aarav boarded the last train home and immediately noticed something strange. There was no ticket collector, no destination board, and every passenger sat completely silent. Then a conductor appeared and told him that this train did not accept money.",
 
-        "conflict": (
-            "Instead, the conductor touched Rohan's forehead. "
-            "Instantly, Rohan forgot his tenth birthday. "
-            "The conductor whispered, "
-            "'One memory. One station.' "
-            "Rohan thought it was some bizarre trick. "
-            "Then the train stopped. "
-            "A passenger stood, surrendered another memory, "
-            "and walked through the doors into complete darkness."
-        ),
+        "conflict":
+            "At the first station, the conductor asked Aarav to pay with one memory. Aarav laughed until he suddenly forgot his tenth birthday. At the next station, he lost the memory of his first kiss. Then he forgot the sound of his father's voice.",
 
-        "escalation": (
-            "Station after station, Rohan kept paying. "
-            "His first day of school vanished. "
-            "Then his first kiss. "
-            "Then the sound of his father's voice. "
-            "Rohan finally shouted for the train to stop. "
-            "The conductor calmly said, "
-            "'You chose to keep traveling.' "
-            "Rohan looked around. "
-            "The other passengers were not silent because they were frightened. "
-            "They had forgotten how to speak."
-        ),
+        "escalation":
+            "Aarav looked around and finally understood why the other passengers were silent. Some had forgotten how to speak. Others stared at photographs but could no longer recognize the people inside them. The train kept stopping, and every station demanded another memory.",
 
-        "dramatic_reveal": (
-            "Finally, the train reached the last station. "
-            "The conductor demanded one final memory. "
-            "Rohan searched his mind. "
-            "Only his mother's face remained. "
-            "He refused to surrender it. "
-            "The conductor smiled and said, "
-            "'Then you cannot leave.' "
-            "Rohan looked outside. "
-            "Hundreds of confused people stood on the platform. "
-            "Every one of them had once been a passenger."
-        ),
+        "dramatic_reveal":
+            "At the final station, the conductor asked for the memory Aarav valued most. Aarav saw his mother's face in his mind and refused. The doors locked. The lights went out. Then the passengers began whispering that nobody had ever refused the final payment.",
 
-        "final_punch": (
-            "The conductor leaned close and whispered, "
-            "'People think forgetting makes pain disappear.' "
-            "'It doesn't.' "
-            "'It only makes you forget why you're hurting.' "
-            "The doors slammed shut. "
-            "And the train continued deeper into the darkness."
-        ),
-
-        "has_next_part": False,
+        "final_punch":
+            "Aarav woke up at home the next morning. His mother hugged him, crying with relief. He hugged her back politely and asked, Who are you?"
     },
 
 
@@ -121,166 +92,89 @@ STORIES = [
 
     {
         "story_id": "lying_king",
+
         "part": 1,
-        "category": "fantasy",
+
+        "has_next_part": False,
+
+        "category":
+            "fantasy",
 
         "title_hook":
             "The King Who Could Hear Every Lie",
 
         "topic":
-            "a king cursed to hear lies",
+            "A king gains the ability to hear lies as screams.",
 
         "main_figure":
-            "a young king wearing dark royal armor",
+            "a young king wearing black and gold royal clothing",
 
         "setting":
-            "a vast medieval fantasy kingdom and royal palace",
+            "a vast ancient royal kingdom and stone palace",
 
         "mood":
-            "dark fantasy, psychological, royal, dramatic",
+            "dark fantasy, royal, unsettling",
 
-        "opening": (
-            "The king possessed one gift no ruler should ever have. "
-            "Whenever somebody lied to him, he heard a scream. "
-            "At first, he loved it. "
-            "A merchant said his prices were fair. "
-            "Scream. "
-            "A general claimed every soldier adored him. "
-            "Scream. "
-            "No adviser could deceive him."
-        ),
+        "opening":
+            "After surviving an assassination attempt, a young king woke with a strange gift. Every time someone lied near him, he heard a painful scream that nobody else could hear. At first, he thought the power would make him the greatest ruler alive.",
 
-        "conflict": (
-            "Soon, the gift became an obsession. "
-            "Servants were punished. "
-            "Friends were banished. "
-            "Ministers were imprisoned. "
-            "Eventually his wife begged him to stop. "
-            "The king looked at her and asked, "
-            "'Do you still love me?' "
-            "She answered yes. "
-            "For the first time in months, there was complete silence."
-        ),
+        "conflict":
+            "Merchants lied about prices. Generals lied about victories. Ministers lied about loyalty. Even his closest friends lied about loving him. The screams followed him through every corridor of the palace until he trusted nobody.",
 
-        "escalation": (
-            "That should have comforted him. "
-            "Instead, it frightened him. "
-            "The following morning, his wife disappeared. "
-            "The king interrogated the entire palace. "
-            "Scream after scream filled his head. "
-            "Finally, an old prisoner began laughing. "
-            "The king demanded to know why. "
-            "The prisoner replied, "
-            "'Because you still don't understand your curse.'"
-        ),
+        "escalation":
+            "One evening, the queen told him she still loved him. The king heard a scream so violent that he ordered her imprisoned. The next morning she disappeared. Soon he was locking away anyone whose words caused the sound.",
 
-        "dramatic_reveal": (
-            "The prisoner pointed toward a mirror. "
-            "'Your gift doesn't reveal every lie people tell.' "
-            "'It reveals lies you desperately want to believe.' "
-            "The king stared at his reflection. "
-            "He whispered, "
-            "'My people love me.' "
-            "A scream exploded through the chamber. "
-            "Then he said, "
-            "'I am a good king.' "
-            "The scream became unbearable."
-        ),
+        "dramatic_reveal":
+            "An old prisoner finally asked the king to stand before a giant mirror. He said the curse did not scream when other people lied. It screamed whenever the king heard something he desperately wanted to believe.",
 
-        "final_punch": (
-            "Finally he asked the question he'd avoided. "
-            "'Did my wife leave because she stopped loving me?' "
-            "Silence. "
-            "That silence hurt more than every scream combined. "
-            "She had loved him. "
-            "She had simply become terrified of the man he had become."
-        ),
-
-        "has_next_part": False,
+        "final_punch":
+            "The king stared into the mirror and whispered, My people love me. For the first time, the scream came from inside his own mouth."
     },
 
 
     # ========================================================
-    # INDIAN FOLKTALE — PART 1
+    # INDIAN FOLKTALE
     # ========================================================
 
     {
         "story_id": "unlocked_village",
+
         "part": 1,
-        "category": "indian_folktale",
+
+        "has_next_part": True,
+
+        "category":
+            "indian_folktale",
 
         "title_hook":
             "The Village Where Nobody Locked Their Doors",
 
         "topic":
-            "a village with a mysterious night visitor",
+            "A peaceful village hides a supernatural reason for leaving every door unlocked.",
 
         "main_figure":
-            "a skeptical young Indian traveler",
+            "a young traveler wearing simple traditional Indian clothing",
 
         "setting":
-            "an isolated old Indian village surrounded by dense forest",
+            "an isolated old Indian village surrounded by forest",
 
         "mood":
-            "Indian folklore, eerie, atmospheric, suspenseful",
+            "folk horror, mysterious, atmospheric",
 
-        "opening": (
-            "A traveler reached a tiny village shortly before sunset. "
-            "Something immediately felt wrong. "
-            "Not one house had a lock. "
-            "Even the jewellery shop stood completely unsecured. "
-            "He asked an old shopkeeper, "
-            "'Aren't you afraid of thieves?' "
-            "The old man smiled strangely. "
-            "'Thieves don't survive the night here.'"
-        ),
+        "opening":
+            "A traveler reached a tiny village just before sunset and noticed something impossible. Every house had a door, but none had a lock. Gold jewellery sat openly near windows, yet nobody seemed afraid of thieves.",
 
-        "conflict": (
-            "The traveler assumed the man was joking. "
-            "Before nightfall, villagers gave him only one warning. "
-            "'After midnight, if someone knocks three times, do not open the door.' "
-            "He laughed. "
-            "Then midnight arrived. "
-            "Knock. "
-            "Knock. "
-            "Knock. "
-            "A frightened woman's voice whispered from outside, "
-            "'Please... let me in.'"
-        ),
+        "conflict":
+            "When the traveler asked why, the villagers became nervous. An old woman warned him that doors were never locked after dark. She refused to explain further and simply told him to sleep with his door wide open.",
 
-        "escalation": (
-            "The traveler looked through a crack in the window. "
-            "A woman wearing red bridal clothes stood outside. "
-            "Her feet were covered in mud. "
-            "She looked terrified. "
-            "Then she whispered his name. "
-            "The traveler froze. "
-            "Nobody in the village knew his name. "
-            "Suddenly the knocking started again. "
-            "But this time... it came from the wall behind him."
-        ),
+        "escalation":
+            "That night the traveler heard slow footsteps outside. They stopped at every house. Something entered one home, crossed through it, exited from the back, and moved to the next. The footsteps eventually reached his room.",
 
-        "dramatic_reveal": (
-            "At sunrise, everything stopped. "
-            "The traveler rushed to the old shopkeeper. "
-            "The man quietly pulled out a faded photograph. "
-            "The same bride was standing in it. "
-            "The photograph was almost eighty years old. "
-            "The traveler asked why the dead woman wanted inside. "
-            "The old man shook his head. "
-            "'She wasn't trying to enter your room.' "
-            "'She was warning you.'"
-        ),
+        "dramatic_reveal":
+            "Terrified, the traveler slammed his door shut and locked it. The footsteps stopped outside immediately. Then someone knocked three times. A child's voice whispered from the other side, You weren't supposed to make it notice you.",
 
-        "final_punch": (
-            "The traveler slowly returned to the house. "
-            "Behind it were enormous muddy footprints. "
-            "But they weren't coming toward his window. "
-            "They were leading away from the house. "
-            "Something else had been inside the room with him all night."
-        ),
-
-        "has_next_part": True,
+        "final_punch":
+            "The traveler backed away from the door. Then he heard the same child's voice whisper again, this time from underneath his bed."
     },
 
 
@@ -290,147 +184,89 @@ STORIES = [
 
     {
         "story_id": "bhishma_death",
+
         "part": 1,
-        "category": "indian_mythology",
-
-        "title_hook":
-            "The Warrior Who Chose His Own Death",
-
-        "topic":
-            "Bhishma and the boon of choosing the time of his death",
-
-        "main_figure":
-            "Bhishma, an elderly legendary Indian warrior",
-
-        "setting":
-            "the battlefield of Kurukshetra during the Mahabharata war",
-
-        "mood":
-            "epic, tragic, powerful, mythological",
-
-        "opening": (
-            "Imagine being given an impossible power. "
-            "Not immortality. "
-            "Something stranger. "
-            "The ability to decide when you die. "
-            "According to the Mahabharata, Bhishma possessed exactly that boon. "
-            "And during the war of Kurukshetra, "
-            "it created one of the epic's most unforgettable moments."
-        ),
-
-        "conflict": (
-            "Bhishma was almost impossible to defeat. "
-            "He was older than most warriors around him, "
-            "yet entire forces struggled to stop him. "
-            "Eventually, Arjuna's arrows brought him down. "
-            "But Bhishma never touched the ground. "
-            "So many arrows pierced his body that they formed a bed beneath him."
-        ),
-
-        "escalation": (
-            "Everyone expected him to die. "
-            "He didn't. "
-            "Days passed. "
-            "Bhishma remained alive on the bed of arrows. "
-            "He was wounded. "
-            "He was suffering. "
-            "But because of his boon, "
-            "death could not take him until he permitted it."
-        ),
-
-        "dramatic_reveal": (
-            "Bhishma was waiting for something. "
-            "According to tradition, he waited for Uttarayana, "
-            "the period connected with the sun's northward journey. "
-            "Only when the moment he considered auspicious finally arrived "
-            "did Bhishma choose to release his life."
-        ),
-
-        "final_punch": (
-            "Most warriors spend their final battle desperately avoiding death. "
-            "Bhishma's final battle was different. "
-            "Death was already waiting beside him. "
-            "And according to the epic, "
-            "death itself had to wait for Bhishma."
-        ),
 
         "has_next_part": False,
+
+        "category":
+            "indian_mythology",
+
+        "title_hook":
+            "The Warrior Who Chose the Moment of His Own Death",
+
+        "topic":
+            "The extraordinary boon of Bhishma from the Mahabharata.",
+
+        "main_figure":
+            "Bhishma, an elderly legendary Indian warrior with white hair and royal armor",
+
+        "setting":
+            "the battlefield of Kurukshetra in ancient India",
+
+        "mood":
+            "epic, tragic, spiritual",
+
+        "opening":
+            "Bhishma was not simply one of the greatest warriors of the Mahabharata. He carried an extraordinary boon called Iccha Mrityu, the power to choose the moment of his own death.",
+
+        "conflict":
+            "During the battle of Kurukshetra, Arjuna faced Bhishma with Shikhandi before him. Bhishma refused to raise his weapons against Shikhandi, allowing Arjuna's arrows to strike him again and again.",
+
+        "escalation":
+            "So many arrows pierced Bhishma that when he finally fell, his body never touched the ground. He rested upon a bed made entirely of arrows while warriors from both armies gathered around him.",
+
+        "dramatic_reveal":
+            "But Bhishma still did not die. Because of his boon, death could not take him until he allowed it. He chose to remain alive on the battlefield until the sun began its northward journey.",
+
+        "final_punch":
+            "For weeks Bhishma lay upon the arrows, teaching kings and warriors. Only when the moment he had chosen finally arrived did one of India's greatest warriors willingly release his life."
     },
 
 
     # ========================================================
-    # ROMANCE
+    # ROMANCE / DRAMA
     # ========================================================
 
     {
         "story_id": "future_messages",
+
         "part": 1,
-        "category": "romance_drama",
+
+        "has_next_part": False,
+
+        "category":
+            "romance_drama",
 
         "title_hook":
             "He Received Her Messages Five Years After She Died",
 
         "topic":
-            "scheduled messages from a lost love",
+            "A man begins receiving impossible messages from his dead girlfriend.",
 
         "main_figure":
-            "Arjun, a young man grieving the woman he loved",
+            "a young Indian man named Rohan wearing modern casual clothing",
 
         "setting":
-            "a modern Indian city, rainy apartment and old cafe",
+            "a modern Indian city, apartment rooms and quiet streets at night",
 
         "mood":
-            "emotional, bittersweet, mysterious, cinematic",
+            "romantic, melancholic, mysterious",
 
-        "opening": (
-            "Five years after Mira died, Arjun's phone suddenly buzzed. "
-            "The message came from her old number. "
-            "It read, "
-            "'You still order coffee without sugar, don't you?' "
-            "Arjun nearly dropped the phone. "
-            "The number had been disconnected for years."
-        ),
+        "opening":
+            "Five years after losing his girlfriend Maya in an accident, Rohan's phone buzzed at exactly midnight. The message was from Maya's old number. It simply said, Don't take the highway tomorrow.",
 
-        "conflict": (
-            "One week later, another message arrived. "
-            "'Stop keeping my blue sweater.' "
-            "Then another. "
-            "'Your mother still worries when you skip dinner.' "
-            "Nobody else knew those details. "
-            "Arjun slowly became convinced that somehow, "
-            "Mira was still reaching him."
-        ),
+        "conflict":
+            "Rohan assumed it was a cruel prank, but the next morning a major accident blocked the same highway. Another message arrived that night telling him to call his mother. Minutes after he called, she collapsed and he managed to get help in time.",
 
-        "escalation": (
-            "For months the messages continued. "
-            "Sometimes they were funny. "
-            "Sometimes painfully specific. "
-            "Then one night a message appeared. "
-            "'Tomorrow. Our old cafe. Table seven.' "
-            "Arjun barely slept. "
-            "The following evening he arrived early. "
-            "Someone was already sitting there."
-        ),
+        "escalation":
+            "The messages continued. Each one warned him about something that had not happened yet. Rohan tried calling the number, but it was disconnected. He visited the old phone company and learned that Maya's number had never been reassigned.",
 
-        "dramatic_reveal": (
-            "It was Mira's younger sister. "
-            "She placed an old laptop on the table. "
-            "Before Mira died, she had written hundreds of messages "
-            "and scheduled them years into the future. "
-            "She knew Arjun would struggle to move on. "
-            "So she had designed a goodbye that would take years to finish."
-        ),
+        "dramatic_reveal":
+            "Then one final message appeared. It said, Tomorrow you will meet me again. Rohan spent the entire day terrified until a little girl approached him at a railway station and handed him an old phone he instantly recognized as Maya's.",
 
-        "final_punch": (
-            "Arjun opened Mira's final scheduled message. "
-            "It read, "
-            "'If you're reading this, you've survived the part "
-            "where you thought you couldn't.' "
-            "'Now stop waiting for me.' "
-            "'Go live enough for both of us.'"
-        ),
-
-        "has_next_part": False,
+        "final_punch":
+            "The phone contained one unsent message dated five years earlier. Maya had written, If there is any way back to you, I promise I'll find it."
     },
 
 
@@ -440,177 +276,250 @@ STORIES = [
 
     {
         "story_id": "lucky_thief",
+
         "part": 1,
-        "category": "comedy",
+
+        "has_next_part": False,
+
+        "category":
+            "comedy",
 
         "title_hook":
             "The Thief Who Accidentally Became Prime Minister",
 
         "topic":
-            "a terrible thief mistaken for a brilliant strategist",
+            "A terrible thief repeatedly fails upward.",
 
         "main_figure":
-            "Milo, a nervous young thief",
+            "a nervous young thief wearing shabby dark clothes",
 
         "setting":
-            "a chaotic medieval fantasy kingdom",
+            "a fictional colourful kingdom filled with markets and royal buildings",
 
         "mood":
-            "fast, funny, absurd, energetic",
+            "fast, absurd, comedic",
 
-        "opening": (
-            "Milo broke into the royal palace for exactly one reason. "
-            "Gold. "
-            "Nothing heroic. "
-            "Nothing complicated. "
-            "Unfortunately, he chose the worst possible room to hide in. "
-            "The king's military strategy chamber."
-        ),
+        "opening":
+            "A thief named Kallu decided to rob the royal treasury. Unfortunately, he entered the wrong building and accidentally walked into a secret government meeting where everyone assumed he was the new economic adviser.",
 
-        "conflict": (
-            "Guards burst through the door. "
-            "Milo panicked and pointed randomly at a military map. "
-            "'Attack there!' "
-            "The king walked in at exactly that moment. "
-            "Everyone became silent. "
-            "The king stared at the map and whispered, "
-            "'Brilliant.' "
-            "Milo had accidentally pointed at the enemy's weakest position."
-        ),
+        "conflict":
+            "Kallu tried escaping, but every nonsense sentence he spoke was treated as genius. When he suggested hiding the treasury so thieves could not find it, the ministers called it revolutionary financial security.",
 
-        "escalation": (
-            "By morning, Milo had been promoted to royal adviser. "
-            "He tried to resign. "
-            "The king mistook it for humility. "
-            "Milo deliberately gave terrible advice. "
-            "It somehow worked. "
-            "'Move the army left!' "
-            "A bridge collapsed on the right. "
-            "'Don't attack today!' "
-            "A storm destroyed the enemy camp."
-        ),
+        "escalation":
+            "Within a week he became finance minister. He tried getting himself fired by proposing ridiculous ideas, but each disaster somehow improved the kingdom. Taxes became simpler. Corruption dropped. Even food prices fell by accident.",
 
-        "dramatic_reveal": (
-            "Within a month, everyone called Milo the greatest strategist alive. "
-            "Then the king announced his retirement. "
-            "Milo smiled politely. "
-            "Until the king continued, "
-            "'And you shall replace me.' "
-            "For the first time in his criminal career, "
-            "Milo genuinely wanted the guards to arrest him."
-        ),
+        "dramatic_reveal":
+            "The king finally announced that he was retiring and named Kallu as his successor. Kallu panicked and confessed that he was actually a thief who had entered the palace to steal gold.",
 
-        "final_punch": (
-            "Years later, historians called him Milo the Brilliant. "
-            "His greatest secret never became public. "
-            "He hadn't correctly predicted a single event in his entire life. "
-            "He was simply the luckiest idiot the kingdom had ever seen."
-        ),
-
-        "has_next_part": False,
+        "final_punch":
+            "The ministers applauded. They said it was the first honest statement any politician had made in years and promoted him immediately."
     },
 
 
     # ========================================================
-    # INDIAN LEGEND — PART 1
+    # INDIAN LEGEND
     # ========================================================
 
     {
         "story_id": "black_door_palace",
+
         "part": 1,
-        "category": "indian_legend",
+
+        "has_next_part": True,
+
+        "category":
+            "indian_legend",
 
         "title_hook":
             "The Palace Room That Was Never Opened",
 
         "topic":
-            "a forbidden royal chamber containing a supernatural mirror",
+            "A prince opens a forbidden room inside an ancient palace.",
 
         "main_figure":
             "a young Indian prince wearing dark traditional royal clothing",
 
         "setting":
-            "an ancient Indian hill palace during a violent thunderstorm",
+            "an enormous ancient Indian palace during a storm",
 
         "mood":
-            "royal mystery, eerie, suspenseful, supernatural",
+            "royal, supernatural, ominous",
 
-        "opening": (
-            "For generations, one room in the palace remained locked. "
-            "No servant cleaned it. "
-            "No guard entered it. "
-            "Even the king refused to explain why. "
-            "There was only one rule. "
-            "Never open the black door after sunset."
-        ),
+        "opening":
+            "For hundreds of years, one black door inside the royal palace had never been opened. Every ruler was given the same warning. The room behind it belonged to the dead, and no living person was permitted to enter.",
 
-        "conflict": (
-            "Naturally, the king's youngest son became obsessed with it. "
-            "One stormy night, the prince stole the key. "
-            "The black door opened surprisingly easily. "
-            "Inside were only three things. "
-            "A wooden chair. "
-            "A giant antique mirror. "
-            "And hundreds of names carved into the stone wall."
-        ),
+        "conflict":
+            "A young prince eventually decided the warning was nothing more than superstition. During a violent storm, he stole the ancient key and opened the black door while the palace guards slept.",
 
-        "escalation": (
-            "The prince stepped closer. "
-            "Every name belonged to somebody from his own family. "
-            "Kings. Queens. Children. "
-            "Beside every name was a date. "
-            "Then the prince noticed the final line. "
-            "His own name was already carved into the wall. "
-            "Beside it was tomorrow's date."
-        ),
+        "escalation":
+            "Inside he found no treasure. The chamber contained dozens of mirrors and names carved into the stone walls. Every name belonged to a member of the royal family who had disappeared without explanation.",
 
-        "dramatic_reveal": (
-            "The prince ran for the door. "
-            "It slammed shut. "
-            "Then his reflection moved without him. "
-            "The reflection slowly smiled and placed one finger against the glass. "
-            "Behind it stood dozens of terrified people. "
-            "Every missing member of the royal family "
-            "was trapped inside the mirror."
-        ),
+        "dramatic_reveal":
+            "The prince stepped toward the largest mirror. Instead of his own reflection, he saw his missing relatives standing inside it. Behind them stood another version of the prince, smiling directly at him.",
 
-        "final_punch": (
-            "The prince grabbed a metal candle stand and smashed the mirror. "
-            "The chamber instantly became silent. "
-            "The following morning, guards opened the black door. "
-            "The prince was gone. "
-            "But a new mirror stood against the wall. "
-            "And inside it... the prince was screaming."
-        ),
-
-        "has_next_part": True,
+        "final_punch":
+            "The guards heard the prince scream and rushed toward the chamber. When they opened the door, the room was empty. A new name had been carved into the wall."
     },
 ]
 
 
 # ============================================================
 # PART TWO STORIES
-# =====================================
+# ============================================================
+
+PART_TWOS = {
+
+
+    # ========================================================
+    # UNLOCKED VILLAGE PART 2
+    # ========================================================
+
+    "unlocked_village": {
+
+        "story_id":
+            "unlocked_village",
+
+        "part":
+            2,
+
+        "has_next_part":
+            False,
+
+        "category":
+            "indian_folktale",
+
+        "title_hook":
+            "The Thing That Was Already Inside the House",
+
+        "topic":
+            "The mystery of the unlocked village continues.",
+
+        "main_figure":
+            "the same young traveler wearing simple traditional Indian clothing",
+
+        "setting":
+            "the isolated old Indian village at night",
+
+        "mood":
+            "folk horror, dark, supernatural",
+
+        "opening":
+            "The traveler froze when the child's voice came from underneath his bed. He slowly looked down, expecting to see someone hiding there. But beneath the bed was completely empty.",
+
+        "conflict":
+            "Outside, the villagers began screaming for him to open the door. They warned him that locking the house had trapped the wandering thing inside with him. The traveler rushed toward the door, but something began walking behind him.",
+
+        "escalation":
+            "He turned and saw nothing. Then every family portrait on the wall changed at once. A pale stranger now stood behind each family, smiling. In the newest portrait, the traveler himself appeared inside the house.",
+
+        "dramatic_reveal":
+            "The old woman shouted through the window that the creature never entered houses at night. The open doors allowed it to leave. By locking the door, the traveler had prevented something that was already inside from escaping.",
+
+        "final_punch":
+            "The traveler unlocked the door and ran outside. At sunrise everyone was safe. But in the portrait inside the house, the stranger was gone and the traveler was still trapped inside the frame."
+    },
+
+
+    # ========================================================
+    # BLACK DOOR PALACE PART 2
+    # ========================================================
+
+    "black_door_palace": {
+
+        "story_id":
+            "black_door_palace",
+
+        "part":
+            2,
+
+        "has_next_part":
+            False,
+
+        "category":
+            "indian_legend",
+
+        "title_hook":
+            "The Prince Wasn't Trapped Alone",
+
+        "topic":
+            "The forbidden palace room reveals its true purpose.",
+
+        "main_figure":
+            "the same young Indian prince wearing dark traditional royal clothing",
+
+        "setting":
+            "the ancient Indian palace and supernatural mirror chamber",
+
+        "mood":
+            "royal, supernatural, terrifying",
+
+        "opening":
+            "The prince opened his eyes and found himself standing inside the mirror world. The palace looked almost identical, but the corridors were silent and every torch burned with cold blue fire.",
+
+        "conflict":
+            "His missing relatives emerged from the darkness. Some had been trapped for decades. Others had vanished centuries earlier. They told him the chamber was not a tomb. It was a prison.",
+
+        "escalation":
+            "The prince searched desperately for a way out. Every mirror showed the real palace on the other side. He could see guards searching the empty room, but no matter how hard he struck the glass, nobody could hear him.",
+
+        "dramatic_reveal":
+            "Then one relative revealed the truth. Every time someone entered the chamber, the mirror created a copy. The copy escaped into the real world while the original remained trapped forever.",
+
+        "final_punch":
+            "Outside the chamber, the guards finally found the prince walking calmly through the palace. But inside the mirror, the real prince watched his smiling copy sit upon the throne."
+    },
+}
+
+
+# ============================================================
+# HISTORY
+# ============================================================
 
 def load_history():
+
     if not HISTORY_FILE.exists():
+
         return []
 
+
     try:
+
         data = json.loads(
             HISTORY_FILE.read_text(
                 encoding="utf-8"
             )
         )
 
-        return data if isinstance(data, list) else []
 
-    except Exception as error:
-        print("History load failed:", error)
+        if isinstance(
+            data,
+            list
+        ):
+
+            return data
+
+
         return []
 
 
-def save_history(history):
+    except Exception as error:
+
+        print(
+            "Could not load story history:",
+            error
+        )
+
+        return []
+
+
+# ============================================================
+# SAVE HISTORY
+# ============================================================
+
+def save_history(
+    history
+):
+
     HISTORY_FILE.write_text(
         json.dumps(
             history,
@@ -621,150 +530,43 @@ def save_history(history):
     )
 
 
+# ============================================================
+# STORY FINGERPRINT
+# ============================================================
 
-def fingerprint(story):
-    source = (
-        f"{story['story_id']}|"
-        f"{story['part']}|"
-        f"{story['title_hook']}"
-    )
+def make_fingerprint(
+    story
+):
+
+    source = "|".join([
+        str(
+            story.get(
+                "story_id",
+                ""
+            )
+        ),
+
+        str(
+            story.get(
+                "part",
+                ""
+            )
+        ),
+
+        story.get(
+            "title_hook",
+            ""
+        ),
+    ])
+
 
     return hashlib.sha256(
-        source.encode("utf-8")
+        source.encode(
+            "utf-8"
+        )
     ).hexdigest()
 
 
-def get_pending_part_two(history):
-    if not history:
-        return None
-
-    latest = history[-1]
-
-    if not isinstance(latest, dict):
-        return None
-
-    if not latest.get("next_part_pending", False):
-        return None
-
-    story_id = latest.get("story_id")
-
-    if story_id in PART_TWOS:
-        return PART_TWOS[story_id]
-
-    return None
-
-
-def choose_random_story(history):
-    category = random.choice(CATEGORIES)
-
-    used = {
-        item.get("fingerprint")
-        for item in history
-        if isinstance(item, dict)
-    }
-
-    available = [
-        story
-        for story in STORIES
-        if story["category"] == category
-        and fingerprint(story) not in used
-    ]
-
-    if not available:
-        available = [
-            story
-            for story in STORIES
-            if story["category"] == category
-        ]
-
-    if not available:
-        raise RuntimeError("No story available")
-
-    return random.choice(available)
-
-
-def build_story(source):
-    story = dict(source)
-
-    if story.get("has_next_part", False):
-        story["final_punch"] += (
-            " But this story isn't over. "
-            "Part two is next."
-        )
-
-    story["screenplay"] = " ".join([
-        story["title_hook"] + ".",
-        story["opening"],
-        story["conflict"],
-        story["escalation"],
-        story["dramatic_reveal"],
-        story["final_punch"],
-    ])
-
-    story["fingerprint"] = fingerprint(story)
-
-    return story
-
-
-
-def main():
-
-    history = load_history()
-
-    pending = get_pending_part_two(history)
-
-    if pending is not None:
-        selected = pending
-        print("Generating guaranteed Part 2")
-    else:
-        selected = choose_random_story(history)
-        print("Generating new random story")
-
-    story = build_story(selected)
-
-    OUTPUT_FILE.write_text(
-        json.dumps(
-            story,
-            indent=2,
-            ensure_ascii=False
-        ),
-        encoding="utf-8"
-    )
-
-    if not OUTPUT_FILE.exists():
-        raise RuntimeError("story.json was not created")
-
-    if OUTPUT_FILE.stat().st_size < 100:
-        raise RuntimeError("story.json is unexpectedly small")
-
-    word_count = len(
-        story["screenplay"].split()
-    )
-
-    print("Story:", story["title_hook"])
-    print("Part:", story["part"])
-    print("Words:", word_count)
-
-    history.append({
-        "story_id": story["story_id"],
-        "part": story["part"],
-        "category": story["category"],
-        "title_hook": story["title_hook"],
-        "fingerprint": story["fingerprint"],
-        "next_part_pending": bool(
-            story.get("has_next_part", False)
-        ),
-    })
-
-    save_history(history[-100:])
-
-    if story.get("has_next_part", False):
-        print("Next workflow run WILL generate Part 2.")
-    else:
-        print("No continuation pending.")
-
-    print("story.json created successfully")
-
-
-if __name__ == "__main__":
-    main()
+# ============================================================
+# CHECK FOR REQUIRED PART TWO
+# =======================
