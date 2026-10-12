@@ -303,5 +303,13 @@
     "title_hook": "He Received Her Messages Five Years After She Died",
     "fingerprint": "8bb1b4754cf4c83f66853eac069ce84c4e563191a8f025da604ef3283cd08308",
     "next_part_pending": false
+  },
+  {
+    "story_id": "black_door_palace",
+    "part": 1,
+    "category": "indian_legend",
+    "title_hook": "The Palace Room That Was Never Opened",
+    "fingerprint": "c334b828a7e9960a4346715bc67b79a3db3d62189be26ac0e1658715d5795dec",
+    "next_part_pending": true
   }
 ]
