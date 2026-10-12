@@ -49,10 +49,39 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install edge-tts requests
+
+          pip install \
+            kokoro-onnx \
+            soundfile \
+            requests \
+            numpy
 
           sudo apt-get update
-          sudo apt-get install -y ffmpeg
+
+          sudo apt-get install -y \
+            ffmpeg \
+            espeak-ng \
+            wget
+
+
+      # ======================================================
+      # KOKORO MODEL
+      # ======================================================
+
+      - name: Download Kokoro model
+        run: |
+          wget -q \
+            https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.1/kokoro-v1.0.onnx \
+            -O kokoro-v1.0.onnx
+
+          wget -q \
+            https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.1/voices-v1.0.bin \
+            -O voices-v1.0.bin
+
+          echo "Downloaded Kokoro files:"
+
+          ls -lh kokoro-v1.0.onnx
+          ls -lh voices-v1.0.bin
 
 
       # ======================================================
@@ -70,6 +99,11 @@ jobs:
 
           if [ ! -f story.json ]; then
             echo "story.json was not created"
+            exit 1
+          fi
+
+          if [ ! -s story.json ]; then
+            echo "story.json is empty"
             exit 1
           fi
 
@@ -133,6 +167,11 @@ jobs:
 
       - name: Generate narration
         run: |
+          rm -rf voice_parts
+          rm -f voice.wav
+          rm -f voice.mp3
+          rm -f voice_timing.json
+
           python generate_voice.py
 
 
@@ -147,6 +186,11 @@ jobs:
 
           if [ ! -f voice_timing.json ]; then
             echo "voice_timing.json was not created"
+            exit 1
+          fi
+
+          if [ ! -s voice.mp3 ]; then
+            echo "voice.mp3 is empty"
             exit 1
           fi
 
@@ -211,6 +255,11 @@ jobs:
 
           if [ ! -f final_short.mp4 ]; then
             echo "final_short.mp4 was not created"
+            exit 1
+          fi
+
+          if [ ! -s final_short.mp4 ]; then
+            echo "final_short.mp4 is empty"
             exit 1
           fi
 
