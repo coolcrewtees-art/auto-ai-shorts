@@ -287,5 +287,13 @@
     "title_hook": "The King Who Could Hear Every Lie",
     "fingerprint": "884aee20a917dfcb11e7e2c7bef93e4253ee460fa8aad6c4910fa2a539d6628c",
     "next_part_pending": false
+  },
+  {
+    "story_id": "bhishma_death",
+    "part": 1,
+    "category": "indian_mythology",
+    "title_hook": "The Warrior Who Chose His Own Death",
+    "fingerprint": "202dc2dd7752598a39b1dd197301db08685241b815147a565366b1dc629d9764",
+    "next_part_pending": false
   }
 ]
