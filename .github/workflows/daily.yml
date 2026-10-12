@@ -20,6 +20,10 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
+      YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+      YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+      YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+
 
     steps:
 
@@ -54,7 +58,10 @@ jobs:
             kokoro-onnx \
             soundfile \
             requests \
-            numpy
+            numpy \
+            google-api-python-client \
+            google-auth \
+            google-auth-httplib2
 
           sudo apt-get update
 
@@ -91,11 +98,12 @@ jobs:
       - name: Generate unique story
         run: |
           echo "Checking generate_story.py syntax..."
+
           python -m py_compile generate_story.py
 
           echo "Running story generator..."
 
-          python -c "import generate_story; print('Loaded:', generate_story.__file__); generate_story.main()"
+          python generate_story.py
 
           echo "Story generator finished."
 
@@ -124,9 +132,11 @@ jobs:
       - name: Generate visual scenes
         run: |
           echo "Checking generate_scenes.py syntax..."
+
           python -m py_compile generate_scenes.py
 
           echo "Generating scenes..."
+
           python generate_scenes.py
 
 
@@ -184,9 +194,11 @@ jobs:
           rm -f voice_timing.json
 
           echo "Checking generate_voice.py syntax..."
+
           python -m py_compile generate_voice.py
 
           echo "Generating narration..."
+
           python generate_voice.py
 
 
@@ -232,9 +244,11 @@ jobs:
           mkdir -p images
 
           echo "Checking generate_images.py syntax..."
+
           python -m py_compile generate_images.py
 
           echo "Generating images..."
+
           python generate_images.py
 
 
@@ -266,9 +280,11 @@ jobs:
           rm -f final_short.mp4
 
           echo "Checking make_video.py syntax..."
+
           python -m py_compile make_video.py
 
           echo "Creating final short..."
+
           python make_video.py
 
 
@@ -309,19 +325,37 @@ jobs:
 
 
       # ======================================================
+      # YOUTUBE UPLOAD
+      # ======================================================
+
+      - name: Upload Short to YouTube
+        run: |
+          echo "Checking YouTube uploader..."
+
+          python -m py_compile upload_youtube.py
+
+          echo "Uploading final Short to YouTube..."
+
+          python upload_youtube.py
+
+
+      # ======================================================
       # ARTIFACTS
       # ======================================================
 
       - name: Upload final Short
+        if: always()
         uses: actions/upload-artifact@v4
 
         with:
           name: final-short
           path: final_short.mp4
+          if-no-files-found: ignore
           retention-days: 7
 
 
       - name: Upload narration
+        if: always()
         uses: actions/upload-artifact@v4
 
         with:
@@ -329,33 +363,40 @@ jobs:
           path: |
             voice.mp3
             voice_timing.json
+          if-no-files-found: ignore
           retention-days: 7
 
 
       - name: Upload generated images
+        if: always()
         uses: actions/upload-artifact@v4
 
         with:
           name: generated-images
           path: images/
+          if-no-files-found: ignore
           retention-days: 7
 
 
       - name: Upload scene prompts
+        if: always()
         uses: actions/upload-artifact@v4
 
         with:
           name: scene-prompts
           path: scenes.json
+          if-no-files-found: ignore
           retention-days: 7
 
 
       - name: Upload story
+        if: always()
         uses: actions/upload-artifact@v4
 
         with:
           name: generated-story
           path: story.json
+          if-no-files-found: ignore
           retention-days: 7
 
 
@@ -364,6 +405,7 @@ jobs:
       # ======================================================
 
       - name: Save story history
+        if: success()
         run: |
           git config user.name "AI Shorts Bot"
           git config user.email "actions@github.com"
