@@ -7,13 +7,29 @@ on:
 
   schedule:
 
-    # 5:30 PM IST every day
-    # = 12:00 UTC
+    # ======================================================
+    # MORNING SHORT
     #
-    # Video generation begins here.
-    # YouTube upload is then scheduled for 8 PM IST.
+    # 02:00 UTC = 7:30 AM IST
+    #
+    # Workflow starts at 7:30 AM
+    # Video is scheduled for 9:00 AM IST
+    # ======================================================
 
-    - cron: "0 12 * * *"
+    - cron: "0 2 * * *"
+
+
+    # ======================================================
+    # EVENING SHORT
+    #
+    # 12:30 UTC = 6:00 PM IST
+    #
+    # Workflow starts at 6:00 PM
+    # Video is scheduled for 7:30 PM IST
+    # ======================================================
+
+    - cron: "30 12 * * *"
+
 
 
 jobs:
@@ -80,6 +96,7 @@ jobs:
 
           python -m pip install --upgrade pip
 
+
           pip install \
             kokoro-onnx \
             soundfile \
@@ -89,7 +106,9 @@ jobs:
             google-auth \
             google-auth-httplib2
 
+
           sudo apt-get update
+
 
           sudo apt-get install -y \
             ffmpeg \
@@ -110,37 +129,62 @@ jobs:
             https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.1/kokoro-v1.0.onnx \
             -O kokoro-v1.0.onnx
 
+
           wget -q \
             https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.1/voices-v1.0.bin \
             -O voices-v1.0.bin
 
 
+          echo "Kokoro downloaded"
+
+
+          ls -lh kokoro-v1.0.onnx
+
+          ls -lh voices-v1.0.bin
+
+
 
       # ======================================================
-      # CLEAN OLD RUNTIME FILES
+      # CLEAR OLD RUNTIME FILES
       #
-      # Critical:
-      # prevents stale files from an old run being reused.
+      # This prevents an old video from being reused.
       # ======================================================
 
       - name: Clear previous runtime files
 
         run: |
 
+          echo "Clearing old runtime files..."
+
+
           rm -f story.json
+
           rm -f scenes.json
 
+
           rm -f voice.mp3
+
           rm -f voice.wav
+
           rm -f voice_timing.json
+
 
           rm -f final_short.mp4
 
+          rm -f captions.ass
+
+
           rm -rf images
+
           rm -rf temp_video
+
           rm -rf voice_parts
 
+
           mkdir -p images
+
+
+          echo "Runtime cleared"
 
 
 
@@ -152,18 +196,48 @@ jobs:
 
         run: |
 
+          echo "Checking generate_story.py..."
+
+
           python -m py_compile generate_story.py
+
+
+          echo "Generating fresh story..."
+
 
           python generate_story.py
 
 
-          if [ ! -s story.json ]; then
+          echo "Story generation finished"
 
-            echo "Fresh story.json was not created"
+
+
+      - name: Check fresh story
+
+        run: |
+
+          if [ ! -f story.json ]; then
+
+            echo "story.json does not exist"
 
             exit 1
 
           fi
+
+
+          if [ ! -s story.json ]; then
+
+            echo "story.json is empty"
+
+            exit 1
+
+          fi
+
+
+          echo "Fresh story created"
+
+
+          cat story.json
 
 
 
@@ -175,7 +249,14 @@ jobs:
 
         run: |
 
+          echo "Checking generate_scenes.py..."
+
+
           python -m py_compile generate_scenes.py
+
+
+          echo "Generating visual scenes..."
+
 
           python generate_scenes.py
 
@@ -185,39 +266,39 @@ jobs:
 
         run: |
 
+          if [ ! -f scenes.json ]; then
+
+            echo "scenes.json missing"
+
+            exit 1
+
+          fi
+
+
           python - <<'PY'
 
           import json
 
 
           with open(
-
               "scenes.json",
-
               "r",
-
               encoding="utf-8"
-
           ) as f:
 
               scenes = json.load(f)
 
 
           print(
-
               "Scene count:",
-
               len(scenes)
-
           )
 
 
           if len(scenes) != 8:
 
               raise SystemExit(
-
-                  "Exactly 8 scenes required"
-
+                  f"Expected exactly 8 scenes, got {len(scenes)}"
               )
 
           PY
@@ -233,14 +314,30 @@ jobs:
 
 
       # ======================================================
-      # VOICE
+      # NARRATION
       # ======================================================
 
       - name: Generate narration
 
         run: |
 
+          rm -rf voice_parts
+
+          rm -f voice.wav
+
+          rm -f voice.mp3
+
+          rm -f voice_timing.json
+
+
+          echo "Checking generate_voice.py..."
+
+
           python -m py_compile generate_voice.py
+
+
+          echo "Generating narration..."
+
 
           python generate_voice.py
 
@@ -250,7 +347,7 @@ jobs:
 
         run: |
 
-          if [ ! -s voice.mp3 ]; then
+          if [ ! -f voice.mp3 ]; then
 
             echo "voice.mp3 missing"
 
@@ -259,13 +356,41 @@ jobs:
           fi
 
 
-          if [ ! -s voice_timing.json ]; then
+          if [ ! -s voice.mp3 ]; then
+
+            echo "voice.mp3 is empty"
+
+            exit 1
+
+          fi
+
+
+          if [ ! -f voice_timing.json ]; then
 
             echo "voice_timing.json missing"
 
             exit 1
 
           fi
+
+
+          if [ ! -s voice_timing.json ]; then
+
+            echo "voice_timing.json empty"
+
+            exit 1
+
+          fi
+
+
+          echo "Narration ready"
+
+
+          ffprobe \
+            -v error \
+            -show_entries format=duration \
+            -of default=noprint_wrappers=1:nokey=1 \
+            voice.mp3
 
 
 
@@ -279,10 +404,18 @@ jobs:
 
           rm -rf images
 
+
           mkdir -p images
 
 
+          echo "Checking generate_images.py..."
+
+
           python -m py_compile generate_images.py
+
+
+          echo "Generating 8 images..."
+
 
           python generate_images.py
 
@@ -302,7 +435,7 @@ jobs:
           )
 
 
-          echo "Images: $IMAGE_COUNT"
+          echo "Generated images: $IMAGE_COUNT"
 
 
           if [ "$IMAGE_COUNT" -ne 8 ]; then
@@ -314,9 +447,12 @@ jobs:
           fi
 
 
+          ls -lh images/
+
+
 
       # ======================================================
-      # VIDEO
+      # FINAL VIDEO
       # ======================================================
 
       - name: Create final Short
@@ -327,8 +463,17 @@ jobs:
 
           rm -f final_short.mp4
 
+          rm -f captions.ass
+
+
+          echo "Checking make_video.py..."
+
 
           python -m py_compile make_video.py
+
+
+          echo "Creating final video..."
+
 
           python make_video.py
 
@@ -338,19 +483,48 @@ jobs:
 
         run: |
 
-          if [ ! -s final_short.mp4 ]; then
+          if [ ! -f final_short.mp4 ]; then
 
-            echo "Final video missing"
+            echo "final_short.mp4 missing"
 
             exit 1
 
           fi
 
 
+          if [ ! -s final_short.mp4 ]; then
+
+            echo "final_short.mp4 is empty"
+
+            exit 1
+
+          fi
+
+
+          echo "Final Short created"
+
+
+          ls -lh final_short.mp4
+
+
+          echo "Duration:"
+
+
           ffprobe \
             -v error \
             -show_entries format=duration \
             -of default=noprint_wrappers=1:nokey=1 \
+            final_short.mp4
+
+
+          echo "Video properties:"
+
+
+          ffprobe \
+            -v error \
+            -select_streams v:0 \
+            -show_entries stream=width,height,sample_aspect_ratio,display_aspect_ratio \
+            -of default=noprint_wrappers=1 \
             final_short.mp4
 
 
@@ -363,7 +537,14 @@ jobs:
 
         run: |
 
+          echo "Checking YouTube uploader..."
+
+
           python -m py_compile upload_youtube.py
+
+
+          echo "Scheduling fresh Short..."
+
 
           python upload_youtube.py
 
@@ -391,7 +572,7 @@ jobs:
 
 
 
-      - name: Upload scenes artifact
+      - name: Upload narration artifact
 
         if: always()
 
@@ -399,9 +580,11 @@ jobs:
 
         with:
 
-          name: scenes-${{ github.run_id }}
+          name: narration-${{ github.run_id }}
 
-          path: scenes.json
+          path: |
+            voice.mp3
+            voice_timing.json
 
           if-no-files-found: ignore
 
@@ -420,6 +603,42 @@ jobs:
           name: images-${{ github.run_id }}
 
           path: images/
+
+          if-no-files-found: ignore
+
+          retention-days: 7
+
+
+
+      - name: Upload scenes artifact
+
+        if: always()
+
+        uses: actions/upload-artifact@v4
+
+        with:
+
+          name: scenes-${{ github.run_id }}
+
+          path: scenes.json
+
+          if-no-files-found: ignore
+
+          retention-days: 7
+
+
+
+      - name: Upload story artifact
+
+        if: always()
+
+        uses: actions/upload-artifact@v4
+
+        with:
+
+          name: story-${{ github.run_id }}
+
+          path: story.json
 
           if-no-files-found: ignore
 
@@ -447,7 +666,11 @@ jobs:
             "actions@github.com"
 
 
-          git add story_history.json
+          if [ -f story_history.json ]; then
+
+            git add story_history.json
+
+          fi
 
 
           if [ -f youtube_upload_history.json ]; then
@@ -459,7 +682,7 @@ jobs:
 
           if git diff --cached --quiet; then
 
-            echo "Nothing to save"
+            echo "No history changes"
 
           else
 
