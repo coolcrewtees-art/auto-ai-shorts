@@ -592,6 +592,120 @@ STORIES = [
 # PART TWO STORIES
 # =====================================
 
+def load_history():
+    if not HISTORY_FILE.exists():
+        return []
+
+    try:
+        data = json.loads(
+            HISTORY_FILE.read_text(
+                encoding="utf-8"
+            )
+        )
+
+        return data if isinstance(data, list) else []
+
+    except Exception as error:
+        print("History load failed:", error)
+        return []
+
+
+def save_history(history):
+    HISTORY_FILE.write_text(
+        json.dumps(
+            history,
+            indent=2,
+            ensure_ascii=False
+        ),
+        encoding="utf-8"
+    )
+
+
+
+def fingerprint(story):
+    source = (
+        f"{story['story_id']}|"
+        f"{story['part']}|"
+        f"{story['title_hook']}"
+    )
+
+    return hashlib.sha256(
+        source.encode("utf-8")
+    ).hexdigest()
+
+
+def get_pending_part_two(history):
+    if not history:
+        return None
+
+    latest = history[-1]
+
+    if not isinstance(latest, dict):
+        return None
+
+    if not latest.get("next_part_pending", False):
+        return None
+
+    story_id = latest.get("story_id")
+
+    if story_id in PART_TWOS:
+        return PART_TWOS[story_id]
+
+    return None
+
+
+def choose_random_story(history):
+    category = random.choice(CATEGORIES)
+
+    used = {
+        item.get("fingerprint")
+        for item in history
+        if isinstance(item, dict)
+    }
+
+    available = [
+        story
+        for story in STORIES
+        if story["category"] == category
+        and fingerprint(story) not in used
+    ]
+
+    if not available:
+        available = [
+            story
+            for story in STORIES
+            if story["category"] == category
+        ]
+
+    if not available:
+        raise RuntimeError("No story available")
+
+    return random.choice(available)
+
+
+def build_story(source):
+    story = dict(source)
+
+    if story.get("has_next_part", False):
+        story["final_punch"] += (
+            " But this story isn't over. "
+            "Part two is next."
+        )
+
+    story["screenplay"] = " ".join([
+        story["title_hook"] + ".",
+        story["opening"],
+        story["conflict"],
+        story["escalation"],
+        story["dramatic_reveal"],
+        story["final_punch"],
+    ])
+
+    story["fingerprint"] = fingerprint(story)
+
+    return story
+
+
 
 def main():
 
