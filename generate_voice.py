@@ -1,27 +1,40 @@
-import asyncio
 import json
 import re
 import subprocess
 from pathlib import Path
 
-import edge_tts
+import numpy as np
+import soundfile as sf
+from kokoro_onnx import Kokoro
 
+
+# ============================================================
+# FILES
+# ============================================================
+
+STORY_FILE = Path("story.json")
+
+MODEL_FILE = Path("kokoro-v1.0.onnx")
+VOICES_FILE = Path("voices-v1.0.bin")
 
 TEMP_DIR = Path("voice_parts")
 TEMP_DIR.mkdir(exist_ok=True)
 
-OUTPUT_AUDIO = Path("voice.mp3")
+OUTPUT_WAV = Path("voice.wav")
+OUTPUT_MP3 = Path("voice.mp3")
 TIMING_FILE = Path("voice_timing.json")
 
-# Use the voice you originally liked for EVERYTHING.
-VOICE = "en-US-AndrewMultilingualNeural"
+
+# ============================================================
+# VOICE
+# ============================================================
+
+VOICE = "bm_george"
+LANG = "en-gb"
 
 
 # ============================================================
 # PRONUNCIATION FIXES
-#
-# Only the spoken version is modified.
-# Captions/story.json keep the proper spelling.
 # ============================================================
 
 PRONUNCIATIONS = {
@@ -34,21 +47,18 @@ PRONUNCIATIONS = {
     "Yudhishthira": "Yudhishthir",
     "Arjuna": "Arjun",
     "Lakshmana": "Lakshman",
-    "Hanuman": "Hunoomaan",
-    "Neelkanth": "Neel kanth",
-    "Halahala": "Halaa hala",
-    "Krishna": "Krishna",
-    "Indra": "Indra",
+    "Hanuman": "Hanoomaan",
     "Mahabharata": "Mahaa bhaarata",
     "Ramayana": "Raamaayana",
+    "Uttarayana": "Uttaraayana",
 }
 
 
-def pronunciation_fix(text):
-    for original, spoken in PRONUNCIATIONS.items():
+def fix_pronunciation(text):
+    for original, replacement in PRONUNCIATIONS.items():
         text = re.sub(
             rf"\b{re.escape(original)}\b",
-            spoken,
+            replacement,
             text,
             flags=re.IGNORECASE,
         )
@@ -57,273 +67,383 @@ def pronunciation_fix(text):
 
 
 # ============================================================
-# AUDIO HELPERS
+# HELPERS
 # ============================================================
 
-def get_duration(filename):
-    result = subprocess.run(
-        [
-            "ffprobe",
-            "-v", "error",
-            "-show_entries", "format=duration",
-            "-of", "default=noprint_wrappers=1:nokey=1",
-            str(filename),
-        ],
-        capture_output=True,
-        text=True,
-        check=True,
+def make_silence(seconds, sample_rate):
+    samples = int(seconds * sample_rate)
+
+    return np.zeros(
+        samples,
+        dtype=np.float32
     )
 
-    return float(result.stdout.strip())
+
+def audio_duration(audio, sample_rate):
+    return len(audio) / sample_rate
 
 
-def make_pause(filename, seconds):
+def save_mp3():
     subprocess.run(
         [
             "ffmpeg",
             "-y",
-            "-f", "lavfi",
-            "-i", "anullsrc=r=44100:cl=stereo",
-            "-t", str(seconds),
-            "-c:a", "libmp3lame",
-            "-b:a", "128k",
-            str(filename),
+            "-i",
+            str(OUTPUT_WAV),
+            "-codec:a",
+            "libmp3lame",
+            "-b:a",
+            "192k",
+            str(OUTPUT_MP3),
         ],
         check=True,
     )
-
-
-async def create_voice(
-    text,
-    rate,
-    pitch,
-    filename,
-):
-    text = pronunciation_fix(text)
-
-    communicate = edge_tts.Communicate(
-        text=text,
-        voice=VOICE,
-        rate=rate,
-        pitch=pitch,
-        volume="+0%",
-    )
-
-    await communicate.save(str(filename))
-
-    if not filename.exists():
-        raise RuntimeError(
-            f"TTS failed to create {filename}"
-        )
 
 
 # ============================================================
 # MAIN
 # ============================================================
 
-async def main():
+def main():
+
+    print("Starting Kokoro narration...")
+
+    # --------------------------------------------------------
+    # VERIFY FILES
+    # --------------------------------------------------------
+
+    if not STORY_FILE.exists():
+        raise FileNotFoundError(
+            "story.json is missing"
+        )
+
+    if not MODEL_FILE.exists():
+        raise FileNotFoundError(
+            "kokoro-v1.0.onnx is missing"
+        )
+
+    if not VOICES_FILE.exists():
+        raise FileNotFoundError(
+            "voices-v1.0.bin is missing"
+        )
+
+    # --------------------------------------------------------
+    # LOAD STORY
+    # --------------------------------------------------------
 
     with open(
-        "story.json",
+        STORY_FILE,
         "r",
-        encoding="utf-8",
+        encoding="utf-8"
     ) as f:
         story = json.load(f)
 
-    # Faster and more contrast between story sections.
+    # --------------------------------------------------------
+    # LOAD KOKORO
+    # --------------------------------------------------------
+
+    print("Loading Kokoro model...")
+
+    tts = Kokoro(
+        str(MODEL_FILE),
+        str(VOICES_FILE)
+    )
+
+    # --------------------------------------------------------
+    # PERFORMANCE SETTINGS
+    #
+    # Faster middle.
+    # Slower hook/reveal/final.
+    # --------------------------------------------------------
+
     sections = [
+
         {
             "name": "title_hook",
             "text": story["title_hook"],
-            "rate": "+4%",
-            "pitch": "-6Hz",
+            "speed": 1.03,
             "pause": 0.42,
         },
 
         {
             "name": "opening",
             "text": story["opening"],
-            "rate": "+17%",
-            "pitch": "-1Hz",
+            "speed": 1.14,
             "pause": 0.08,
         },
 
         {
             "name": "conflict",
             "text": story["conflict"],
-            "rate": "+19%",
-            "pitch": "+0Hz",
-            "pause": 0.06,
+            "speed": 1.17,
+            "pause": 0.07,
         },
 
         {
             "name": "escalation",
             "text": story["escalation"],
-            "rate": "+22%",
-            "pitch": "+1Hz",
-            "pause": 0.06,
+            "speed": 1.20,
+            "pause": 0.07,
         },
 
         {
             "name": "dramatic_reveal",
             "text": story["dramatic_reveal"],
-            "rate": "+10%",
-            "pitch": "-5Hz",
-            "pause": 0.30,
+            "speed": 1.08,
+            "pause": 0.32,
         },
 
         {
             "name": "final_punch",
             "text": story["final_punch"],
-            "rate": "+6%",
-            "pitch": "-6Hz",
-            "pause": 0.20,
+            "speed": 1.04,
+            "pause": 0.25,
         },
     ]
 
-    files = []
-    timing = []
+    all_audio = []
+    timings = []
 
     current_time = 0.0
+    sample_rate = None
+
+    # --------------------------------------------------------
+    # GENERATE EACH SECTION
+    # --------------------------------------------------------
 
     for index, section in enumerate(sections):
 
-        output = (
-            TEMP_DIR
-            / f"{index:02d}_{section['name']}.mp3"
+        spoken_text = fix_pronunciation(
+            section["text"]
         )
 
+        print("")
         print(
-            f"Generating {section['name']} "
-            f"| rate {section['rate']} "
-            f"| pitch {section['pitch']}"
+            "Generating:",
+            section["name"],
+            "| speed:",
+            section["speed"]
         )
 
-        await create_voice(
-            section["text"],
-            section["rate"],
-            section["pitch"],
-            output,
+        audio, sr = tts.create(
+            spoken_text,
+            voice=VOICE,
+            speed=section["speed"],
+            lang=LANG,
         )
 
-        part_duration = get_duration(output)
+        if sample_rate is None:
+            sample_rate = sr
+
+        if sr != sample_rate:
+            raise RuntimeError(
+                "Kokoro returned inconsistent sample rates"
+            )
+
+        audio = np.asarray(
+            audio,
+            dtype=np.float32
+        )
+
+        if len(audio) == 0:
+            raise RuntimeError(
+                f"No audio generated for {section['name']}"
+            )
+
+        # Save debug section
+        section_file = (
+            TEMP_DIR
+            / f"{index:02d}_{section['name']}.wav"
+        )
+
+        sf.write(
+            section_file,
+            audio,
+            sample_rate,
+            subtype="PCM_16"
+        )
+
+        duration = audio_duration(
+            audio,
+            sample_rate
+        )
 
         start = current_time
-        end = start + part_duration
+        end = start + duration
 
-        timing.append(
+        timings.append(
             {
                 "name": section["name"],
                 "text": section["text"],
                 "start": round(start, 3),
                 "end": round(end, 3),
-                "duration": round(
-                    part_duration,
-                    3,
-                ),
+                "duration": round(duration, 3),
             }
         )
 
-        files.append(output)
+        all_audio.append(
+            audio
+        )
 
         current_time = end
 
-        if section["pause"] > 0:
+        # ----------------------------------------------------
+        # ADD PAUSE
+        # ----------------------------------------------------
 
-            pause_file = (
-                TEMP_DIR
-                / f"{index:02d}_pause.mp3"
+        pause = section["pause"]
+
+        if pause > 0:
+
+            silence = make_silence(
+                pause,
+                sample_rate
             )
 
-            make_pause(
-                pause_file,
-                section["pause"],
+            all_audio.append(
+                silence
             )
 
-            files.append(
-                pause_file
-            )
-
-            current_time += (
-                section["pause"]
-            )
+            current_time += pause
 
     # --------------------------------------------------------
-    # CONCAT EVERYTHING
+    # JOIN ALL AUDIO
     # --------------------------------------------------------
 
-    concat_file = (
-        TEMP_DIR / "concat.txt"
+    if not all_audio:
+        raise RuntimeError(
+            "No narration audio was generated"
+        )
+
+    final_audio = np.concatenate(
+        all_audio
     )
 
-    with open(
-        concat_file,
-        "w",
-        encoding="utf-8",
-    ) as f:
+    # --------------------------------------------------------
+    # NORMALIZE SAFELY
+    # --------------------------------------------------------
 
-        for file in files:
-            f.write(
-                f"file '{file.resolve()}'\n"
-            )
-
-    subprocess.run(
-        [
-            "ffmpeg",
-            "-y",
-            "-f", "concat",
-            "-safe", "0",
-            "-i", str(concat_file),
-            "-c:a", "libmp3lame",
-            "-b:a", "192k",
-            str(OUTPUT_AUDIO),
-        ],
-        check=True,
+    peak = np.max(
+        np.abs(final_audio)
     )
 
-    if not OUTPUT_AUDIO.exists():
+    if peak > 0:
+        final_audio = (
+            final_audio
+            / peak
+            * 0.92
+        )
+
+    # --------------------------------------------------------
+    # SAVE WAV
+    # --------------------------------------------------------
+
+    sf.write(
+        OUTPUT_WAV,
+        final_audio,
+        sample_rate,
+        subtype="PCM_16"
+    )
+
+    if not OUTPUT_WAV.exists():
+        raise RuntimeError(
+            "voice.wav was not created"
+        )
+
+    # --------------------------------------------------------
+    # CONVERT TO MP3
+    # --------------------------------------------------------
+
+    save_mp3()
+
+    if not OUTPUT_MP3.exists():
         raise RuntimeError(
             "voice.mp3 was not created"
         )
 
-    if OUTPUT_AUDIO.stat().st_size < 5000:
+    if OUTPUT_MP3.stat().st_size < 5000:
         raise RuntimeError(
             "voice.mp3 is suspiciously small"
         )
 
+    # --------------------------------------------------------
+    # SAVE TIMINGS
+    # --------------------------------------------------------
+
     TIMING_FILE.write_text(
         json.dumps(
-            timing,
+            timings,
             indent=2,
-            ensure_ascii=False,
+            ensure_ascii=False
         ),
-        encoding="utf-8",
+        encoding="utf-8"
     )
 
-    total_duration = get_duration(
-        OUTPUT_AUDIO
+    if not TIMING_FILE.exists():
+        raise RuntimeError(
+            "voice_timing.json was not created"
+        )
+
+    final_duration = (
+        len(final_audio)
+        / sample_rate
     )
+
+    # --------------------------------------------------------
+    # LOG
+    # --------------------------------------------------------
 
     print("")
-    print("==============================")
-    print("NARRATION CREATED")
-    print("==============================")
-    print("Voice:", VOICE)
+    print(
+        "===================================="
+    )
+
+    print(
+        "KOKORO NARRATION CREATED"
+    )
+
+    print(
+        "===================================="
+    )
+
+    print(
+        "Voice:",
+        VOICE
+    )
+
+    print(
+        "Language:",
+        LANG
+    )
+
+    print(
+        "Sample rate:",
+        sample_rate
+    )
+
     print(
         "Duration:",
-        round(total_duration, 2),
-        "seconds",
+        round(
+            final_duration,
+            2
+        ),
+        "seconds"
     )
+
     print(
-        "Audio:",
-        OUTPUT_AUDIO,
+        "Output:",
+        OUTPUT_MP3
     )
+
     print(
         "Timing:",
-        TIMING_FILE,
+        TIMING_FILE
     )
-    print("==============================")
+
+    print(
+        "===================================="
+    )
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
