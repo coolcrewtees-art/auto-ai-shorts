@@ -327,5 +327,13 @@
     "title_hook": "The Village Where Nobody Locked Their Doors",
     "fingerprint": "a6b447840de4e4905bf9dfcc23d1ecfdcc25d0037396beaf576aa29cf594aaa6",
     "next_part_pending": true
+  },
+  {
+    "story_id": "unlocked_village",
+    "part": 2,
+    "category": "indian_folktale",
+    "title_hook": "The Thing That Was Already Inside the House",
+    "fingerprint": "f546d005ac17a01ef8c410da9fa64e87c02e18af1b8396223966f69a35375fbb",
+    "next_part_pending": false
   }
 ]
