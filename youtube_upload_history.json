@@ -8,5 +8,15 @@
     "video_sha256": "b52e91573d38a04915396ba32238a95dc46237b0cee5c5af17152a61dbc5373d",
     "scheduled_publish_at": "2026-10-13T03:30:00Z",
     "uploaded_at": "2026-10-12T19:05:41.095295+00:00"
+  },
+  {
+    "story_key": "a6b447840de4e4905bf9dfcc23d1ecfdcc25d0037396beaf576aa29cf594aaa6",
+    "story_id": "unlocked_village",
+    "part": 1,
+    "title": "The Village Where Nobody Locked Their Doors #Shorts",
+    "video_id": "QUXw68ZNYv4",
+    "video_sha256": "99691d174baceaefbff5883d882b3407d13135d212460cdb215396f861614b38",
+    "scheduled_publish_at": "2026-10-13T14:00:00Z",
+    "uploaded_at": "2026-10-13T08:52:26.411877+00:00"
   }
 ]

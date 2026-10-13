@@ -319,5 +319,13 @@
     "title_hook": "The Prince Wasn't Trapped Alone",
     "fingerprint": "12837c754fb0a91fc0bdddb3c175deb1456fe3bbc09fd570de2dd834a2b8928b",
     "next_part_pending": false
+  },
+  {
+    "story_id": "unlocked_village",
+    "part": 1,
+    "category": "indian_folktale",
+    "title_hook": "The Village Where Nobody Locked Their Doors",
+    "fingerprint": "a6b447840de4e4905bf9dfcc23d1ecfdcc25d0037396beaf576aa29cf594aaa6",
+    "next_part_pending": true
   }
 ]
