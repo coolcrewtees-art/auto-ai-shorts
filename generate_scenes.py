@@ -4,64 +4,122 @@ from pathlib import Path
 
 
 STORY_FILE = Path("story.json")
-SCENES_FILE = Path("scenes.json")
+OUTPUT_FILE = Path("scenes.json")
 
+
+# ============================================================
+# BASE VISUAL STYLE
+# ============================================================
 
 BASE_STYLE = (
-    "photorealistic cinematic movie frame, vertical 9:16, "
-    "realistic anatomy, realistic lighting, realistic environment, "
-    "strong environmental storytelling, dramatic depth, "
-    "premium film cinematography, no text, no subtitles, "
-    "no watermark, no logo"
+    "photorealistic cinematic movie still, vertical 9:16, "
+    "high detail, realistic lighting, dramatic composition, "
+    "environmental storytelling, realistic anatomy, "
+    "cinematic depth of field, premium film look"
 )
 
 
-CATEGORY_STYLES = {
+# ============================================================
+# CATEGORY STYLES
+# ============================================================
+
+CATEGORY_STYLE = {
+
     "indian_mythology":
-        "epic ancient Indian mythological cinema, authentic Indian setting",
+        "epic ancient Indian mythological cinema, authentic period environment",
 
     "indian_folktale":
-        "dark atmospheric Indian folklore cinema, rural traditional setting",
+        "dark Indian folklore cinema, atmospheric rural India",
 
     "indian_legend":
-        "ancient Indian royal palace cinema, torchlight, stone architecture",
+        "ancient Indian royal palace, stone architecture, torchlight, royal mystery",
 
     "supernatural_mystery":
-        "grounded supernatural thriller, eerie realistic atmosphere",
+        "grounded supernatural thriller, eerie realistic environment",
 
     "fantasy":
-        "dark fantasy cinema, realistic medieval architecture",
+        "dark fantasy cinema, realistic magical environment",
 
     "romance_drama":
-        "emotional cinematic drama, realistic contemporary setting",
+        "emotional modern cinematic drama",
 
     "comedy":
-        "energetic cinematic comedy adventure, expressive action",
+        "energetic cinematic comedy, expressive physical action",
 }
 
 
 # ============================================================
-# TEXT HELPERS
+# SCENE CAMERA RULES
 # ============================================================
 
-def sentences(text):
-    result = re.split(
+SHOT_RULES = {
+
+    "title_hook": (
+        "dramatic wide establishing shot. "
+        "Show the central mystery or location, not a face."
+    ),
+
+    "opening_1": (
+        "wide environmental storytelling shot. "
+        "Show the location and physical situation."
+    ),
+
+    "opening_2": (
+        "medium-wide action shot. "
+        "Show the event happening."
+    ),
+
+    "conflict": (
+        "dynamic action or discovery shot. "
+        "The conflict must be physically visible."
+    ),
+
+    "escalation_1": (
+        "over-the-shoulder or environmental discovery shot. "
+        "Focus on the important object or event."
+    ),
+
+    "escalation_2": (
+        "dramatic object/action shot. "
+        "Show a new visual event, not another portrait."
+    ),
+
+    "dramatic_reveal": (
+        "large cinematic reveal shot. "
+        "Show the reveal clearly with multiple story elements visible."
+    ),
+
+    "final_punch": (
+        "wide cinematic consequence shot. "
+        "Show the final twist itself, not merely someone's reaction."
+    ),
+}
+
+
+# ============================================================
+# TEXT SPLITTING
+# ============================================================
+
+def split_sentences(text):
+
+    pieces = re.split(
         r"(?<=[.!?])\s+",
         text.strip()
     )
 
     return [
         x.strip()
-        for x in result
+        for x in pieces
         if x.strip()
     ]
 
 
 def split_balanced(text):
 
-    parts = sentences(text)
+    parts = split_sentences(text)
 
     if len(parts) <= 1:
+
         words = text.split()
 
         middle = max(
@@ -70,32 +128,55 @@ def split_balanced(text):
         )
 
         return (
-            " ".join(words[:middle]),
-            " ".join(words[middle:])
+            " ".join(
+                words[:middle]
+            ),
+
+            " ".join(
+                words[middle:]
+            )
         )
 
-    total = sum(
+
+    total_words = sum(
         len(x.split())
         for x in parts
     )
 
-    half = total / 2
+    halfway = total_words / 2
+
 
     first = []
     second = []
 
     count = 0
 
-    for item in parts:
 
-        if count < half:
-            first.append(item)
-            count += len(item.split())
+    for sentence in parts:
+
+        if count < halfway:
+
+            first.append(
+                sentence
+            )
+
+            count += len(
+                sentence.split()
+            )
+
         else:
-            second.append(item)
+
+            second.append(
+                sentence
+            )
+
 
     if not second:
-        second.append(first.pop())
+
+        second.append(
+            first.pop()
+        )
+
 
     return (
         " ".join(first),
@@ -104,206 +185,243 @@ def split_balanced(text):
 
 
 # ============================================================
-# VISUAL EVENT SELECTION
+# FIND VISUAL OBJECTS
 # ============================================================
 
-ACTION_WORDS = [
-    "opened",
-    "closed",
-    "entered",
-    "walked",
-    "ran",
-    "pointed",
-    "grabbed",
-    "smashed",
-    "broke",
-    "fell",
-    "vanished",
-    "appeared",
-    "left",
-    "arrived",
-    "turned",
-    "looked",
-    "found",
-    "discovered",
-    "lifted",
-    "knocked",
-    "stood",
-    "collapsed",
-]
+VISUAL_KEYWORDS = [
 
-
-OBJECT_WORDS = [
-    "door",
     "mirror",
+    "mirrors",
+
+    "door",
+    "doors",
+
     "phone",
     "message",
-    "letter",
+
     "train",
     "station",
-    "platform",
-    "palace",
+
     "room",
-    "window",
+    "palace",
+
     "painting",
     "portrait",
-    "clock",
-    "temple",
-    "forest",
-    "house",
-    "stairs",
-    "arrow",
-    "sword",
-    "throne",
-    "wall",
+
     "photograph",
-    "screen",
-    "grave",
+    "photo",
+
+    "window",
+
+    "clock",
+
+    "letter",
+
+    "throne",
+
+    "sword",
+    "arrow",
+
+    "forest",
+
+    "house",
+
+    "temple",
+
+    "stairs",
+
+    "fire",
+
+    "flames",
+
+    "guards",
+
+    "relatives",
+
+    "family",
+
+    "wall",
+
+    "name",
+
+    "bed",
+
+    "shadow",
+
+    "market",
+
+    "bottle",
+
+    "corridor",
+
 ]
 
 
-def visual_score(text):
+def find_objects(text):
 
     lower = text.lower()
 
-    score = 0
+    found = []
 
-    for word in ACTION_WORDS:
+    for word in VISUAL_KEYWORDS:
+
         if word in lower:
-            score += 4
 
-    for word in OBJECT_WORDS:
-        if word in lower:
-            score += 3
-
-    abstract = [
-        "thought",
-        "believed",
-        "remembered",
-        "realized",
-        "felt",
-        "understood",
-        "wondered",
-        "knew",
-    ]
-
-    for word in abstract:
-        if word in lower:
-            score -= 2
-
-    return score
+            found.append(
+                word
+            )
 
 
-def select_visual_event(
-    narration,
-    prefer_late=False
+    return found[:5]
+
+
+# ============================================================
+# DETERMINE WHETHER CHARACTER IS REQUIRED
+# ============================================================
+
+def character_needed(
+    story,
+    narration
 ):
 
-    parts = sentences(narration)
-
-    if not parts:
-        return narration
-
-    scored = []
-
-    for i, part in enumerate(parts):
-
-        score = visual_score(part)
-
-        if prefer_late:
-            score += i * 0.8
-
-        scored.append(
-            (
-                score,
-                i,
-                part
-            )
-        )
-
-    scored.sort(
-        key=lambda item: (
-            item[0],
-            item[1]
-        ),
-        reverse=True
+    text = (
+        " "
+        + narration.lower()
+        + " "
     )
 
-    return scored[0][2]
 
-
-# ============================================================
-# CHARACTER REQUIREMENT
-# ============================================================
-
-def protagonist_required(
-    story,
-    event
-):
-
-    lower = event.lower()
-
-    main = story.get(
+    main_figure = story.get(
         "main_figure",
         ""
     ).lower()
 
-    if main:
 
-        name = (
-            main
-            .split(",")[0]
-            .split()[0]
+    if main_figure:
+
+        words = re.findall(
+            r"[a-zA-Z]+",
+            main_figure
         )
 
-        if name and name in lower:
-            return True
+        for word in words:
+
+            if (
+                len(word) >= 4
+                and word in text
+            ):
+
+                return True
+
 
     pronouns = [
+
         " he ",
-        " his ",
         " him ",
+        " his ",
+
         " she ",
         " her ",
+
+        " prince ",
+        " traveler ",
+        " king ",
+        " warrior ",
     ]
 
-    padded = f" {lower} "
 
     return any(
-        word in padded
+        word in text
         for word in pronouns
     )
 
 
 # ============================================================
-# CAMERA PLAN
+# SCENE-SPECIFIC EMPHASIS
 # ============================================================
 
-SHOT_TYPES = {
-    "title_hook":
-        "wide mystery establishing shot",
+def special_visual_rules(
+    narration
+):
 
-    "opening_1":
-        "wide environmental shot",
+    lower = narration.lower()
 
-    "opening_2":
-        "medium action shot",
+    rules = []
 
-    "conflict":
-        "dynamic conflict shot",
 
-    "escalation_1":
-        "over-the-shoulder discovery shot",
+    if "mirror" in lower:
 
-    "escalation_2":
-        "important object or action close shot",
+        rules.append(
+            "Mirrors must be clearly visible and important in the composition."
+        )
 
-    "dramatic_reveal":
-        "wide dramatic reveal shot",
 
-    "final_punch":
-        "cinematic consequence shot",
-}
+    if "relative" in lower or "family" in lower:
+
+        rules.append(
+            "Show multiple family members or relatives physically in the scene."
+        )
+
+
+    if "guard" in lower:
+
+        rules.append(
+            "Show palace guards visibly performing the narrated action."
+        )
+
+
+    if "throne" in lower:
+
+        rules.append(
+            "The throne and whoever occupies it must dominate the frame."
+        )
+
+
+    if "phone" in lower or "message" in lower:
+
+        rules.append(
+            "The phone or message must be visually central; do not replace it with a face."
+        )
+
+
+    if "train" in lower:
+
+        rules.append(
+            "The train interior, platform, carriage or railway environment must be clearly visible."
+        )
+
+
+    if "door" in lower:
+
+        rules.append(
+            "The door must be clearly visible as a major story object."
+        )
+
+
+    if "portrait" in lower or "painting" in lower:
+
+        rules.append(
+            "The portrait or painting must dominate the visual storytelling."
+        )
+
+
+    if "bed" in lower:
+
+        rules.append(
+            "Show the bed and the relevant physical space clearly."
+        )
+
+
+    if "clock" in lower:
+
+        rules.append(
+            "The clock must be an obvious central story object."
+        )
+
+
+    return " ".join(
+        rules
+    )
 
 
 # ============================================================
@@ -313,81 +431,139 @@ SHOT_TYPES = {
 def build_prompt(
     story,
     beat,
-    event
+    narration
 ):
 
-    category_style = CATEGORY_STYLES.get(
-        story.get("category"),
+    category = story.get(
+        "category",
+        ""
+    )
+
+
+    category_style = CATEGORY_STYLE.get(
+        category,
         "cinematic storytelling"
     )
 
-    shot = SHOT_TYPES.get(
-        beat,
-        "cinematic story frame"
-    )
 
     setting = story.get(
         "setting",
-        "realistic environment"
+        "cinematic environment"
     )
+
 
     mood = story.get(
         "mood",
         "dramatic"
     )
 
-    protagonist = story.get(
+
+    main_figure = story.get(
         "main_figure",
-        "main protagonist"
+        "main character"
     )
 
 
-    if protagonist_required(
+    shot = SHOT_RULES.get(
+        beat,
+        "cinematic storytelling shot"
+    )
+
+
+    objects = find_objects(
+        narration
+    )
+
+
+    object_text = (
+        ", ".join(objects)
+        if objects
+        else "the physical environment and narrated action"
+    )
+
+
+    if character_needed(
         story,
-        event
+        narration
     ):
 
-        character_instruction = (
-            f"The recurring protagonist may appear: {protagonist}. "
-            "Keep approximate age, face, hairstyle and clothing consistent. "
-            "Do not pose them for a portrait."
+        character_rule = (
+            f"If the protagonist appears, use {main_figure}. "
+            "Keep appearance approximately consistent, "
+            "but the character must be performing the narrated action. "
+            "Do NOT pose them for a portrait."
         )
 
     else:
 
-        character_instruction = (
-            "Do NOT show the protagonist unless absolutely necessary. "
-            "Show the object, location, secondary character or physical event instead."
+        character_rule = (
+            "Do not show the protagonist unless required. "
+            "Prioritize the environment, object, secondary characters "
+            "or supernatural event."
         )
+
+
+    extra = special_visual_rules(
+        narration
+    )
 
 
     prompt = f"""
 {BASE_STYLE}.
+
+STYLE:
 {category_style}.
-Setting: {setting}.
-Mood: {mood}.
-Camera: {shot}.
 
-EXACT EVENT THAT MUST BE VISIBLE:
-{event}
+SETTING:
+{setting}.
 
-{character_instruction}
+MOOD:
+{mood}.
 
-CRITICAL RULES:
-Show the exact physical event above.
-Do not summarize the whole story.
-Do not create a generic character portrait.
-Do not show a person merely staring into the camera.
-Do not use a centered head-and-shoulders composition.
-If the event mentions a door, mirror, phone, message, train, room,
-letter, object, secondary character or supernatural event,
-that thing must visibly dominate the frame.
-Environment and actions are more important than faces.
-The image must make sense even with the sound turned off.
-No written text.
+CAMERA:
+{shot}
+
+THIS EXACT STORY MOMENT MUST BE SHOWN:
+{narration}
+
+IMPORTANT VISIBLE ELEMENTS:
+{object_text}.
+
+{character_rule}
+
+{extra}
+
+STRICT VISUAL RULES:
+
+The narration above is the single source of truth.
+
+Show the literal physical event described in the narration.
+
+Do NOT create a generic protagonist portrait.
+
+Do NOT create a centered headshot.
+
+Do NOT show someone merely standing and staring into camera.
+
+Do NOT use the same composition as a previous scene.
+
+If an object, room, mirror, door, phone, train, relative,
+guard, throne, portrait, supernatural event or other physical
+detail is mentioned, it must be clearly visible.
+
+Faces are secondary to the story event.
+
+Prefer wide and medium-wide cinematic storytelling shots.
+
+The viewer must understand what is happening even with sound muted.
+
+No text.
 No subtitles.
+No letters written into the image.
 No watermark.
+No logo.
 """.strip()
+
 
     return prompt[:2048]
 
@@ -396,22 +572,45 @@ No watermark.
 # IMPORTANCE
 # ============================================================
 
-def importance(beat):
+def get_importance(
+    beat
+):
 
     if beat in [
-        "title_hook",
         "dramatic_reveal",
         "final_punch",
     ]:
+
         return "major"
 
+
     if beat in [
+        "title_hook",
         "conflict",
         "escalation_2",
     ]:
+
         return "high"
 
+
     return "medium"
+
+
+# ============================================================
+# COMMA MOTION POINTS
+# ============================================================
+
+def comma_motion_points(
+    text
+):
+
+    return max(
+        1,
+        min(
+            text.count(",") + 1,
+            4
+        )
+    )
 
 
 # ============================================================
@@ -421,9 +620,11 @@ def importance(beat):
 def main():
 
     if not STORY_FILE.exists():
+
         raise RuntimeError(
             "story.json not found"
         )
+
 
     story = json.loads(
         STORY_FILE.read_text(
@@ -431,16 +632,19 @@ def main():
         )
     )
 
+
     opening_1, opening_2 = split_balanced(
         story["opening"]
     )
+
 
     escalation_1, escalation_2 = split_balanced(
         story["escalation"]
     )
 
 
-    plan = [
+    scene_plan = [
+
         (
             "title_hook",
             "title_hook",
@@ -488,72 +692,106 @@ def main():
             "final_punch",
             story["final_punch"]
         ),
+
     ]
 
 
-    output = []
+    scenes = []
 
 
     for index, (
         beat,
-        timing,
+        timing_section,
         narration
-    ) in enumerate(plan):
-
-        prefer_late = beat in [
-            "dramatic_reveal",
-            "final_punch",
-        ]
-
-        event = select_visual_event(
-            narration,
-            prefer_late
-        )
+    ) in enumerate(
+        scene_plan
+    ):
 
         prompt = build_prompt(
             story,
             beat,
-            event
+            narration
         )
 
 
-        output.append({
-            "scene": index,
-            "beat": beat,
-            "timing_section": timing,
-            "narration": narration,
-            "visual_event": event,
-            "importance": importance(
-                beat
-            ),
-            "prompt": prompt,
-        })
+        scene = {
+
+            "scene":
+                index,
+
+            "beat":
+                beat,
+
+            "timing_section":
+                timing_section,
+
+            "narration":
+                narration,
+
+            "importance":
+                get_importance(
+                    beat
+                ),
+
+            "comma_motion_points":
+                comma_motion_points(
+                    narration
+                ),
+
+            "prompt":
+                prompt,
+
+        }
 
 
-    if len(output) != 8:
+        scenes.append(
+            scene
+        )
+
+
+    # ========================================================
+    # VALIDATION
+    # ========================================================
+
+    if len(scenes) != 8:
+
         raise RuntimeError(
-            "Scene count must equal 8"
+            f"Expected 8 scenes, got {len(scenes)}"
         )
 
 
-    SCENES_FILE.write_text(
+    OUTPUT_FILE.write_text(
+
         json.dumps(
-            output,
+            scenes,
             indent=2,
             ensure_ascii=False
         ),
+
         encoding="utf-8"
+
     )
 
+
+    print("")
+    print(
+        "================================="
+    )
 
     print(
-        "\n=== VISUAL EVENTS ==="
+        "SCENE PROMPTS CREATED"
     )
 
-    for scene in output:
+    print(
+        "================================="
+    )
 
+
+    for scene in scenes:
+
+        print("")
         print(
-            "\nScene",
+            "Scene:",
             scene["scene"] + 1
         )
 
@@ -563,10 +801,27 @@ def main():
         )
 
         print(
-            "Visual:",
-            scene["visual_event"]
+            "Narration:",
+            scene["narration"]
         )
 
+        print(
+            "Objects:",
+            find_objects(
+                scene["narration"]
+            )
+        )
+
+
+    print("")
+    print(
+        "8 scene prompts saved successfully."
+    )
+
+
+# ============================================================
+# RUN
+# ============================================================
 
 if __name__ == "__main__":
     main()
