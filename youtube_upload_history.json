@@ -28,5 +28,15 @@
     "video_sha256": "300af5e791537c23002da4a41be6ca1f4fcde396ce326535ba3c2b84abbc3a7e",
     "scheduled_publish_at": "2026-10-14T03:30:00Z",
     "uploaded_at": "2026-10-13T19:31:06.191541+00:00"
+  },
+  {
+    "story_key": "91c656bb6379c071e7317981d1c8b438ca45b88fe5e9773a45aef6641a8e6d1a",
+    "story_id": "lucky_thief",
+    "part": 1,
+    "title": "The Thief Who Accidentally Became Prime Minister #Shorts",
+    "video_id": "4FmNvwIugxc",
+    "video_sha256": "bb4d6f591d858e184386d55ca73bc809e92cc9b82ec492d4d512fa330aa39ee1",
+    "scheduled_publish_at": "2026-10-14T14:00:00Z",
+    "uploaded_at": "2026-10-14T07:01:05.058752+00:00"
   }
 ]

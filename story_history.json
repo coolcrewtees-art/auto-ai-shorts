@@ -335,5 +335,13 @@
     "title_hook": "The Thing That Was Already Inside the House",
     "fingerprint": "f546d005ac17a01ef8c410da9fa64e87c02e18af1b8396223966f69a35375fbb",
     "next_part_pending": false
+  },
+  {
+    "story_id": "lucky_thief",
+    "part": 1,
+    "category": "comedy",
+    "title_hook": "The Thief Who Accidentally Became Prime Minister",
+    "fingerprint": "91c656bb6379c071e7317981d1c8b438ca45b88fe5e9773a45aef6641a8e6d1a",
+    "next_part_pending": false
   }
 ]
