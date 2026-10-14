@@ -343,5 +343,13 @@
     "title_hook": "The Thief Who Accidentally Became Prime Minister",
     "fingerprint": "91c656bb6379c071e7317981d1c8b438ca45b88fe5e9773a45aef6641a8e6d1a",
     "next_part_pending": false
+  },
+  {
+    "story_id": "bhishma_death",
+    "part": 1,
+    "category": "indian_mythology",
+    "title_hook": "The Warrior Who Chose the Moment of His Own Death",
+    "fingerprint": "5936ae3fa212b7f8d68566cb27fa452994e60c6970fbb5f0bb86bebea614494c",
+    "next_part_pending": false
   }
 ]
