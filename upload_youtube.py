@@ -1,13 +1,8 @@
 import hashlib
 import json
 import os
-
-from datetime import (
-    datetime,
-    timedelta,
-    timezone,
-)
-
+import re
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from google.oauth2.credentials import Credentials
@@ -19,30 +14,32 @@ from googleapiclient.http import MediaFileUpload
 # FILES
 # ============================================================
 
-VIDEO_FILE = Path(
-    "final_short.mp4"
-)
-
-STORY_FILE = Path(
-    "story.json"
-)
-
-UPLOAD_HISTORY_FILE = Path(
-    "youtube_upload_history.json"
-)
+STORY_FILE = Path("story.json")
+VIDEO_FILE = Path("final_short.mp4")
+HISTORY_FILE = Path("youtube_upload_history.json")
 
 
 # ============================================================
-# YOUTUBE OAUTH
+# YOUTUBE CREDENTIALS
 # ============================================================
 
-SCOPES = [
-    "https://www.googleapis.com/auth/youtube.upload"
-]
+CLIENT_ID = os.environ.get("YOUTUBE_CLIENT_ID")
+CLIENT_SECRET = os.environ.get("YOUTUBE_CLIENT_SECRET")
+REFRESH_TOKEN = os.environ.get("YOUTUBE_REFRESH_TOKEN")
+
+
+if not CLIENT_ID:
+    raise RuntimeError("YOUTUBE_CLIENT_ID missing")
+
+if not CLIENT_SECRET:
+    raise RuntimeError("YOUTUBE_CLIENT_SECRET missing")
+
+if not REFRESH_TOKEN:
+    raise RuntimeError("YOUTUBE_REFRESH_TOKEN missing")
 
 
 # ============================================================
-# TIMEZONE
+# TIME / PUBLISHING
 # ============================================================
 
 IST = timezone(
@@ -52,71 +49,251 @@ IST = timezone(
     )
 )
 
-
-# ============================================================
-# PUBLISH SLOTS
-#
-# Morning: 9:00 AM IST
-# Evening: 7:30 PM IST
-# ============================================================
-
 PUBLISH_SLOTS = [
     (9, 0),
     (19, 30),
 ]
 
+MINIMUM_SCHEDULE_GAP = timedelta(
+    minutes=10
+)
+
 
 # ============================================================
-# LOAD HISTORY
+# CHANNEL
 # ============================================================
 
-def load_history():
+CHANNEL_NAME = "AI MANIA"
 
-    if not UPLOAD_HISTORY_FILE.exists():
+CATEGORY_ID = "24"  # Entertainment
 
-        return []
 
+# ============================================================
+# CATEGORY HASHTAGS
+# ============================================================
+
+CATEGORY_HASHTAGS = {
+
+    "indian mythology": [
+        "#Shorts",
+        "#IndianMythology",
+        "#Mythology",
+        "#AIStory",
+        "#StoryTime",
+    ],
+
+    "indian folktales": [
+        "#Shorts",
+        "#IndianFolktales",
+        "#Folktale",
+        "#AIStory",
+        "#StoryTime",
+    ],
+
+    "indian legends": [
+        "#Shorts",
+        "#IndianLegends",
+        "#Legend",
+        "#AIStory",
+        "#StoryTime",
+    ],
+
+    "supernatural": [
+        "#Shorts",
+        "#MysteryStory",
+        "#Supernatural",
+        "#HorrorShorts",
+        "#AIStory",
+    ],
+
+    "mystery": [
+        "#Shorts",
+        "#MysteryStory",
+        "#Mystery",
+        "#DarkStory",
+        "#AIStory",
+    ],
+
+    "supernatural/mystery": [
+        "#Shorts",
+        "#MysteryStory",
+        "#Supernatural",
+        "#HorrorShorts",
+        "#AIStory",
+    ],
+
+    "fantasy": [
+        "#Shorts",
+        "#FantasyStory",
+        "#DarkFantasy",
+        "#AIStory",
+        "#StoryTime",
+    ],
+
+    "dark fantasy": [
+        "#Shorts",
+        "#DarkFantasy",
+        "#FantasyStory",
+        "#MysteryStory",
+        "#AIStory",
+    ],
+
+    "fantasy/dark fantasy": [
+        "#Shorts",
+        "#DarkFantasy",
+        "#FantasyStory",
+        "#MysteryStory",
+        "#AIStory",
+    ],
+
+    "romance": [
+        "#Shorts",
+        "#LoveStory",
+        "#RomanceStory",
+        "#Drama",
+        "#AIStory",
+    ],
+
+    "romance drama": [
+        "#Shorts",
+        "#LoveStory",
+        "#RomanceStory",
+        "#Drama",
+        "#AIStory",
+    ],
+
+    "comedy": [
+        "#Shorts",
+        "#FunnyStory",
+        "#ComedyShorts",
+        "#PlotTwist",
+        "#AIStory",
+    ],
+
+    "comedy/absurd twist": [
+        "#Shorts",
+        "#FunnyStory",
+        "#ComedyShorts",
+        "#PlotTwist",
+        "#AIStory",
+    ],
+}
+
+
+# ============================================================
+# YOUTUBE SEARCH TAGS
+# ============================================================
+
+CATEGORY_TAGS = {
+
+    "indian mythology": [
+        "indian mythology",
+        "mythology story",
+        "mythological stories",
+        "ai story",
+        "short story",
+        "youtube shorts",
+    ],
+
+    "indian folktales": [
+        "indian folktales",
+        "indian stories",
+        "folk tale",
+        "ai story",
+        "short story",
+        "youtube shorts",
+    ],
+
+    "indian legends": [
+        "indian legends",
+        "legend story",
+        "indian stories",
+        "ai story",
+        "short story",
+        "youtube shorts",
+    ],
+
+    "supernatural/mystery": [
+        "mystery story",
+        "supernatural story",
+        "horror story",
+        "dark mystery",
+        "ai story",
+        "youtube shorts",
+    ],
+
+    "fantasy/dark fantasy": [
+        "dark fantasy",
+        "fantasy story",
+        "mystery story",
+        "ai story",
+        "short story",
+        "youtube shorts",
+    ],
+
+    "romance drama": [
+        "love story",
+        "romance story",
+        "emotional story",
+        "drama story",
+        "ai story",
+        "youtube shorts",
+    ],
+
+    "comedy/absurd twist": [
+        "funny story",
+        "comedy story",
+        "plot twist",
+        "unexpected ending",
+        "ai story",
+        "youtube shorts",
+    ],
+}
+
+
+# ============================================================
+# HELPERS
+# ============================================================
+
+def clean_text(value):
+
+    if value is None:
+        return ""
+
+    value = str(value)
+
+    value = re.sub(
+        r"\s+",
+        " ",
+        value
+    )
+
+    return value.strip()
+
+
+def load_json(path, default):
+
+    if not path.exists():
+        return default
 
     try:
 
-        data = json.loads(
-            UPLOAD_HISTORY_FILE.read_text(
+        return json.loads(
+            path.read_text(
                 encoding="utf-8"
             )
         )
 
-        if isinstance(
-            data,
-            list
-        ):
+    except Exception:
 
-            return data
+        return default
 
 
-        return []
+def save_json(path, data):
 
-
-    except Exception as error:
-
-        print(
-            "Could not read upload history:",
-            error
-        )
-
-        return []
-
-
-# ============================================================
-# SAVE HISTORY
-# ============================================================
-
-def save_history(
-    history
-):
-
-    UPLOAD_HISTORY_FILE.write_text(
+    path.write_text(
         json.dumps(
-            history,
+            data,
             indent=2,
             ensure_ascii=False
         ),
@@ -124,21 +301,11 @@ def save_history(
     )
 
 
-# ============================================================
-# HASH FILE
-# ============================================================
+def sha256_file(path):
 
-def sha256_file(
-    path
-):
+    sha = hashlib.sha256()
 
-    digest = hashlib.sha256()
-
-
-    with open(
-        path,
-        "rb"
-    ) as file:
+    with path.open("rb") as file:
 
         while True:
 
@@ -147,73 +314,560 @@ def sha256_file(
             )
 
             if not chunk:
+                break
+
+            sha.update(chunk)
+
+    return sha.hexdigest()
+
+
+# ============================================================
+# STORY HELPERS
+# ============================================================
+
+def get_story_title(story):
+
+    possible = [
+        story.get("title_hook"),
+        story.get("title"),
+        story.get("hook_title"),
+        story.get("name"),
+    ]
+
+    for value in possible:
+
+        value = clean_text(value)
+
+        if value:
+            return value
+
+    return "A Story You Won't Forget"
+
+
+def get_story_category(story):
+
+    category = clean_text(
+        story.get(
+            "category",
+            "mystery"
+        )
+    )
+
+    return category.lower()
+
+
+def get_story_part(story):
+
+    try:
+
+        return int(
+            story.get(
+                "part",
+                1
+            )
+        )
+
+    except Exception:
+
+        return 1
+
+
+def get_story_id(story):
+
+    value = clean_text(
+        story.get("story_id")
+    )
+
+    if value:
+        return value
+
+    return clean_text(
+        story.get("title_hook")
+    )
+
+
+def get_story_fingerprint(story):
+
+    value = clean_text(
+        story.get("fingerprint")
+    )
+
+    if value:
+        return value
+
+    base = json.dumps(
+        story,
+        sort_keys=True,
+        ensure_ascii=False
+    )
+
+    return hashlib.sha256(
+        base.encode("utf-8")
+    ).hexdigest()
+
+
+def get_story_text(story):
+
+    chunks = []
+
+    possible_keys = [
+        "hook",
+        "opening",
+        "opening_1",
+        "opening_2",
+        "conflict",
+        "escalation",
+        "escalation_1",
+        "escalation_2",
+        "reveal",
+        "final",
+        "final_punch",
+        "narration",
+        "script",
+    ]
+
+    for key in possible_keys:
+
+        value = story.get(key)
+
+        if isinstance(
+            value,
+            str
+        ):
+
+            value = clean_text(value)
+
+            if value:
+                chunks.append(value)
+
+    return " ".join(chunks)
+
+
+# ============================================================
+# TITLE GENERATION
+# ============================================================
+
+def strip_existing_shorts(title):
+
+    title = re.sub(
+        r"#shorts",
+        "",
+        title,
+        flags=re.IGNORECASE
+    )
+
+    return clean_text(title)
+
+
+def build_title(story):
+
+    original = strip_existing_shorts(
+        get_story_title(story)
+    )
+
+    category = get_story_category(
+        story
+    )
+
+    part = get_story_part(
+        story
+    )
+
+
+    # --------------------------------------------------------
+    # PART 2
+    # --------------------------------------------------------
+
+    if part >= 2:
+
+        candidates = [
+
+            f"{original} 😨 | Part {part} #Shorts",
+
+            f"{original}... It Gets Worse 😳 | Part {part} #Shorts",
+
+            f"{original} — The Truth Is Worse 😨 #Shorts",
+        ]
+
+    # --------------------------------------------------------
+    # MYSTERY / SUPERNATURAL
+    # --------------------------------------------------------
+
+    elif (
+        "mystery" in category
+        or "supernatural" in category
+        or "dark fantasy" in category
+    ):
+
+        candidates = [
+
+            f"{original}... Then THIS Happened 😨 #Shorts",
+
+            f"{original} — But Something Was Wrong 😳 #Shorts",
+
+            f"{original}... Until They Discovered the Truth 😨 #Shorts",
+        ]
+
+    # --------------------------------------------------------
+    # MYTHOLOGY
+    # --------------------------------------------------------
+
+    elif "mythology" in category:
+
+        candidates = [
+
+            f"{original} — The Part Nobody Tells You ⚡ #Shorts",
+
+            f"{original}... But There Was a Twist ⚡ #Shorts",
+
+            f"{original} | Indian Mythology #Shorts",
+        ]
+
+    # --------------------------------------------------------
+    # LEGEND / FOLKTALE
+    # --------------------------------------------------------
+
+    elif (
+        "legend" in category
+        or "folktale" in category
+    ):
+
+        candidates = [
+
+            f"{original}... But the Ending Changes Everything 😳 #Shorts",
+
+            f"{original} — An Indian Legend You Need to Hear #Shorts",
+
+            f"{original} | Incredible Indian Story #Shorts",
+        ]
+
+    # --------------------------------------------------------
+    # ROMANCE
+    # --------------------------------------------------------
+
+    elif "romance" in category:
+
+        candidates = [
+
+            f"{original}... Then Everything Changed 💔 #Shorts",
+
+            f"{original} — A Love Story With a Twist 💔 #Shorts",
+
+            f"{original}... But She Never Expected This 😳 #Shorts",
+        ]
+
+    # --------------------------------------------------------
+    # COMEDY
+    # --------------------------------------------------------
+
+    elif "comedy" in category:
+
+        candidates = [
+
+            f"{original}... This Escalated Quickly 😂 #Shorts",
+
+            f"{original} — The Ending Is Ridiculous 😂 #Shorts",
+
+            f"{original}... Nobody Expected THAT 😂 #Shorts",
+        ]
+
+    else:
+
+        candidates = [
+            f"{original}... Then Everything Changed 😳 #Shorts"
+        ]
+
+
+    title = candidates[0]
+
+
+    # YouTube title limit
+    if len(title) > 100:
+
+        suffix = " #Shorts"
+
+        max_original = (
+            100
+            - len(suffix)
+            - 3
+        )
+
+        title = (
+            original[:max_original]
+            .rstrip(
+                " .,-"
+            )
+            + "..."
+            + suffix
+        )
+
+
+    return title
+
+
+# ============================================================
+# DESCRIPTION GENERATION
+# ============================================================
+
+def get_description_hook(story):
+
+    title = strip_existing_shorts(
+        get_story_title(story)
+    )
+
+    category = get_story_category(
+        story
+    )
+
+    part = get_story_part(
+        story
+    )
+
+
+    if part >= 2:
+
+        return (
+            f"The story continues.\n\n"
+            f"{title} takes an even darker turn — "
+            f"and the truth is not what it first seemed."
+        )
+
+
+    if (
+        "mystery" in category
+        or "supernatural" in category
+    ):
+
+        return (
+            f"{title} seemed impossible.\n\n"
+            f"But the deeper they looked, "
+            f"the stranger the truth became."
+        )
+
+
+    if "dark fantasy" in category:
+
+        return (
+            f"{title} begins like a legend.\n\n"
+            f"Then something impossible changes everything."
+        )
+
+
+    if "mythology" in category:
+
+        return (
+            f"{title} hides a story of power, fate and consequence.\n\n"
+            f"Watch till the end for the full twist."
+        )
+
+
+    if (
+        "folktale" in category
+        or "legend" in category
+    ):
+
+        return (
+            f"{title} sounds like an ordinary tale at first.\n\n"
+            f"The ending tells a very different story."
+        )
+
+
+    if "romance" in category:
+
+        return (
+            f"{title} begins with a simple connection.\n\n"
+            f"What happens next changes everything."
+        )
+
+
+    if "comedy" in category:
+
+        return (
+            f"{title} starts normally enough.\n\n"
+            f"Then things get completely out of control."
+        )
+
+
+    return (
+        f"{title} begins normally.\n\n"
+        f"Then everything changes."
+    )
+
+
+def get_hashtags(category):
+
+    category = category.lower()
+
+
+    if category in CATEGORY_HASHTAGS:
+
+        return CATEGORY_HASHTAGS[
+            category
+        ]
+
+
+    for key, value in CATEGORY_HASHTAGS.items():
+
+        if (
+            key in category
+            or category in key
+        ):
+
+            return value
+
+
+    return [
+        "#Shorts",
+        "#AIStory",
+        "#StoryTime",
+        "#PlotTwist",
+        "#MysteryStory",
+    ]
+
+
+def build_description(story):
+
+    category = get_story_category(
+        story
+    )
+
+    hook = get_description_hook(
+        story
+    )
+
+    hashtags = get_hashtags(
+        category
+    )
+
+
+    lines = [
+
+        hook,
+
+        "",
+
+        "Watch till the end for the twist.",
+
+        "",
+
+        "🎬 Original cinematic AI story by AI MANIA.",
+
+        "",
+
+        " ".join(
+            hashtags
+        ),
+    ]
+
+
+    description = "\n".join(
+        lines
+    )
+
+
+    return description[:5000]
+
+
+# ============================================================
+# YOUTUBE TAG GENERATION
+# ============================================================
+
+def build_tags(story):
+
+    category = get_story_category(
+        story
+    )
+
+    result = [
+        "AI MANIA",
+        "AI story",
+        "short story",
+        "story shorts",
+        "youtube shorts",
+        "shorts",
+        "plot twist",
+    ]
+
+
+    if category in CATEGORY_TAGS:
+
+        result.extend(
+            CATEGORY_TAGS[
+                category
+            ]
+        )
+
+    else:
+
+        for key, values in CATEGORY_TAGS.items():
+
+            if (
+                key in category
+                or category in key
+            ):
+
+                result.extend(
+                    values
+                )
 
                 break
 
 
-            digest.update(
-                chunk
-            )
+    unique = []
+
+    seen = set()
 
 
-    return digest.hexdigest()
+    for tag in result:
+
+        tag = clean_text(tag)
+
+        lower = tag.lower()
+
+        if (
+            tag
+            and lower not in seen
+        ):
+
+            unique.append(tag)
+
+            seen.add(lower)
 
 
-# ============================================================
-# STORY KEY
-# ============================================================
+    # Stay safely within YouTube's total tag limit
+    final = []
 
-def story_key(
-    story
-):
-
-    fingerprint = story.get(
-        "fingerprint"
-    )
+    total = 0
 
 
-    if fingerprint:
+    for tag in unique:
 
-        return fingerprint
+        extra = len(tag) + 1
 
+        if total + extra > 450:
+            break
 
-    source = "|".join([
-        str(
-            story.get(
-                "story_id",
-                ""
-            )
-        ),
+        final.append(tag)
 
-        str(
-            story.get(
-                "part",
-                ""
-            )
-        ),
-
-        story.get(
-            "title_hook",
-            ""
-        ),
-    ])
+        total += extra
 
 
-    return hashlib.sha256(
-        source.encode(
-            "utf-8"
-        )
-    ).hexdigest()
+    return final
 
 
 # ============================================================
-# GET NEXT PUBLISH TIME
+# PUBLISH TIME
 # ============================================================
 
 def next_publish_time():
 
     now = datetime.now(
         IST
+    )
+
+    minimum_time = (
+        now
+        + MINIMUM_SCHEDULE_GAP
     )
 
 
@@ -226,185 +880,145 @@ def next_publish_time():
             hour=hour,
             minute=minute,
             second=0,
-            microsecond=0,
+            microsecond=0
         )
 
-
-        # Give workflow/upload at least
-        # 10 minutes before publishing.
-        if candidate > (
-            now
-            + timedelta(
-                minutes=10
-            )
-        ):
+        if candidate > minimum_time:
 
             candidates.append(
                 candidate
             )
 
 
-    # ========================================================
-    # NO SLOT LEFT TODAY
-    # ========================================================
+    if candidates:
 
-    if not candidates:
-
-        tomorrow = (
-            now
-            + timedelta(
-                days=1
-            )
-        )
-
-
-        target = tomorrow.replace(
-            hour=PUBLISH_SLOTS[0][0],
-            minute=PUBLISH_SLOTS[0][1],
-            second=0,
-            microsecond=0,
-        )
-
-
-    else:
-
-        target = min(
+        publish_ist = min(
             candidates
         )
 
+    else:
 
-    target_utc = target.astimezone(
+        tomorrow = (
+            now
+            + timedelta(days=1)
+        )
+
+        first_hour, first_minute = (
+            PUBLISH_SLOTS[0]
+        )
+
+        publish_ist = tomorrow.replace(
+            hour=first_hour,
+            minute=first_minute,
+            second=0,
+            microsecond=0
+        )
+
+
+    publish_utc = publish_ist.astimezone(
         timezone.utc
     )
 
 
     return (
-        target,
-        target_utc
+        publish_ist,
+        publish_utc
+    )
+
+
+def youtube_datetime(dt):
+
+    return (
+        dt.strftime(
+            "%Y-%m-%dT%H:%M:%S"
+        )
+        + "Z"
     )
 
 
 # ============================================================
-# MAIN
+# DUPLICATE PROTECTION
 # ============================================================
 
-def main():
+def make_story_key(story):
 
-    # ========================================================
-    # CHECK FILES
-    # ========================================================
-
-    if not VIDEO_FILE.exists():
-
-        raise RuntimeError(
-            "final_short.mp4 not found"
-        )
-
-
-    if not STORY_FILE.exists():
-
-        raise RuntimeError(
-            "story.json not found"
-        )
-
-
-    if VIDEO_FILE.stat().st_size == 0:
-
-        raise RuntimeError(
-            "final_short.mp4 is empty"
-        )
-
-
-    # ========================================================
-    # LOAD STORY
-    # ========================================================
-
-    story = json.loads(
-        STORY_FILE.read_text(
-            encoding="utf-8"
-        )
-    )
-
-
-    # ========================================================
-    # LOAD HISTORY
-    # ========================================================
-
-    history = load_history()
-
-
-    current_story_key = story_key(
+    story_id = get_story_id(
         story
     )
 
+    part = get_story_part(
+        story
+    )
 
-    current_video_hash = sha256_file(
-        VIDEO_FILE
+    fingerprint = get_story_fingerprint(
+        story
+    )
+
+    return (
+        f"{story_id}"
+        f"|part={part}"
+        f"|{fingerprint}"
     )
 
 
-    # ========================================================
-    # DUPLICATE PROTECTION
-    # ========================================================
+def check_duplicate(
+    history,
+    story_key,
+    video_hash
+):
 
-    for item in history:
+    for record in history:
 
-        if (
-            item.get(
+        old_key = clean_text(
+            record.get(
                 "story_key"
             )
-            == current_story_key
+        )
+
+        old_hash = clean_text(
+            record.get(
+                "video_sha256"
+            )
+        )
+
+
+        if (
+            old_key
+            and old_key == story_key
         ):
 
             raise RuntimeError(
-                "STOPPED: this story has already been uploaded."
+                "Duplicate upload blocked: "
+                "this story has already been uploaded."
             )
 
 
         if (
-            item.get(
-                "video_sha256"
-            )
-            == current_video_hash
+            old_hash
+            and old_hash == video_hash
         ):
 
             raise RuntimeError(
-                "STOPPED: this exact video file has already been uploaded."
+                "Duplicate upload blocked: "
+                "this exact video file has already been uploaded."
             )
 
 
-    # ========================================================
-    # LOAD SECRETS
-    # ========================================================
+# ============================================================
+# YOUTUBE CLIENT
+# ============================================================
 
-    client_id = os.environ[
-        "YOUTUBE_CLIENT_ID"
-    ]
-
-
-    client_secret = os.environ[
-        "YOUTUBE_CLIENT_SECRET"
-    ]
-
-
-    refresh_token = os.environ[
-        "YOUTUBE_REFRESH_TOKEN"
-    ]
-
-
-    # ========================================================
-    # GOOGLE AUTH
-    # ========================================================
+def build_youtube_client():
 
     credentials = Credentials(
         token=None,
-        refresh_token=refresh_token,
-        token_uri=(
-            "https://oauth2.googleapis.com/token"
-        ),
-        client_id=client_id,
-        client_secret=client_secret,
-        scopes=SCOPES,
+        refresh_token=REFRESH_TOKEN,
+        token_uri="https://oauth2.googleapis.com/token",
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        scopes=[
+            "https://www.googleapis.com/auth/youtube.upload"
+        ],
     )
 
 
@@ -416,77 +1030,21 @@ def main():
     )
 
 
-    # ========================================================
-    # TITLE
-    # ========================================================
-
-    title = story.get(
-        "title_hook",
-        "AI Mania Story"
-    ).strip()
+    return youtube
 
 
-    if "#Shorts" not in title:
+# ============================================================
+# UPLOAD
+# ============================================================
 
-        title += " #Shorts"
-
-
-    title = title[:100]
-
-
-    # ========================================================
-    # CATEGORY
-    # ========================================================
-
-    category = (
-        story.get(
-            "category",
-            "story"
-        )
-        .replace(
-            "_",
-            " "
-        )
-        .title()
-    )
-
-
-    # ========================================================
-    # DESCRIPTION
-    # ========================================================
-
-    description = (
-        f"{story.get('title_hook', '')}\n\n"
-        f"A cinematic short story from AI MANIA.\n\n"
-        f"Category: {category}\n\n"
-        "#Shorts #AIMania #Story "
-        "#Storytelling #CinematicStory "
-        "#Mystery #AIStory"
-    )
-
-
-    # ========================================================
-    # GET NEXT SLOT
-    # ========================================================
-
-    local_publish, utc_publish = (
-        next_publish_time()
-    )
-
-
-    publish_at = (
-        utc_publish
-        .isoformat()
-        .replace(
-            "+00:00",
-            "Z"
-        )
-    )
-
-
-    # ========================================================
-    # VIDEO BODY
-    # ========================================================
+def upload_video(
+    youtube,
+    story,
+    title,
+    description,
+    tags,
+    publish_at_utc,
+):
 
     body = {
 
@@ -498,32 +1056,22 @@ def main():
             "description":
                 description,
 
-            "categoryId":
-                "24",
+            "tags":
+                tags,
 
-            "tags": [
-                "AI Mania",
-                "shorts",
-                "story",
-                "storytelling",
-                "AI story",
-                "cinematic story",
-                "mystery",
-                "short story",
-            ],
+            "categoryId":
+                CATEGORY_ID,
         },
 
-
         "status": {
-
-            # Scheduled videos must
-            # initially be private.
 
             "privacyStatus":
                 "private",
 
             "publishAt":
-                publish_at,
+                youtube_datetime(
+                    publish_at_utc
+                ),
 
             "selfDeclaredMadeForKids":
                 False,
@@ -531,67 +1079,28 @@ def main():
     }
 
 
-    # ========================================================
-    # MEDIA
-    # ========================================================
-
     media = MediaFileUpload(
-        str(
-            VIDEO_FILE
-        ),
-
+        str(VIDEO_FILE),
         mimetype="video/mp4",
-
         resumable=True,
+        chunksize=-1,
     )
 
 
-    # ========================================================
-    # DEBUG INFO
-    # ========================================================
-
-    print("")
-    print(
-        "================================="
-    )
-
-    print(
-        "AI MANIA YOUTUBE UPLOAD"
-    )
-
-    print(
-        "================================="
-    )
-
-
-    print(
-        "Title:",
-        title
-    )
-
-
-    print(
-        "Publish time IST:",
-        local_publish.strftime(
-            "%d %B %Y %I:%M %p"
+    request = (
+        youtube
+        .videos()
+        .insert(
+            part="snippet,status",
+            body=body,
+            media_body=media,
         )
     )
 
 
+    print("")
     print(
-        "Publish time UTC:",
-        publish_at
-    )
-
-
-    # ========================================================
-    # UPLOAD REQUEST
-    # ========================================================
-
-    request = youtube.videos().insert(
-        part="snippet,status",
-        body=body,
-        media_body=media,
+        "Uploading video to YouTube..."
     )
 
 
@@ -607,29 +1116,309 @@ def main():
 
         if status:
 
-            percent = int(
+            percentage = int(
                 status.progress()
                 * 100
             )
 
-
             print(
-                f"Upload progress: {percent}%"
+                f"Upload progress: "
+                f"{percentage}%"
             )
 
 
-    video_id = response[
+    video_id = response.get(
         "id"
-    ]
+    )
 
 
-    # ========================================================
-    # SUCCESS
-    # ========================================================
+    if not video_id:
+
+        raise RuntimeError(
+            "YouTube upload completed "
+            "but no video ID was returned."
+        )
+
+
+    return video_id
+
+
+# ============================================================
+# MAIN
+# ============================================================
+
+def main():
+
+    # --------------------------------------------------------
+    # VALIDATE FILES
+    # --------------------------------------------------------
+
+    if not STORY_FILE.exists():
+
+        raise RuntimeError(
+            "story.json not found"
+        )
+
+
+    if not VIDEO_FILE.exists():
+
+        raise RuntimeError(
+            "final_short.mp4 not found"
+        )
+
+
+    if VIDEO_FILE.stat().st_size < 10000:
+
+        raise RuntimeError(
+            "final_short.mp4 looks invalid "
+            "or too small."
+        )
+
+
+    # --------------------------------------------------------
+    # LOAD STORY
+    # --------------------------------------------------------
+
+    story = load_json(
+        STORY_FILE,
+        {}
+    )
+
+
+    if not story:
+
+        raise RuntimeError(
+            "story.json is empty "
+            "or invalid."
+        )
+
+
+    # --------------------------------------------------------
+    # METADATA
+    # --------------------------------------------------------
+
+    title = build_title(
+        story
+    )
+
+    description = build_description(
+        story
+    )
+
+    tags = build_tags(
+        story
+    )
+
+
+    # --------------------------------------------------------
+    # DUPLICATE CHECK
+    # --------------------------------------------------------
+
+    video_hash = sha256_file(
+        VIDEO_FILE
+    )
+
+    story_key = make_story_key(
+        story
+    )
+
+
+    history = load_json(
+        HISTORY_FILE,
+        []
+    )
+
+
+    if not isinstance(
+        history,
+        list
+    ):
+
+        history = []
+
+
+    check_duplicate(
+        history,
+        story_key,
+        video_hash
+    )
+
+
+    # --------------------------------------------------------
+    # SCHEDULE TIME
+    # --------------------------------------------------------
+
+    publish_ist, publish_utc = (
+        next_publish_time()
+    )
+
 
     print("")
     print(
-        "================================="
+        "========================================"
+    )
+
+    print(
+        "AI MANIA YOUTUBE UPLOADER"
+    )
+
+    print(
+        "========================================"
+    )
+
+    print("")
+    print(
+        "Title:"
+    )
+
+    print(
+        title
+    )
+
+    print("")
+    print(
+        "Description:"
+    )
+
+    print(
+        description
+    )
+
+    print("")
+    print(
+        "Tags:"
+    )
+
+    print(
+        ", ".join(
+            tags
+        )
+    )
+
+    print("")
+    print(
+        "Publish time IST:"
+    )
+
+    print(
+        publish_ist.strftime(
+            "%Y-%m-%d %I:%M %p"
+        )
+    )
+
+    print("")
+    print(
+        "Publish time UTC:"
+    )
+
+    print(
+        youtube_datetime(
+            publish_utc
+        )
+    )
+
+
+    # --------------------------------------------------------
+    # YOUTUBE
+    # --------------------------------------------------------
+
+    youtube = build_youtube_client()
+
+
+    video_id = upload_video(
+        youtube=youtube,
+        story=story,
+        title=title,
+        description=description,
+        tags=tags,
+        publish_at_utc=publish_utc,
+    )
+
+
+    # --------------------------------------------------------
+    # SAVE HISTORY
+    # --------------------------------------------------------
+
+    record = {
+
+        "uploaded_at":
+            datetime.now(
+                timezone.utc
+            ).isoformat(),
+
+        "youtube_video_id":
+            video_id,
+
+        "youtube_url":
+            (
+                "https://www.youtube.com/watch?v="
+                + video_id
+            ),
+
+        "title":
+            title,
+
+        "category":
+            get_story_category(
+                story
+            ),
+
+        "story_id":
+            get_story_id(
+                story
+            ),
+
+        "part":
+            get_story_part(
+                story
+            ),
+
+        "story_key":
+            story_key,
+
+        "story_fingerprint":
+            get_story_fingerprint(
+                story
+            ),
+
+        "video_sha256":
+            video_hash,
+
+        "publish_time_ist":
+            publish_ist.isoformat(),
+
+        "publish_time_utc":
+            publish_utc.isoformat(),
+
+        "status":
+            "scheduled",
+    }
+
+
+    history.append(
+        record
+    )
+
+
+    # Keep history reasonably sized
+    if len(history) > 500:
+
+        history = history[-500:]
+
+
+    save_json(
+        HISTORY_FILE,
+        history
+    )
+
+
+    # --------------------------------------------------------
+    # SUCCESS
+    # --------------------------------------------------------
+
+    print("")
+    print(
+        "========================================"
     )
 
     print(
@@ -637,67 +1426,34 @@ def main():
     )
 
     print(
-        "================================="
+        "========================================"
     )
 
-
+    print("")
     print(
         "Video ID:",
         video_id
     )
 
+    print(
+        "Scheduled:",
+        publish_ist.strftime(
+            "%d %b %Y, %I:%M %p IST"
+        )
+    )
 
     print(
         "URL:",
-        f"https://youtube.com/watch?v={video_id}"
+        (
+            "https://www.youtube.com/watch?v="
+            + video_id
+        )
     )
 
 
-    # ========================================================
-    # SAVE UPLOAD RECORD
-    # ========================================================
-
-    history.append({
-
-        "story_key":
-            current_story_key,
-
-        "story_id":
-            story.get(
-                "story_id"
-            ),
-
-        "part":
-            story.get(
-                "part"
-            ),
-
-        "title":
-            title,
-
-        "video_id":
-            video_id,
-
-        "video_sha256":
-            current_video_hash,
-
-        "scheduled_publish_at":
-            publish_at,
-
-        "uploaded_at":
-            datetime.now(
-                timezone.utc
-            ).isoformat(),
-
-    })
-
-
-    # Keep last 500 uploads.
-    save_history(
-        history[-500:]
-    )
-
+# ============================================================
+# RUN
+# ============================================================
 
 if __name__ == "__main__":
-
     main()
