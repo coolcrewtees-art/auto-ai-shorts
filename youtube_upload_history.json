@@ -63,5 +63,20 @@
     "publish_time_ist": "2026-10-15T19:30:00+05:30",
     "publish_time_utc": "2026-10-15T14:00:00+00:00",
     "status": "scheduled"
+  },
+  {
+    "uploaded_at": "2026-10-15T17:19:22.316577+00:00",
+    "youtube_video_id": "CXi7genVl20",
+    "youtube_url": "https://www.youtube.com/watch?v=CXi7genVl20",
+    "title": "The King Who Could Hear Every Lie... Then Everything Changed 😳 #Shorts",
+    "category": "fantasy",
+    "story_id": "lying_king",
+    "part": 1,
+    "story_key": "lying_king|part=1|884aee20a917dfcb11e7e2c7bef93e4253ee460fa8aad6c4910fa2a539d6628c",
+    "story_fingerprint": "884aee20a917dfcb11e7e2c7bef93e4253ee460fa8aad6c4910fa2a539d6628c",
+    "video_sha256": "64c57559bc0e882e1058bae7ceb5e42395083c512ca4be25cca15c6a88a41b4d",
+    "publish_time_ist": "2026-10-16T09:00:00+05:30",
+    "publish_time_utc": "2026-10-16T03:30:00+00:00",
+    "status": "scheduled"
   }
 ]
