@@ -367,5 +367,13 @@
     "title_hook": "The King Who Could Hear Every Lie",
     "fingerprint": "884aee20a917dfcb11e7e2c7bef93e4253ee460fa8aad6c4910fa2a539d6628c",
     "next_part_pending": false
+  },
+  {
+    "story_id": "memory_train",
+    "part": 1,
+    "category": "supernatural_mystery",
+    "title_hook": "The Train That Charged Passengers With Memories",
+    "fingerprint": "f4bc24507448dce935e527e78fa25efe0e90801a6461150a55f19875b5aba2fb",
+    "next_part_pending": false
   }
 ]
