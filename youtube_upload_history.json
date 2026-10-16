@@ -93,5 +93,20 @@
     "publish_time_ist": "2026-10-16T19:30:00+05:30",
     "publish_time_utc": "2026-10-16T14:00:00+00:00",
     "status": "scheduled"
+  },
+  {
+    "uploaded_at": "2026-10-16T16:54:51.208015+00:00",
+    "youtube_video_id": "bBFzt1a1vto",
+    "youtube_url": "https://www.youtube.com/watch?v=bBFzt1a1vto",
+    "title": "The Palace Room That Was Never Opened... But the Ending Changes Everything 😳 #Shorts",
+    "category": "indian_legend",
+    "story_id": "black_door_palace",
+    "part": 1,
+    "story_key": "black_door_palace|part=1|c334b828a7e9960a4346715bc67b79a3db3d62189be26ac0e1658715d5795dec",
+    "story_fingerprint": "c334b828a7e9960a4346715bc67b79a3db3d62189be26ac0e1658715d5795dec",
+    "video_sha256": "657932ec007caec2b75b73d67d00a664ca454b8520d5c5babb7a3c3205d033f5",
+    "publish_time_ist": "2026-10-17T09:00:00+05:30",
+    "publish_time_utc": "2026-10-17T03:30:00+00:00",
+    "status": "scheduled"
   }
 ]
