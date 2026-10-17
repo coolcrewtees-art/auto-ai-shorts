@@ -391,5 +391,13 @@
     "title_hook": "The Prince Wasn't Trapped Alone",
     "fingerprint": "12837c754fb0a91fc0bdddb3c175deb1456fe3bbc09fd570de2dd834a2b8928b",
     "next_part_pending": false
+  },
+  {
+    "story_id": "lucky_thief",
+    "part": 1,
+    "category": "comedy",
+    "title_hook": "The Thief Who Accidentally Became Prime Minister",
+    "fingerprint": "91c656bb6379c071e7317981d1c8b438ca45b88fe5e9773a45aef6641a8e6d1a",
+    "next_part_pending": false
   }
 ]

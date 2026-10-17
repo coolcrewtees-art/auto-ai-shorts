@@ -123,5 +123,20 @@
     "publish_time_ist": "2026-10-17T19:30:00+05:30",
     "publish_time_utc": "2026-10-17T14:00:00+00:00",
     "status": "scheduled"
+  },
+  {
+    "uploaded_at": "2026-10-17T15:52:58.316415+00:00",
+    "youtube_video_id": "2_6cdvGCEJk",
+    "youtube_url": "https://www.youtube.com/watch?v=2_6cdvGCEJk",
+    "title": "The Thief Who Accidentally Became Prime Minister... This Escalated Quickly 😂 #Shorts",
+    "category": "comedy",
+    "story_id": "lucky_thief",
+    "part": 1,
+    "story_key": "lucky_thief|part=1|91c656bb6379c071e7317981d1c8b438ca45b88fe5e9773a45aef6641a8e6d1a",
+    "story_fingerprint": "91c656bb6379c071e7317981d1c8b438ca45b88fe5e9773a45aef6641a8e6d1a",
+    "video_sha256": "343cf4be3a0bdc5cd3aaf5491dfbf8ac985cd1199235b83f776ee439cc764df4",
+    "publish_time_ist": "2026-10-18T09:00:00+05:30",
+    "publish_time_utc": "2026-10-18T03:30:00+00:00",
+    "status": "scheduled"
   }
 ]
