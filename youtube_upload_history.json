@@ -108,5 +108,20 @@
     "publish_time_ist": "2026-10-17T09:00:00+05:30",
     "publish_time_utc": "2026-10-17T03:30:00+00:00",
     "status": "scheduled"
+  },
+  {
+    "uploaded_at": "2026-10-17T06:29:49.378092+00:00",
+    "youtube_video_id": "du2Jh1_n8B0",
+    "youtube_url": "https://www.youtube.com/watch?v=du2Jh1_n8B0",
+    "title": "The Prince Wasn't Trapped Alone 😨 | Part 2 #Shorts",
+    "category": "indian_legend",
+    "story_id": "black_door_palace",
+    "part": 2,
+    "story_key": "black_door_palace|part=2|12837c754fb0a91fc0bdddb3c175deb1456fe3bbc09fd570de2dd834a2b8928b",
+    "story_fingerprint": "12837c754fb0a91fc0bdddb3c175deb1456fe3bbc09fd570de2dd834a2b8928b",
+    "video_sha256": "d459260646e64ccc97ad09626b5853f1ac8f87fdeb162e35754f41391b2e7ec0",
+    "publish_time_ist": "2026-10-17T19:30:00+05:30",
+    "publish_time_utc": "2026-10-17T14:00:00+00:00",
+    "status": "scheduled"
   }
 ]
