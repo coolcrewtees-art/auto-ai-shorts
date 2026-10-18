@@ -138,5 +138,20 @@
     "publish_time_ist": "2026-10-18T09:00:00+05:30",
     "publish_time_utc": "2026-10-18T03:30:00+00:00",
     "status": "scheduled"
+  },
+  {
+    "uploaded_at": "2026-10-18T06:54:25.087057+00:00",
+    "youtube_video_id": "PYmbUdqAlsM",
+    "youtube_url": "https://www.youtube.com/watch?v=PYmbUdqAlsM",
+    "title": "The Village Where Nobody Locked Their Doors... But the Ending Changes Everything 😳 #Shorts",
+    "category": "indian_folktale",
+    "story_id": "unlocked_village",
+    "part": 1,
+    "story_key": "unlocked_village|part=1|a6b447840de4e4905bf9dfcc23d1ecfdcc25d0037396beaf576aa29cf594aaa6",
+    "story_fingerprint": "a6b447840de4e4905bf9dfcc23d1ecfdcc25d0037396beaf576aa29cf594aaa6",
+    "video_sha256": "2a2e895ad4288f3025b01dab31e602019466213522d8fc79cb95e5a01b871739",
+    "publish_time_ist": "2026-10-18T19:30:00+05:30",
+    "publish_time_utc": "2026-10-18T14:00:00+00:00",
+    "status": "scheduled"
   }
 ]

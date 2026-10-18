@@ -399,5 +399,13 @@
     "title_hook": "The Thief Who Accidentally Became Prime Minister",
     "fingerprint": "91c656bb6379c071e7317981d1c8b438ca45b88fe5e9773a45aef6641a8e6d1a",
     "next_part_pending": false
+  },
+  {
+    "story_id": "unlocked_village",
+    "part": 1,
+    "category": "indian_folktale",
+    "title_hook": "The Village Where Nobody Locked Their Doors",
+    "fingerprint": "a6b447840de4e4905bf9dfcc23d1ecfdcc25d0037396beaf576aa29cf594aaa6",
+    "next_part_pending": true
   }
 ]
