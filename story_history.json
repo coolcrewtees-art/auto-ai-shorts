@@ -439,5 +439,13 @@
     "title_hook": "The Train That Charged Passengers With Memories",
     "fingerprint": "f4bc24507448dce935e527e78fa25efe0e90801a6461150a55f19875b5aba2fb",
     "next_part_pending": false
+  },
+  {
+    "story_id": "bhishma_death",
+    "part": 1,
+    "category": "indian_mythology",
+    "title_hook": "The Warrior Who Chose the Moment of His Own Death",
+    "fingerprint": "5936ae3fa212b7f8d68566cb27fa452994e60c6970fbb5f0bb86bebea614494c",
+    "next_part_pending": false
   }
 ]
