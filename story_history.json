@@ -447,5 +447,13 @@
     "title_hook": "The Warrior Who Chose the Moment of His Own Death",
     "fingerprint": "5936ae3fa212b7f8d68566cb27fa452994e60c6970fbb5f0bb86bebea614494c",
     "next_part_pending": false
+  },
+  {
+    "story_id": "black_door_palace",
+    "part": 1,
+    "category": "indian_legend",
+    "title_hook": "The Palace Room That Was Never Opened",
+    "fingerprint": "c334b828a7e9960a4346715bc67b79a3db3d62189be26ac0e1658715d5795dec",
+    "next_part_pending": true
   }
 ]
